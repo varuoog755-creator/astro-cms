@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 COPY . .
 RUN npx prisma generate
@@ -23,7 +23,7 @@ ENV DATABASE_URL="file:./cms.db"
 
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm ci --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
