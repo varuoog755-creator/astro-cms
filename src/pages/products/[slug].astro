@@ -1,0 +1,186 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import { PRODUCTS_CATALOG } from '../../lib/products';
+
+const { slug } = Astro.params;
+
+const product = PRODUCTS_CATALOG.find((p) => p.slug === slug);
+
+if (!product) {
+  return Astro.redirect('/products');
+}
+
+const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
+---
+
+<PublicLayout
+  seo={{
+    title: `${product.name} - Official Product Showcase`,
+    description: product.description,
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: 'Products', url: '/products' },
+      { name: product.name, url: `/products/${product.slug}` },
+    ],
+  }}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-8">
+      <a href="/" class="hover:text-blue-600 transition">Home</a>
+      <span>/</span>
+      <a href="/products" class="hover:text-blue-600 transition">Products</a>
+      <span>/</span>
+      <span class="text-slate-800 font-bold">{product.name}</span>
+    </nav>
+
+    <!-- Main Product Card -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 mb-16">
+      
+      <!-- Gallery Column -->
+      <div class="p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200">
+        <div class="relative aspect-square rounded-2xl overflow-hidden shadow-inner bg-slate-200">
+          <img
+            id="main-product-img"
+            src={product.images[0]}
+            alt={product.name}
+            class="w-full h-full object-cover"
+          />
+          {product.badge && (
+            <span class="absolute top-4 left-4 bg-slate-900 text-white text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+              {product.badge}
+            </span>
+          )}
+        </div>
+
+        <!-- Thumbnails -->
+        {product.images.length > 1 && (
+          <div class="flex gap-4 mt-6">
+            {product.images.map((img, idx) => (
+              <button
+                onclick={`document.getElementById('main-product-img').src='${img}'`}
+                class="w-20 h-20 rounded-xl overflow-hidden border-2 border-slate-300 hover:border-blue-600 transition shadow-sm focus:outline-none"
+              >
+                <img src={img} alt={`Thumbnail ${idx + 1}`} class="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Detail Info Column -->
+      <div class="p-8 lg:p-12 space-y-6 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="bg-blue-100 text-blue-800 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+              {product.category}
+            </span>
+            <span class="bg-emerald-100 text-emerald-800 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+              In Stock & Ready to Ship
+            </span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
+            {product.name}
+          </h1>
+
+          <div class="flex items-center gap-4 text-xs font-semibold">
+            <div class="flex items-center gap-1 text-amber-500 text-sm">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              <span class="text-slate-900 font-bold ml-1">{product.rating}</span>
+            </div>
+            <span class="text-slate-400">|</span>
+            <span class="text-slate-500">{product.reviewCount} Verified Customer Reviews</span>
+          </div>
+
+          <p class="text-slate-600 text-sm leading-relaxed">
+            {product.description}
+          </p>
+
+          <!-- Price Header -->
+          <div class="pt-4 pb-2 border-y border-slate-100 flex items-baseline gap-3">
+            <span class="text-3xl font-black text-slate-900">{product.currency}{product.price}</span>
+            {product.originalPrice && (
+              <span class="text-base text-slate-400 line-through font-semibold">{product.currency}{product.originalPrice}</span>
+            )}
+            <span class="bg-rose-100 text-rose-700 font-bold text-xs px-2.5 py-0.5 rounded-full ml-auto">
+              Save {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}% Today
+            </span>
+          </div>
+
+          <!-- Color Selector -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Select Color</label>
+            <div class="flex gap-3">
+              {product.colors.map((c) => (
+                <div class="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800">
+                  <span class="w-3.5 h-3.5 rounded-full border border-slate-400" style={`background-color: ${c.hex}`}></span>
+                  {c.name}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Size Selector -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Select Size (Oversized Fit)</label>
+            <div class="flex gap-2">
+              {product.sizes.map((sz) => (
+                <button class="w-12 h-10 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:bg-blue-50 font-extrabold text-xs text-slate-800 transition">
+                  {sz}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <!-- Technical Specs Card -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2">
+            <div class="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Fabric & Specifications</div>
+            <div class="grid grid-cols-2 gap-2 text-slate-600">
+              <div>• <strong>GSM:</strong> {product.fabricSpecs.gsm} GSM</div>
+              <div>• <strong>Material:</strong> {product.fabricSpecs.material}</div>
+              <div>• <strong>Fit:</strong> {product.fabricSpecs.fit}</div>
+              <div>• <strong>Care:</strong> {product.fabricSpecs.care}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-6 border-t border-slate-100 space-y-3">
+          <button
+            onclick="alert('Order inquiry added successfully! Super Admin will contact you.')"
+            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2"
+          >
+            <span>🛍️ Order Now / Add to Cart</span>
+          </button>
+          
+          <div class="flex items-center justify-center gap-6 text-[11px] text-slate-500 font-semibold pt-1">
+            <span>🔒 Secure Checkout</span>
+            <span>⚡ 7-Day Replacement Guarantee</span>
+            <span>🚚 Express Delivery</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    {relatedProducts.length > 0 && (
+      <div class="space-y-6">
+        <h3 class="text-2xl font-black text-slate-900">Recommended Next</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {relatedProducts.map((rel) => (
+            <a href={`/products/${rel.slug}`} class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex items-center gap-6 group">
+              <img src={rel.images[0]} alt={rel.name} class="w-24 h-24 rounded-xl object-cover" />
+              <div>
+                <span class="text-[10px] font-bold uppercase text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{rel.category}</span>
+                <h4 class="font-bold text-base text-slate-900 group-hover:text-blue-600 transition mt-1">{rel.name}</h4>
+                <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">{rel.tagline}</p>
+                <div class="font-black text-sm text-slate-900 mt-2">{rel.currency}{rel.price}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</PublicLayout>

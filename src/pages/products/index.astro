@@ -1,0 +1,121 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import { PRODUCTS_CATALOG } from '../../lib/products';
+
+const products = PRODUCTS_CATALOG;
+---
+
+<PublicLayout
+  seo={{
+    title: 'Products Storefront - Astro CMS Showcase',
+    description: 'Explore high quality 240 GSM heavyweight streetwear, developer merch, and custom apparel catalog.',
+  }}
+>
+  <!-- Hero Header -->
+  <div class="relative bg-slate-950 text-white overflow-hidden py-16 px-4 sm:px-6 lg:px-8">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div class="relative max-w-7xl mx-auto text-center space-y-4">
+      <span class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+        <span>✨ Official Storefront Collection</span>
+      </span>
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
+        Premium Streetwear & <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Apparel Catalog</span>
+      </h1>
+      <p class="max-w-2xl mx-auto text-slate-300 text-sm sm:text-base leading-relaxed">
+        Crafted with 240 GSM heavyweight cotton, pre-shrunk bio-wash treatment, and precision high-density prints for unmatched durability and comfort.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Category & Filter Header -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-200">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900">Featured Products</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Displaying {products.length} heavy-duty items</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="bg-blue-600 text-white font-bold text-xs px-3.5 py-1.5 rounded-full shadow-sm">All Items</span>
+        <span class="bg-slate-100 text-slate-700 font-semibold text-xs px-3.5 py-1.5 rounded-full hover:bg-slate-200 cursor-pointer transition">Hoodies</span>
+        <span class="bg-slate-100 text-slate-700 font-semibold text-xs px-3.5 py-1.5 rounded-full hover:bg-slate-200 cursor-pointer transition">T-Shirts</span>
+        <span class="bg-slate-100 text-slate-700 font-semibold text-xs px-3.5 py-1.5 rounded-full hover:bg-slate-200 cursor-pointer transition">Sweatshirts</span>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {products.map((product) => (
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+          <!-- Product Image Container -->
+          <div class="relative aspect-square bg-slate-100 overflow-hidden">
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {product.badge && (
+              <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
+                {product.badge}
+              </span>
+            )}
+            <span class="absolute top-4 right-4 bg-blue-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-md">
+              {product.fabricSpecs.gsm} GSM
+            </span>
+          </div>
+
+          <!-- Content Body -->
+          <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-blue-600 font-bold uppercase tracking-wider text-[10px] bg-blue-50 px-2 py-0.5 rounded-md">
+                  {product.category}
+                </span>
+                <div class="flex items-center gap-1 text-amber-500 font-bold text-xs">
+                  <span>★</span>
+                  <span>{product.rating}</span>
+                  <span class="text-slate-400 font-normal">({product.reviewCount})</span>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+                <a href={`/products/${product.slug}`}>{product.name}</a>
+              </h3>
+              
+              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.tagline}</p>
+            </div>
+
+            <!-- Features Tags -->
+            <div class="flex flex-wrap gap-1.5 pt-2">
+              {product.features.slice(0, 2).map((feat) => (
+                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded">
+                  ✓ {feat}
+                </span>
+              ))}
+            </div>
+
+            <!-- Price & Buy Section -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-xl font-black text-slate-900">{product.currency}{product.price}</span>
+                  {product.originalPrice && (
+                    <span class="text-xs text-slate-400 line-through font-medium">{product.currency}{product.originalPrice}</span>
+                  )}
+                </div>
+                <span class="text-[10px] text-emerald-600 font-semibold">Free Express Shipping</span>
+              </div>
+
+              <a
+                href={`/products/${product.slug}`}
+                class="bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition-colors flex items-center gap-1"
+              >
+                View Details &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</PublicLayout>

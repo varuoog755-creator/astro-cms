@@ -295,11 +295,13 @@ async function main() {
     },
   });
 
+  await prisma.menuItem.deleteMany({ where: { menuId: menu.id } });
   await prisma.menuItem.createMany({
     data: [
       { menuId: menu.id, title: 'Home', url: '/', sortOrder: 1 },
-      { menuId: menu.id, title: 'Blog', url: '/blog', sortOrder: 2 },
-      { menuId: menu.id, title: 'About', url: '/about', sortOrder: 3 },
+      { menuId: menu.id, title: 'Products', url: '/products', sortOrder: 2 },
+      { menuId: menu.id, title: 'Blog', url: '/blog', sortOrder: 3 },
+      { menuId: menu.id, title: 'About', url: '/about', sortOrder: 4 },
     ],
   });
 

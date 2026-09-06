@@ -1,6 +1,7 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import prisma from '../lib/db';
+import { PRODUCTS_CATALOG } from '../lib/products';
 
 const posts = await prisma.post.findMany({
   where: { status: 'published' },
@@ -11,85 +12,262 @@ const posts = await prisma.post.findMany({
 
 const featuredPost = posts[0];
 const recentPosts = posts.slice(1);
+const featuredProducts = PRODUCTS_CATALOG;
 ---
 
-<PublicLayout seo={{ title: 'Home - Modern Astro CMS' }}>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Hero Banner -->
-    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-      <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-        ⚡ Astro CMS Engine
-      </span>
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
-        Modern Publishing Platform for High Performance
-      </h1>
-      <p class="text-lg text-gray-600">
-        An open-architecture CMS built on Astro 7.2, TypeScript, and Prisma ORM. Zero bloated client JS, maximum Core Web Vitals score.
-      </p>
-    </div>
-
-    {featuredPost && (
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden mb-16 grid grid-cols-1 md:grid-cols-2">
-        <div class="p-8 md:p-12 flex flex-col justify-between">
-          <div class="space-y-4">
-            <div class="flex items-center gap-2">
-              {featuredPost.categories.map((c) => (
-                <span class="bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full text-xs">
-                  {c.category.name}
-                </span>
-              ))}
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 leading-snug">
-              <a href={`/blog/${featuredPost.slug}`} class="hover:text-blue-600 transition">
-                {featuredPost.title}
-              </a>
-            </h2>
-            <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed">{featuredPost.excerpt}</p>
-          </div>
-
-          <div class="mt-8 flex items-center justify-between pt-6 border-t border-gray-100 text-xs text-gray-500">
-            <span class="font-semibold text-gray-800">By {featuredPost.author.displayName}</span>
-            <span>{new Date(featuredPost.publishedAt || featuredPost.createdAt).toLocaleDateString()}</span>
-          </div>
+<PublicLayout seo={{ title: 'Astro CMS - Modern Publishing & Storefront Platform' }}>
+  <!-- Hero Section -->
+  <section class="relative bg-slate-950 text-white overflow-hidden py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-b border-slate-900">
+    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#3b82f6_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
+    
+    <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6 text-left">
+        <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
+          <span>Enterprise Astro 7.2 Engine</span>
         </div>
 
-        <div class="bg-slate-900 p-8 flex items-center justify-center text-white">
-          <div class="text-center space-y-2">
-            <div class="text-5xl">🚀</div>
-            <div class="font-bold text-xl">Featured Article</div>
-            <div class="text-xs text-slate-400">Fast SSR Block Content Rendering</div>
+        <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
+          Next-Gen Content & <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Storefront Platform</span>
+        </h1>
+
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl">
+          An open-architecture CMS engineered with Astro, TypeScript, and Prisma ORM. Designed for lightning performance, block content editing, and heavyweight product catalogs.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <a
+            href="/products"
+            class="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm px-7 py-3.5 rounded-full shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          >
+            <span>🛍️ Explore Products</span>
+            <span>&rarr;</span>
+          </a>
+
+          <a
+            href="/blog"
+            class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-sm px-6 py-3.5 rounded-full transition-all"
+          >
+            Read Articles
+          </a>
+        </div>
+
+        <!-- Key Metrics Banner -->
+        <div class="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80 text-xs">
+          <div>
+            <div class="text-xl font-black text-white">100 / 100</div>
+            <div class="text-slate-400 font-medium mt-0.5">Core Web Vitals</div>
+          </div>
+          <div>
+            <div class="text-xl font-black text-blue-400">240 GSM</div>
+            <div class="text-slate-400 font-medium mt-0.5">Heavyweight Apparel</div>
+          </div>
+          <div>
+            <div class="text-xl font-black text-emerald-400">0.0 ms</div>
+            <div class="text-slate-400 font-medium mt-0.5">Hydration Overhead</div>
           </div>
         </div>
       </div>
-    )}
 
-    <!-- Recent Grid -->
-    <h2 class="text-2xl font-bold text-gray-900 mb-8">Latest Articles</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {recentPosts.map((post) => (
-        <article class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition">
-          <div class="space-y-3">
+      <!-- Hero Visual Card -->
+      <div class="relative">
+        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-30 animate-pulse"></div>
+        <div class="relative bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div class="flex items-center gap-2">
-              {post.categories.map((c) => (
-                <span class="bg-gray-100 text-gray-700 font-semibold px-2 py-0.5 rounded text-[10px]">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            </div>
+            <span class="text-[11px] font-mono text-slate-400">astro-cms-core-v2.0</span>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-blue-400 space-y-1">
+              <div><span class="text-purple-400">import</span> &#123; PrismaClient &#125; <span class="text-purple-400">from</span> <span class="text-emerald-400">'@prisma/client'</span>;</div>
+              <div><span class="text-purple-400">export const</span> cms = <span class="text-purple-400">new</span> PrismaClient();</div>
+              <div class="text-slate-500">// ✅ Database Synced & Live Seeding Active</div>
+            </div>
+
+            <!-- Mini Product Card Preview inside Hero -->
+            <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <img src={PRODUCTS_CATALOG[0].images[0]} alt="Featured Product" class="w-12 h-12 rounded-xl object-cover" />
+                <div>
+                  <div class="text-xs font-bold text-white">{PRODUCTS_CATALOG[0].name}</div>
+                  <div class="text-[10px] text-blue-400 font-semibold">{PRODUCTS_CATALOG[0].tagline}</div>
+                </div>
+              </div>
+              <a href={`/products/${PRODUCTS_CATALOG[0].slug}`} class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg">
+                View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Storefront Products Showcase Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="flex flex-col sm:flex-row items-baseline justify-between mb-10 pb-4 border-b border-slate-200">
+      <div>
+        <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">Official Merchandise</span>
+        <h2 class="text-3xl font-black text-slate-900 mt-2">Heavyweight Apparel Collection</h2>
+      </div>
+      <a href="/products" class="text-xs font-bold text-blue-600 hover:underline mt-2 sm:mt-0">
+        View All Products ({featuredProducts.length}) &rarr;
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {featuredProducts.map((product) => (
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+          <div class="relative aspect-square bg-slate-100 overflow-hidden">
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {product.badge && (
+              <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
+                {product.badge}
+              </span>
+            )}
+            <span class="absolute top-4 right-4 bg-blue-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-md">
+              {product.fabricSpecs.gsm} GSM
+            </span>
+          </div>
+
+          <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-blue-600 font-bold uppercase tracking-wider text-[10px] bg-blue-50 px-2 py-0.5 rounded-md">
+                  {product.category}
+                </span>
+                <div class="flex items-center gap-1 text-amber-500 font-bold text-xs">
+                  <span>★</span>
+                  <span>{product.rating}</span>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+                <a href={`/products/${product.slug}`}>{product.name}</a>
+              </h3>
+              
+              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.tagline}</p>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-xl font-black text-slate-900">{product.currency}{product.price}</span>
+                {product.originalPrice && (
+                  <span class="text-xs text-slate-400 line-through font-medium ml-1.5">{product.currency}{product.originalPrice}</span>
+                )}
+              </div>
+
+              <a
+                href={`/products/${product.slug}`}
+                class="bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition-colors"
+              >
+                View Item &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Featured Blog Post Banner -->
+  {featuredPost && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+        <div class="p-8 sm:p-12 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="bg-blue-500/20 text-blue-300 font-extrabold px-3 py-1 rounded-full text-xs uppercase tracking-wider border border-blue-500/30">
+                ⭐ Featured Article
+              </span>
+              {featuredPost.categories.map((c) => (
+                <span class="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-full text-xs">
                   {c.category.name}
                 </span>
               ))}
             </div>
-            <h3 class="font-bold text-lg text-gray-900 leading-snug">
+
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-snug">
+              <a href={`/blog/${featuredPost.slug}`} class="hover:text-blue-400 transition">
+                {featuredPost.title}
+              </a>
+            </h2>
+
+            <p class="text-slate-300 text-sm leading-relaxed line-clamp-3">
+              {featuredPost.excerpt}
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white">
+                {featuredPost.author.displayName[0]}
+              </div>
+              <span class="font-bold text-white">{featuredPost.author.displayName}</span>
+            </div>
+            <a
+              href={`/blog/${featuredPost.slug}`}
+              class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-2.5 rounded-full transition shadow-md"
+            >
+              Read Story &rarr;
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/60 p-8 lg:p-12 flex items-center justify-center border-t lg:border-t-0 lg:border-l border-slate-800">
+          <div class="text-center space-y-3 max-w-sm">
+            <div class="text-6xl">🚀</div>
+            <div class="font-black text-2xl text-white">Zero JS Overhead</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Astro SSR delivers pure HTML and minimal hydrated components for ultra-fast rendering on all desktop & mobile devices.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Latest Articles Grid -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="flex items-baseline justify-between mb-8 pb-4 border-b border-slate-200">
+      <h2 class="text-2xl font-black text-slate-900">Latest Editorial Posts</h2>
+      <a href="/blog" class="text-xs font-bold text-blue-600 hover:underline">Browse All Articles &rarr;</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {recentPosts.map((post) => (
+        <article class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              {post.categories.map((c) => (
+                <span class="bg-slate-100 text-slate-700 font-extrabold px-2.5 py-0.5 rounded text-[10px]">
+                  {c.category.name}
+                </span>
+              ))}
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 leading-snug">
               <a href={`/blog/${post.slug}`} class="hover:text-blue-600 transition">
                 {post.title}
               </a>
             </h3>
-            <p class="text-xs text-gray-600 line-clamp-2">{post.excerpt}</p>
+            <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed">{post.excerpt}</p>
           </div>
 
-          <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-            <span>{post.author.displayName}</span>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span class="font-semibold text-slate-800">By {post.author.displayName}</span>
             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
           </div>
         </article>
       ))}
     </div>
-  </div>
+  </section>
 </PublicLayout>
