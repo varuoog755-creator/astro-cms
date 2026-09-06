@@ -1,4 +1,6 @@
 FROM node:22-alpine AS builder
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -10,6 +12,8 @@ RUN npx prisma generate
 RUN npm run build
 
 FROM node:22-alpine AS runner
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -21,11 +25,10 @@ COPY package*.json ./
 COPY prisma ./prisma/
 RUN npm ci --omit=dev
 RUN npx prisma generate
-RUN npx prisma db push
-RUN node --import tsx prisma/seed.ts || true
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/prisma/cms.db ./prisma/cms.db || true
 
 EXPOSE 4321
 CMD ["node", "./dist/server/entry.mjs"]
