@@ -1,0 +1,12 @@
+{
+  "name": "Default Theme",
+  "slug": "default",
+  "version": "1.0.0",
+  "description": "Default modern responsive theme for Astro CMS",
+  "author": "Astro CMS Team",
+  "settings": {
+    "primaryColor": "#3b82f6",
+    "fontFamily": "Inter, sans-serif",
+    "headerStyle": "sticky"
+  }
+}

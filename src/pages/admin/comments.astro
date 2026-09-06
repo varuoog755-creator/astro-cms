@@ -1,0 +1,83 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const statusFilter = Astro.url.searchParams.get('status') || 'pending';
+
+const comments = await prisma.comment.findMany({
+  where: { status: statusFilter },
+  orderBy: { createdAt: 'desc' },
+  include: { post: true },
+});
+
+const counts = {
+  pending: await prisma.comment.count({ where: { status: 'pending' } }),
+  approved: await prisma.comment.count({ where: { status: 'approved' } }),
+  spam: await prisma.comment.count({ where: { status: 'spam' } }),
+  trash: await prisma.comment.count({ where: { status: 'trash' } }),
+};
+---
+
+<AdminLayout title="Comments Moderation" activeNav="comments">
+  <div class="flex items-center gap-4 text-sm font-medium mb-6">
+    <a href="/admin/comments?status=pending" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'pending' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+      Pending ({counts.pending})
+    </a>
+    <a href="/admin/comments?status=approved" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'approved' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+      Approved ({counts.approved})
+    </a>
+    <a href="/admin/comments?status=spam" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'spam' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+      Spam ({counts.spam})
+    </a>
+    <a href="/admin/comments?status=trash" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'trash' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+      Trash ({counts.trash})
+    </a>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+    {comments.length === 0 ? (
+      <div class="p-8 text-center text-gray-500 text-sm">No comments found in this queue.</div>
+    ) : (
+      comments.map((comment) => (
+        <div class="p-6 flex flex-col md:flex-row items-start justify-between gap-4">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+              <span class="font-bold text-gray-900">{comment.authorName}</span> ({comment.authorEmail})
+              <span>· On post:</span>
+              <a href={`/blog/${comment.post.slug}`} target="_blank" class="font-semibold text-blue-600 hover:underline">
+                {comment.post.title}
+              </a>
+              <span>· {new Date(comment.createdAt).toLocaleDateString()}</span>
+            </div>
+            <p class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-100">{comment.content}</p>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0">
+            {comment.status !== 'approved' && (
+              <form action={`/api/comments/${comment.id}`} method="POST">
+                <input type="hidden" name="action" value="approve" />
+                <button type="submit" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                  Approve
+                </button>
+              </form>
+            )}
+            {comment.status !== 'spam' && (
+              <form action={`/api/comments/${comment.id}`} method="POST">
+                <input type="hidden" name="action" value="spam" />
+                <button type="submit" class="bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                  Mark Spam
+                </button>
+              </form>
+            )}
+            <form action={`/api/comments/${comment.id}`} method="POST">
+              <input type="hidden" name="action" value="trash" />
+              <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                Trash
+              </button>
+            </form>
+          </div>
+        </div>
+      ))
+    )}
+  </div>
+</AdminLayout>

@@ -1,0 +1,140 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import prisma from '../../../lib/db';
+
+const statusFilter = Astro.url.searchParams.get('status') || 'all';
+const search = Astro.url.searchParams.get('s') || '';
+
+let whereClause: any = {};
+if (statusFilter !== 'all') {
+  whereClause.status = statusFilter;
+} else {
+  whereClause.status = { not: 'trash' };
+}
+
+if (search) {
+  whereClause.title = { contains: search };
+}
+
+const posts = await prisma.post.findMany({
+  where: whereClause,
+  orderBy: { createdAt: 'desc' },
+  include: {
+    author: true,
+    categories: { include: { category: true } },
+    tags: { include: { tag: true } },
+    featuredImage: true,
+  },
+});
+
+const counts = {
+  all: await prisma.post.count({ where: { status: { not: 'trash' } } }),
+  published: await prisma.post.count({ where: { status: 'published' } }),
+  draft: await prisma.post.count({ where: { status: 'draft' } }),
+  trash: await prisma.post.count({ where: { status: 'trash' } }),
+};
+---
+
+<AdminLayout title="Posts" activeNav="posts">
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-4 text-sm font-medium">
+      <a href="/admin/posts" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'all' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+        All ({counts.all})
+      </a>
+      <a href="/admin/posts?status=published" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'published' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+        Published ({counts.published})
+      </a>
+      <a href="/admin/posts?status=draft" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'draft' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+        Drafts ({counts.draft})
+      </a>
+      <a href="/admin/posts?status=trash" class={`px-3 py-1.5 rounded-lg transition ${statusFilter === 'trash' ? 'bg-blue-600 text-white font-bold' : 'text-gray-600 hover:bg-gray-200'}`}>
+        Trash ({counts.trash})
+      </a>
+    </div>
+
+    <a href="/admin/posts/new" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition">
+      + Create Post
+    </a>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+      <form action="/admin/posts" method="GET" class="flex gap-2">
+        <input type="hidden" name="status" value={statusFilter} />
+        <input
+          type="text"
+          name="s"
+          value={search}
+          placeholder="Search posts..."
+          class="text-xs border border-gray-300 rounded-lg px-3 py-2 bg-white w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button type="submit" class="text-xs bg-gray-900 text-white font-semibold px-3 py-2 rounded-lg">Search</button>
+      </form>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-gray-700">
+        <thead class="bg-gray-100 text-gray-600 font-bold uppercase tracking-wider border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-3.5">Title</th>
+            <th class="px-6 py-3.5">Author</th>
+            <th class="px-6 py-3.5">Categories</th>
+            <th class="px-6 py-3.5">Status</th>
+            <th class="px-6 py-3.5">Date</th>
+            <th class="px-6 py-3.5 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {posts.length === 0 ? (
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                No posts found in this section.
+              </td>
+            </tr>
+          ) : (
+            posts.map((post) => (
+              <tr class="hover:bg-gray-50/80 transition">
+                <td class="px-6 py-4">
+                  <div class="font-bold text-gray-900 text-sm">{post.title}</div>
+                  <div class="text-[11px] text-gray-400 font-mono mt-0.5">/{post.slug}</div>
+                </td>
+                <td class="px-6 py-4 font-medium text-gray-800">{post.author?.displayName}</td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-wrap gap-1">
+                    {post.categories.map((c) => (
+                      <span class="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded text-[10px]">
+                        {c.category.name}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class={`font-bold px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider ${
+                    post.status === 'published'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : post.status === 'draft'
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {post.status}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-gray-500">{new Date(post.createdAt).toLocaleDateString()}</td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <a href={`/admin/posts/${post.id}`} class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2.5 py-1 rounded transition text-[11px]">
+                      Edit
+                    </a>
+                    <a href={`/blog/${post.slug}`} target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2.5 py-1 rounded transition text-[11px]">
+                      View ↗
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

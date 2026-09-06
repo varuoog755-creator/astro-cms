@@ -1,0 +1,59 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const primaryMenu = await prisma.menu.findFirst({
+  where: { isPrimary: true },
+  include: {
+    items: {
+      orderBy: { sortOrder: 'asc' },
+    },
+  },
+});
+
+const pages = await prisma.page.findMany({ where: { status: 'published' } });
+const categories = await prisma.category.findMany();
+---
+
+<AdminLayout title="Navigation Menus" activeNav="appearance">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Add Menu Item Sidebar -->
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+      <h3 class="text-sm font-bold text-gray-900">Add Menu Items</h3>
+
+      <!-- Custom Link Form -->
+      <form action="/api/menus/item" method="POST" class="space-y-3 pb-4 border-b border-gray-100">
+        <input type="hidden" name="menuId" value={primaryMenu?.id || ''} />
+        <input type="hidden" name="type" value="custom" />
+        <div class="text-xs font-bold text-gray-700">Custom URL Link</div>
+        <input type="text" name="title" required placeholder="Link Text e.g. External Link" class="w-full text-xs border border-gray-300 rounded-lg px-3 py-2" />
+        <input type="text" name="url" required placeholder="https://example.com" class="w-full text-xs border border-gray-300 rounded-lg px-3 py-2" />
+        <button type="submit" class="w-full bg-gray-900 text-white font-bold text-xs py-2 rounded-lg">Add to Menu</button>
+      </form>
+    </div>
+
+    <!-- Active Menu Builder Grid -->
+    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div>
+          <h3 class="text-base font-bold text-gray-900">{primaryMenu?.name || 'Primary Navigation Menu'}</h3>
+          <p class="text-xs text-gray-500">Location: Header Navigation</p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        {primaryMenu?.items.map((item) => (
+          <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl">
+            <div>
+              <span class="font-bold text-xs text-gray-900">{item.title}</span>
+              <span class="text-[11px] text-gray-400 font-mono ml-2">({item.url})</span>
+            </div>
+            <span class="text-[10px] font-bold uppercase bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+              {item.type}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</AdminLayout>

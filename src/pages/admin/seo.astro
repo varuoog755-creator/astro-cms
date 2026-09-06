@@ -1,0 +1,46 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const redirects = await prisma.redirect.findMany({
+  orderBy: { createdAt: 'desc' },
+});
+---
+
+<AdminLayout title="SEO & Redirect Manager" activeNav="seo">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+      <h3 class="text-sm font-bold text-gray-900">Automatic 301 Redirects</h3>
+      <p class="text-xs text-gray-500">When post or page slugs change, 301 redirects are generated automatically to prevent 404 broken links.</p>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <table class="w-full text-left text-xs text-gray-700">
+        <thead class="bg-gray-100 text-gray-600 font-bold uppercase tracking-wider border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-3.5">Source URL</th>
+            <th class="px-6 py-3.5">Target URL</th>
+            <th class="px-6 py-3.5">Code</th>
+            <th class="px-6 py-3.5">Hits</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {redirects.length === 0 ? (
+            <tr>
+              <td colspan="4" class="px-6 py-6 text-center text-gray-500">No redirects configured.</td>
+            </tr>
+          ) : (
+            redirects.map((r) => (
+              <tr class="hover:bg-gray-50/80 transition">
+                <td class="px-6 py-4 font-mono text-blue-600 font-semibold">{r.sourceUrl}</td>
+                <td class="px-6 py-4 font-mono text-emerald-600 font-semibold">{r.targetUrl}</td>
+                <td class="px-6 py-4 font-bold">{r.statusCode}</td>
+                <td class="px-6 py-4 font-semibold text-gray-500">{r.hitCount}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

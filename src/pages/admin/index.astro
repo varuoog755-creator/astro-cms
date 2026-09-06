@@ -1,0 +1,169 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const totalPosts = await prisma.post.count({ where: { status: { not: 'trash' } } });
+const publishedPosts = await prisma.post.count({ where: { status: 'published' } });
+const draftPosts = await prisma.post.count({ where: { status: 'draft' } });
+const totalPages = await prisma.page.count({ where: { status: { not: 'trash' } } });
+const totalUsers = await prisma.user.count();
+const totalComments = await prisma.comment.count({ where: { status: { not: 'trash' } } });
+const pendingComments = await prisma.comment.count({ where: { status: 'pending' } });
+
+const recentPosts = await prisma.post.findMany({
+  take: 5,
+  orderBy: { createdAt: 'desc' },
+  include: { author: true },
+});
+
+const recentLogs = await prisma.auditLog.findMany({
+  take: 6,
+  orderBy: { createdAt: 'desc' },
+  include: { user: true },
+});
+---
+
+<AdminLayout title="Dashboard" activeNav="dashboard">
+  <!-- Key Metrics Row -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Posts</div>
+        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalPosts}</div>
+        <div class="text-xs text-gray-500 mt-1">{publishedPosts} Published · {draftPosts} Drafts</div>
+      </div>
+      <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl font-bold">📝</div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pages</div>
+        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalPages}</div>
+        <div class="text-xs text-gray-500 mt-1">Hierarchical site pages</div>
+      </div>
+      <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl font-bold">📄</div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Users</div>
+        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalUsers}</div>
+        <div class="text-xs text-gray-500 mt-1">RBAC Accounts</div>
+      </div>
+      <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-2xl font-bold">👥</div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Comments</div>
+        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalComments}</div>
+        <div class="text-xs text-amber-600 font-semibold mt-1">{pendingComments} Pending Moderation</div>
+      </div>
+      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-2xl font-bold">💬</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Banner -->
+  <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-white">Quick Actions</h2>
+      <p class="text-xs text-slate-300 mt-1">Create posts, add pages, or manage site media with a single click.</p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <a href="/admin/posts/new" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
+        <span>+ New Post</span>
+      </a>
+      <a href="/admin/pages/new" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
+        <span>+ New Page</span>
+      </a>
+      <a href="/admin/media" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
+        <span>🖼️ Media Library</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Recent Posts Column -->
+    <div class="lg:col-span-2 space-y-8">
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+          <h3 class="font-bold text-gray-900 text-base">Recent Posts</h3>
+          <a href="/admin/posts" class="text-xs text-blue-600 font-semibold hover:underline">View All →</a>
+        </div>
+
+        <div class="divide-y divide-gray-100">
+          {recentPosts.length === 0 ? (
+            <p class="text-sm text-gray-500 py-4 text-center">No posts created yet.</p>
+          ) : (
+            recentPosts.map((post) => (
+              <div class="py-3 flex items-center justify-between gap-4">
+                <div>
+                  <a href={`/admin/posts/${post.id}`} class="font-semibold text-sm text-gray-900 hover:text-blue-600 transition">
+                    {post.title}
+                  </a>
+                  <div class="text-xs text-gray-500 mt-0.5">
+                    By <span class="font-medium text-gray-700">{post.author?.displayName}</span> · {new Date(post.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+                <span class={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                  post.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                }`}>
+                  {post.status}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent System Activity / Audit Log -->
+    <div class="space-y-6">
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+          <h3 class="font-bold text-gray-900 text-base">Audit Trail</h3>
+          <a href="/admin/audit-logs" class="text-xs text-blue-600 font-semibold hover:underline">All Logs →</a>
+        </div>
+
+        <div class="space-y-3">
+          {recentLogs.map((log) => (
+            <div class="text-xs p-3 bg-gray-50 rounded-xl border border-gray-100">
+              <div class="font-semibold text-gray-800 flex items-center justify-between">
+                <span>{log.action}</span>
+                <span class="text-[10px] text-gray-400">{new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+              <div class="text-gray-500 text-[11px] mt-1">
+                By {log.user?.displayName || 'System'} ({log.entity})
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- System Health Card -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <h3 class="font-bold text-gray-900 text-base mb-4">System Health</h3>
+        <div class="space-y-3 text-xs">
+          <div class="flex justify-between items-center py-1 border-b border-gray-100">
+            <span class="text-gray-500">Database Connection</span>
+            <span class="font-bold text-emerald-600 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Connected
+            </span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-100">
+            <span class="text-gray-500">Environment</span>
+            <span class="font-semibold text-gray-800">Astro 7.2 + Node SSR</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-100">
+            <span class="text-gray-500">Object Storage</span>
+            <span class="font-semibold text-gray-800">Local Disk Adapter</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-gray-500">RBAC Status</span>
+            <span class="font-semibold text-emerald-600">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

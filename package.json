@@ -1,0 +1,32 @@
+{
+  "name": "astro-ecom-cms",
+  "type": "module",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.2",
+    "@prisma/client": "^5.22.0",
+    "astro": "^7.2.2",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^13.0.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.1",
+    "prisma": "^5.22.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.8"
+  }
+}

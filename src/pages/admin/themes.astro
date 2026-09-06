@@ -1,0 +1,45 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const themes = await prisma.theme.findMany({ orderBy: { name: 'asc' } });
+---
+
+<AdminLayout title="Theme Management" activeNav="appearance">
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h2 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Installed Themes</h2>
+      <p class="text-xs text-gray-500 mt-0.5">Switch or customize the public presentation of your Astro CMS site.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    {themes.map((theme) => (
+      <div class={`bg-white rounded-2xl border ${theme.isActive ? 'border-blue-600 ring-2 ring-blue-500/20' : 'border-gray-200'} p-6 shadow-sm flex flex-col justify-between`}>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-base">{theme.name}</h3>
+            {theme.isActive && (
+              <span class="bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Active Theme
+              </span>
+            )}
+          </div>
+          <p class="text-xs text-gray-500 mb-4">{theme.description}</p>
+          <div class="text-[11px] text-gray-400 font-mono">v{theme.version} · Author: {theme.author}</div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-gray-100 flex gap-2">
+          {!theme.isActive && (
+            <form action="/api/themes/activate" method="POST" class="w-full">
+              <input type="hidden" name="slug" value={theme.slug} />
+              <button type="submit" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs py-2 rounded-lg transition">
+                Activate Theme
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</AdminLayout>

@@ -1,0 +1,252 @@
+---
+interface Props {
+  initialBlocks?: any[];
+  fieldName?: string;
+}
+
+const { initialBlocks = [], fieldName = 'content' } = Astro.props;
+const defaultBlocks = initialBlocks.length > 0 ? initialBlocks : [
+  { id: 'b-1', type: 'heading', data: { level: 2, text: 'Post Heading' } },
+  { id: 'b-2', type: 'paragraph', data: { text: 'Write your post content here...' } }
+];
+const initialJson = JSON.stringify(defaultBlocks);
+---
+
+<div class="block-editor-wrapper bg-white border border-gray-200 rounded-xl p-6 shadow-sm" id="block-editor-root">
+  <input type="hidden" name={fieldName} id="content-json" value={initialJson} />
+
+  <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+      <span>🧩 Block Content Editor</span>
+    </h3>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="paragraph">+ Paragraph</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="heading">+ Heading</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="image">+ Image</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="quote">+ Quote</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="list">+ List</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="code">+ Code</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="button">+ Button</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="divider">+ Divider</button>
+      <button type="button" class="add-block-btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3 py-1.5 rounded-md transition" data-type="embed">+ Embed</button>
+    </div>
+  </div>
+
+  <div id="blocks-container" class="space-y-4 min-h-[250px]">
+    <!-- Blocks will be rendered here dynamically -->
+  </div>
+</div>
+
+<script>
+  let blocks = [];
+  const hiddenInput = document.getElementById('content-json') as HTMLInputElement;
+  const container = document.getElementById('blocks-container');
+
+  try {
+    blocks = JSON.parse(hiddenInput.value || '[]');
+  } catch (e) {
+    blocks = [];
+  }
+
+  function updateHiddenInput() {
+    if (hiddenInput) {
+      hiddenInput.value = JSON.stringify(blocks);
+    }
+  }
+
+  function renderBlocks() {
+    if (!container) return;
+    container.innerHTML = '';
+
+    blocks.forEach((block: any, index: number) => {
+      const blockEl = document.createElement('div');
+      blockEl.className = 'block-item bg-gray-50 border border-gray-200 rounded-lg p-4 relative group transition hover:border-blue-400';
+      blockEl.dataset.index = index.toString();
+
+      let editorHtml = '';
+      switch (block.type) {
+        case 'heading':
+          editorHtml = `
+            <div class="flex items-center gap-3">
+              <select class="block-level text-xs border border-gray-300 rounded px-2 py-1 bg-white" data-index="${index}">
+                <option value="1" ${block.data?.level === 1 ? 'selected' : ''}>H1</option>
+                <option value="2" ${block.data?.level === 2 ? 'selected' : ''}>H2</option>
+                <option value="3" ${block.data?.level === 3 ? 'selected' : ''}>H3</option>
+              </select>
+              <input type="text" class="block-input text-base font-bold text-gray-900 w-full bg-white border border-gray-300 rounded px-3 py-1.5" data-field="text" data-index="${index}" value="${escapeHtml(block.data?.text || '')}" placeholder="Heading text..." />
+            </div>
+          `;
+          break;
+
+        case 'paragraph':
+          editorHtml = `
+            <textarea class="block-input text-sm text-gray-800 w-full bg-white border border-gray-300 rounded px-3 py-2 leading-relaxed" rows="3" data-field="text" data-index="${index}" placeholder="Write paragraph text...">${escapeHtml(block.data?.text || '')}</textarea>
+          `;
+          break;
+
+        case 'image':
+          editorHtml = `
+            <div class="space-y-2">
+              <div class="flex gap-2">
+                <input type="text" class="block-input text-xs w-full bg-white border border-gray-300 rounded px-3 py-1.5" data-field="url" data-index="${index}" value="${escapeHtml(block.data?.url || '')}" placeholder="Image URL (e.g. /uploads/image.jpg)" />
+              </div>
+              <input type="text" class="block-input text-xs w-full bg-white border border-gray-300 rounded px-3 py-1.5" data-field="caption" data-index="${index}" value="${escapeHtml(block.data?.caption || '')}" placeholder="Image Caption (optional)" />
+              ${block.data?.url ? `<img src="${block.data.url}" class="h-24 w-auto rounded object-cover border mt-1" />` : ''}
+            </div>
+          `;
+          break;
+
+        case 'quote':
+          editorHtml = `
+            <div class="space-y-2">
+              <textarea class="block-input text-sm italic w-full bg-white border border-gray-300 rounded px-3 py-1.5" rows="2" data-field="text" data-index="${index}" placeholder="Quote text...">${escapeHtml(block.data?.text || '')}</textarea>
+              <input type="text" class="block-input text-xs w-full bg-white border border-gray-300 rounded px-3 py-1.5" data-field="cite" data-index="${index}" value="${escapeHtml(block.data?.cite || '')}" placeholder="Author / Citation" />
+            </div>
+          `;
+          break;
+
+        case 'list':
+          const itemsText = (block.data?.items || []).join('\n');
+          editorHtml = `
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1">List Items (One per line):</label>
+              <textarea class="block-list-items text-sm w-full bg-white border border-gray-300 rounded px-3 py-2" rows="3" data-index="${index}" placeholder="Item 1\nItem 2">${escapeHtml(itemsText)}</textarea>
+            </div>
+          `;
+          break;
+
+        case 'code':
+          editorHtml = `
+            <textarea class="block-input font-mono text-xs text-green-400 bg-gray-900 w-full rounded p-3" rows="4" data-field="code" data-index="${index}" placeholder="// Enter code snippet here">${escapeHtml(block.data?.code || '')}</textarea>
+          `;
+          break;
+
+        case 'button':
+          editorHtml = `
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" class="block-input text-xs bg-white border border-gray-300 rounded px-3 py-1.5" data-field="text" data-index="${index}" value="${escapeHtml(block.data?.text || '')}" placeholder="Button Text" />
+              <input type="text" class="block-input text-xs bg-white border border-gray-300 rounded px-3 py-1.5" data-field="url" data-index="${index}" value="${escapeHtml(block.data?.url || '')}" placeholder="Button Link URL" />
+            </div>
+          `;
+          break;
+
+        case 'divider':
+          editorHtml = `<div class="border-t-2 border-dashed border-gray-300 my-2 text-center text-xs text-gray-400">--- Divider Line ---</div>`;
+          break;
+
+        case 'embed':
+          editorHtml = `
+            <input type="text" class="block-input text-xs w-full bg-white border border-gray-300 rounded px-3 py-1.5" data-field="url" data-index="${index}" value="${escapeHtml(block.data?.url || '')}" placeholder="Embed iFrame / Video URL" />
+          `;
+          break;
+
+        default:
+          editorHtml = `
+            <textarea class="block-input text-sm w-full bg-white border border-gray-300 rounded px-3 py-2" rows="2" data-field="text" data-index="${index}">${escapeHtml(block.data?.text || '')}</textarea>
+          `;
+      }
+
+      blockEl.innerHTML = `
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-200">
+          <span class="text-xs font-bold uppercase text-gray-500 tracking-wider">📦 ${block.type}</span>
+          <div class="flex items-center gap-1">
+            <button type="button" class="move-up-btn text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded" data-index="${index}">▲</button>
+            <button type="button" class="move-down-btn text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded" data-index="${index}">▼</button>
+            <button type="button" class="delete-block-btn text-xs bg-red-100 text-red-600 hover:bg-red-200 px-2 py-1 rounded ml-2" data-index="${index}">✕ Remove</button>
+          </div>
+        </div>
+        ${editorHtml}
+      `;
+
+      container.appendChild(blockEl);
+    });
+
+    bindEvents();
+    updateHiddenInput();
+  }
+
+  function escapeHtml(str: string) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function bindEvents() {
+    document.querySelectorAll('.block-input').forEach((input) => {
+      input.addEventListener('input', (e: any) => {
+        const idx = parseInt(e.target.dataset.index);
+        const field = e.target.dataset.field;
+        if (blocks[idx]) {
+          if (!blocks[idx].data) blocks[idx].data = {};
+          blocks[idx].data[field] = e.target.value;
+          updateHiddenInput();
+        }
+      });
+    });
+
+    document.querySelectorAll('.block-level').forEach((select) => {
+      select.addEventListener('change', (e: any) => {
+        const idx = parseInt(e.target.dataset.index);
+        if (blocks[idx]) {
+          blocks[idx].data.level = parseInt(e.target.value);
+          updateHiddenInput();
+        }
+      });
+    });
+
+    document.querySelectorAll('.block-list-items').forEach((textarea) => {
+      textarea.addEventListener('input', (e: any) => {
+        const idx = parseInt(e.target.dataset.index);
+        if (blocks[idx]) {
+          blocks[idx].data.items = e.target.value.split('\n').filter((s: string) => s.trim().length > 0);
+          updateHiddenInput();
+        }
+      });
+    });
+
+    document.querySelectorAll('.move-up-btn').forEach((btn) => {
+      btn.addEventListener('click', (e: any) => {
+        const idx = parseInt(e.target.dataset.index);
+        if (idx > 0) {
+          const temp = blocks[idx];
+          blocks[idx] = blocks[idx - 1];
+          blocks[idx - 1] = temp;
+          renderBlocks();
+        }
+      });
+    });
+
+    document.querySelectorAll('.move-down-btn').forEach((btn) => {
+      btn.addEventListener('click', (e: any) => {
+        const idx = parseInt(e.target.dataset.index);
+        if (idx < blocks.length - 1) {
+          const temp = blocks[idx];
+          blocks[idx] = blocks[idx + 1];
+          blocks[idx + 1] = temp;
+          renderBlocks();
+        }
+      });
+    });
+
+    document.querySelectorAll('.delete-block-btn').forEach((btn) => {
+      btn.addEventListener('click', (e: any) => {
+        const idx = parseInt(e.target.dataset.index);
+        blocks.splice(idx, 1);
+        renderBlocks();
+      });
+    });
+  }
+
+  document.querySelectorAll('.add-block-btn').forEach((btn) => {
+    btn.addEventListener('click', (e: any) => {
+      const type = e.target.dataset.type;
+      const newBlock = {
+        id: 'b-' + Date.now(),
+        type,
+        data: type === 'heading' ? { level: 2, text: '' } : { text: '' }
+      };
+      blocks.push(newBlock);
+      renderBlocks();
+    });
+  });
+
+  renderBlocks();
+</script>

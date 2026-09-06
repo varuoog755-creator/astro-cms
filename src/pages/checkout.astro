@@ -1,0 +1,344 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Express Checkout &mdash; Cash on Delivery & UPI | Teepul" description="Complete your Teepul 240 GSM streetwear purchase. Cash on Delivery across 19,000+ Indian pincodes.">
+  <section style="padding: 3rem 0 5rem; background: #fafafa;">
+    <div class="container" style="max-width: 1000px;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span class="badge-checkout">🔒 256-BIT SECURE CHECKOUT</span>
+        <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0.5rem 0; font-family: 'Outfit', sans-serif;">Complete Your Drop Order</h1>
+        <p style="color: #636366;">Cash on Delivery & Express UPI Available Across 19,000+ Indian Pincodes.</p>
+      </div>
+
+      <div class="checkout-grid">
+        <!-- Billing & Shipping Form Column -->
+        <form id="checkout-form" class="checkout-form-box">
+          <h3 class="step-title">1. Customer Information</h3>
+          
+          <div class="form-row-2">
+            <div class="field">
+              <label>Full Name *</label>
+              <input type="text" id="cust-name" required placeholder="Kabir Sharma" class="c-input" />
+            </div>
+
+            <div class="field">
+              <label>Email Address *</label>
+              <input type="email" id="cust-email" required placeholder="kabir@gmail.com" class="c-input" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Mobile Number (For Delivery Updates) *</label>
+            <input type="tel" id="cust-phone" required placeholder="+91 98765 43210" class="c-input" />
+          </div>
+
+          <h3 class="step-title" style="margin-top: 2rem;">2. Delivery Shipping Address</h3>
+
+          <div class="field">
+            <label>Flat / House No. / Street Address *</label>
+            <input type="text" id="cust-address" required placeholder="Flat 402, Highstreet Residency, Indiranagar" class="c-input" />
+          </div>
+
+          <div class="form-row-3">
+            <div class="field">
+              <label>City *</label>
+              <input type="text" id="cust-city" required placeholder="Bangalore" class="c-input" />
+            </div>
+
+            <div class="field">
+              <label>State *</label>
+              <select id="cust-state" required class="c-input">
+                <option value="Karnataka">Karnataka</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Other">Other State</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Pincode *</label>
+              <input type="text" id="cust-pincode" required placeholder="560038" maxlength="6" class="c-input" />
+            </div>
+          </div>
+
+          <h3 class="step-title" style="margin-top: 2rem;">3. Select Payment Method</h3>
+
+          <div class="payment-options">
+            <label class="pay-option active">
+              <input type="radio" name="payment_method" value="COD" checked />
+              <div class="opt-content">
+                <div class="opt-title">💵 Cash on Delivery (COD)</div>
+                <div class="opt-desc">Pay cash or UPI scanner upon delivery at your doorstep.</div>
+              </div>
+            </label>
+
+            <label class="pay-option">
+              <input type="radio" name="payment_method" value="UPI" />
+              <div class="opt-content">
+                <div class="opt-title">⚡ Express UPI (GPay / PhonePe / Paytm)</div>
+                <div class="opt-desc">Instant payment confirmation & priority 24-hour dispatch.</div>
+              </div>
+            </label>
+          </div>
+
+          <button type="submit" id="btn-place-order" class="btn-place-order">
+            Place Order Now &bull; Cash on Delivery &rarr;
+          </button>
+        </form>
+
+        <!-- Order Summary Sidebar -->
+        <div class="order-summary-box">
+          <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 1.25rem;">Order Summary</h3>
+          
+          <div id="checkout-summary-items" class="summary-items">
+            <!-- Items injected by JS -->
+          </div>
+
+          <div class="summary-breakdown">
+            <div class="b-row">
+              <span>Subtotal:</span>
+              <span id="summary-subtotal">₹0</span>
+            </div>
+            <div class="b-row discount">
+              <span>Coupon Discount:</span>
+              <span id="summary-discount">-₹0</span>
+            </div>
+            <div class="b-row">
+              <span>Shipping Fee:</span>
+              <span style="color: #34c759; font-weight: 700;">FREE</span>
+            </div>
+            <div class="b-row total">
+              <span>Grand Total:</span>
+              <span id="summary-total">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .badge-checkout {
+    background: #000;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .checkout-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .checkout-form-box {
+    background: #ffffff;
+    border: 1px solid #e5e5ea;
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .step-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f2f2f7;
+  }
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .c-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #c7c7cc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .c-input:focus {
+    border-color: #000000;
+  }
+
+  .payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .pay-option {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    border: 1px solid #c7c7cc;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .pay-option.active {
+    border-color: #000000;
+    background: #fafafa;
+  }
+
+  .opt-title { font-weight: 800; font-size: 0.95rem; }
+  .opt-desc { font-size: 0.82rem; color: #636366; margin-top: 2px; }
+
+  .btn-place-order {
+    width: 100%;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 1.1rem;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .btn-place-order:hover {
+    background: #ff3b30;
+  }
+
+  .order-summary-box {
+    background: #ffffff;
+    border: 1px solid #e5e5ea;
+    border-radius: 12px;
+    padding: 1.75rem;
+    height: fit-content;
+  }
+
+  .summary-breakdown {
+    border-top: 1px solid #f2f2f7;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  .b-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #636366;
+    margin-bottom: 0.5rem;
+  }
+
+  .b-row.discount { color: #34c759; font-weight: 700; }
+  .b-row.total { font-size: 1.25rem; font-weight: 900; color: #000000; padding-top: 0.5rem; border-top: 1px solid #f2f2f7; }
+
+  @media (max-width: 768px) {
+    .checkout-grid { grid-template-columns: 1fr; }
+    .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    function getCart() {
+      try { return JSON.parse(localStorage.getItem('aura_cart') || '[]'); } catch(e) { return []; }
+    }
+
+    const cart = getCart();
+    const discount = parseFloat(localStorage.getItem('aura_discount') || '0');
+    const subtotal = cart.reduce((acc: number, i: any) => acc + (i.price * i.quantity), 0);
+    const total = Math.max(0, subtotal - discount);
+
+    const itemsContainer = document.getElementById('checkout-summary-items');
+    const subtotalEl = document.getElementById('summary-subtotal');
+    const discountEl = document.getElementById('summary-discount');
+    const totalEl = document.getElementById('summary-total');
+
+    if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+    if (discountEl) discountEl.textContent = `-₹${discount.toLocaleString('en-IN')}`;
+    if (totalEl) totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+
+    if (itemsContainer) {
+      if (cart.length === 0) {
+        itemsContainer.innerHTML = '<p style="color:#8e8e93; font-size:0.9rem;">Your bag is currently empty.</p>';
+      } else {
+        itemsContainer.innerHTML = cart.map((i: any) => `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem;">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <img src="${i.image_url}" style="width:44px; height:44px; object-fit:cover; border-radius:6px;" />
+              <div>
+                <div style="font-size:0.88rem; font-weight:700;">${i.title}</div>
+                <div style="font-size:0.78rem; color:#8e8e93;">Qty: ${i.quantity}</div>
+              </div>
+            </div>
+            <div style="font-weight:800;">₹${(i.price * i.quantity).toLocaleString('en-IN')}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    const form = document.getElementById('checkout-form') as HTMLFormElement;
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const customer_name = (document.getElementById('cust-name') as HTMLInputElement).value;
+        const customer_email = (document.getElementById('cust-email') as HTMLInputElement).value;
+        const address = (document.getElementById('cust-address') as HTMLInputElement).value;
+        const city = (document.getElementById('cust-city') as HTMLInputElement).value;
+        const state = (document.getElementById('cust-state') as HTMLSelectElement).value;
+        const pincode = (document.getElementById('cust-pincode') as HTMLInputElement).value;
+
+        const orderData = {
+          customer_name,
+          customer_email,
+          shipping_address: `${address}, ${city}, ${state} - ${pincode}`,
+          total_amount: total,
+          discount_amount: discount,
+          items: cart
+        };
+
+        try {
+          const res = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+          });
+          const result = await res.json();
+          if (res.ok && result.success) {
+            localStorage.removeItem('aura_cart');
+            localStorage.removeItem('aura_discount');
+            window.location.href = `/order-success?order=${result.order_number}`;
+          }
+        } catch (err) {
+          alert('Error processing order. Please try again.');
+        }
+      });
+    }
+  });
+</script>

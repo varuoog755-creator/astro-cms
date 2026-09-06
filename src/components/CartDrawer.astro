@@ -1,0 +1,285 @@
+---
+---
+
+<div id="cart-overlay" class="cart-overlay"></div>
+
+<aside id="cart-drawer" class="cart-drawer">
+  <!-- Drawer Header -->
+  <div class="drawer-header">
+    <div class="drawer-title-group">
+      <h3>Your Shopping Bag</h3>
+      <span class="cart-count-badge">0</span>
+    </div>
+    <button id="cart-drawer-close" class="drawer-close-btn" aria-label="Close Bag">&times;</button>
+  </div>
+
+  <!-- Free Shipping Progress Bar -->
+  <div class="free-shipping-bar">
+    <div class="shipping-msg" id="shipping-msg">Add ₹799 for FREE Express Delivery in India!</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="shipping-progress-fill" style="width: 0%;"></div>
+    </div>
+  </div>
+
+  <!-- Cart Items List -->
+  <div id="cart-drawer-items" class="drawer-items">
+    <!-- Populated by JavaScript -->
+  </div>
+
+  <!-- Coupon Code Box -->
+  <div class="coupon-section">
+    <div class="coupon-input-group">
+      <input type="text" id="coupon-code-input" placeholder="Coupon Code (DESI20 / TEEPUL100)" class="coupon-input" />
+      <button type="button" id="apply-coupon-btn" class="coupon-btn">Apply</button>
+    </div>
+    <div id="coupon-feedback" class="coupon-msg"></div>
+  </div>
+
+  <!-- Drawer Footer & Checkout Action -->
+  <div class="drawer-footer">
+    <div class="summary-row">
+      <span>Subtotal:</span>
+      <span id="cart-drawer-subtotal" class="subtotal-val">₹0</span>
+    </div>
+    <div class="summary-row discount-row">
+      <span>Discount:</span>
+      <span id="cart-drawer-discount" class="discount-val">₹0</span>
+    </div>
+    <div class="summary-row total-row">
+      <span>Total:</span>
+      <span id="cart-drawer-total" class="total-val">₹0</span>
+    </div>
+
+    <p class="cod-note">
+      🚚 Cash on Delivery & Express UPI Available Across 19,000+ Pincodes.
+    </p>
+
+    <a href="/checkout" class="btn-checkout">
+      Proceed to Checkout &rarr;
+    </a>
+  </div>
+</aside>
+
+<style>
+  .cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .cart-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    background: #ffffff;
+    z-index: 99999;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .cart-drawer.active {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e5ea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .drawer-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .drawer-title-group h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .drawer-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    color: #8e8e93;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .free-shipping-bar {
+    background: #f2f2f7;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 1px solid #e5e5ea;
+  }
+
+  .shipping-msg {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: #e5e5ea;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #ff3b30;
+    transition: width 0.3s ease;
+  }
+
+  .drawer-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+  }
+
+  .coupon-section {
+    padding: 0.85rem 1.5rem;
+    border-top: 1px solid #f2f2f7;
+    background: #fafafa;
+  }
+
+  .coupon-input-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .coupon-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #c7c7cc;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    outline: none;
+    text-transform: uppercase;
+  }
+
+  .coupon-btn {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+
+  .coupon-msg {
+    font-size: 0.75rem;
+    margin-top: 4px;
+  }
+
+  .drawer-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #e5e5ea;
+    background: #ffffff;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #636366;
+    margin-bottom: 0.4rem;
+  }
+
+  .total-row {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #000000;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f2f2f7;
+  }
+
+  .discount-row {
+    color: #34c759;
+    font-weight: 700;
+  }
+
+  .cod-note {
+    font-size: 0.75rem;
+    color: #8e8e93;
+    margin: 0.85rem 0 1.1rem;
+    text-align: center;
+  }
+
+  .btn-checkout {
+    display: block;
+    width: 100%;
+    background: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 0.9rem;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .btn-checkout:hover {
+    background: #ff3b30;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const applyBtn = document.getElementById('apply-coupon-btn');
+    const input = document.getElementById('coupon-code-input') as HTMLInputElement;
+    const msg = document.getElementById('coupon-feedback');
+
+    if (applyBtn && input && msg) {
+      applyBtn.addEventListener('click', () => {
+        const code = input.value.trim().toUpperCase();
+        if (code === 'DESI20') {
+          localStorage.setItem('aura_discount', '160');
+          msg.style.color = '#34c759';
+          msg.textContent = '✓ DESI20 applied! 20% discount added.';
+        } else if (code === 'TEEPUL100') {
+          localStorage.setItem('aura_discount', '100');
+          msg.style.color = '#34c759';
+          msg.textContent = '✓ TEEPUL100 applied! ₹100 OFF added.';
+        } else {
+          msg.style.color = '#ff3b30';
+          msg.textContent = 'Invalid coupon code. Try DESI20 or TEEPUL100.';
+        }
+        if (typeof (window as any).updateCartUI === 'function') {
+          (window as any).updateCartUI();
+        }
+      });
+    }
+  });
+</script>

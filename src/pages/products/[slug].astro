@@ -1,0 +1,335 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import db from '../../db/index';
+
+const { slug } = Astro.params;
+
+const product = db.prepare('SELECT * FROM products WHERE slug = ?').get(slug) as any;
+
+if (!product) {
+  return Astro.redirect('/products');
+}
+
+const reviews = db.prepare('SELECT * FROM reviews WHERE product_id = ? AND is_approved = 1 ORDER BY id DESC').all(product.id) as any[];
+const relatedProducts = db.prepare('SELECT * FROM products WHERE id != ? LIMIT 3').all(product.id) as any[];
+
+const discountPercent = product.compare_at_price 
+  ? Math.round(((product.compare_at_price - product.price) / product.compare_at_price) * 100)
+  : 0;
+---
+
+<Layout title={`${product.title} &bull; 240 GSM Heavyweight Streetwear`} description={product.summary}>
+  <section style="padding: 3.5rem 0 5rem;">
+    <div class="container">
+      <div class="product-detail-grid">
+        <!-- Image Gallery Column -->
+        <div class="product-gallery">
+          <div class="main-image-box">
+            {product.badge && <span class="badge-flag">{product.badge}</span>}
+            <img src={product.image_url} alt={product.title} class="main-product-img" id="main-product-image" />
+          </div>
+        </div>
+
+        <!-- Product Purchase Information Column -->
+        <div class="product-summary-col">
+          <span class="category-pill">🔥 240 GSM Heavyweight Terry Cotton</span>
+          
+          <h1 class="p-title">{product.title}</h1>
+
+          <div class="rating-row">
+            <span class="stars">★★★★★</span>
+            <span class="score">{product.rating || 4.9}</span>
+            <span class="count">({product.reviews_count || 142} verified customer reviews)</span>
+          </div>
+
+          <div class="price-container">
+            <span class="main-price">₹{product.price.toLocaleString('en-IN')}</span>
+            {product.compare_at_price && (
+              <span class="old-price">₹{product.compare_at_price.toLocaleString('en-IN')}</span>
+            )}
+            {discountPercent > 0 && (
+              <span class="discount-tag">Save {discountPercent}%</span>
+            )}
+          </div>
+
+          <p class="p-desc">{product.description}</p>
+
+          <!-- Fabric Specs Badges -->
+          <div class="specs-grid">
+            <div class="spec-item">
+              <div class="spec-val">240 GSM</div>
+              <div class="spec-lbl">Heavy French Terry Cotton</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-val">Oversized</div>
+              <div class="spec-lbl">Drop-Shoulder Fit</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-val">Puff DTG</div>
+              <div class="spec-lbl">High-Density Print</div>
+            </div>
+          </div>
+
+          <!-- Size Selector -->
+          <div class="size-selector-box">
+            <div class="size-header">
+              <span class="lbl">Select Size (Indian Streetwear Fit)</span>
+              <a href="#size-guide" class="size-guide-link">Size Guide</a>
+            </div>
+            <div class="size-options">
+              <button class="size-btn">S</button>
+              <button class="size-btn active">M</button>
+              <button class="size-btn">L</button>
+              <button class="size-btn">XL</button>
+              <button class="size-btn">XXL</button>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="cta-group">
+            <button 
+              class="btn-add-bag" 
+              onclick={`addToCart({ id: ${product.id}, title: ${JSON.stringify(product.title)}, price: ${product.price}, image_url: ${JSON.stringify(product.image_url)} })`}
+            >
+              + Add to Shopping Bag
+            </button>
+            <a href="/checkout" class="btn-buy-now">Buy Now &bull; Cash on Delivery</a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="trust-list">
+            <div>🚚 Free Shipping across 19,000+ Pincodes on orders above ₹799</div>
+            <div>💵 Cash on Delivery (COD) & Express UPI Payments</div>
+            <div>🔄 7-Day Easy Reverse Pickup Exchange Guarantee</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Reviews Section -->
+      <section style="margin-top: 5rem; padding-top: 3rem; border-top: 1px solid #e5e5ea;">
+        <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 2rem;">Customer Reviews ({reviews.length})</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          {reviews.map(rev => (
+            <div style="background: #fafafa; border: 1px solid #e5e5ea; padding: 1.5rem; border-radius: 8px;">
+              <div style="color: #ff9500; font-size: 0.9rem; margin-bottom: 0.4rem;">★★★★★</div>
+              <p style="font-size: 0.95rem; color: #1c1c1e; line-height: 1.5; margin-bottom: 0.85rem;">"{rev.comment}"</p>
+              <div style="font-weight: 700; font-size: 0.85rem; color: #636366;">{rev.customer_name} &bull; Verified Buyer</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  .product-gallery {
+    position: sticky;
+    top: 90px;
+  }
+
+  .main-image-box {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f4f4f4;
+  }
+
+  .main-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .badge-flag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #ff3b30;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 4px;
+  }
+
+  .category-pill {
+    display: inline-block;
+    background: #f2f2f7;
+    color: #000000;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .p-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: #ff9500;
+    margin-bottom: 1.5rem;
+  }
+
+  .score { font-weight: 800; color: #000000; }
+  .count { color: #636366; }
+
+  .price-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .main-price {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #000000;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .old-price {
+    font-size: 1.25rem;
+    color: #8e8e93;
+    text-decoration: line-through;
+  }
+
+  .discount-tag {
+    background: #ff3b30;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  .p-desc {
+    font-size: 1.05rem;
+    color: #3a3a3c;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: #fafafa;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #e5e5ea;
+  }
+
+  .spec-val {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #000000;
+  }
+
+  .spec-lbl {
+    font-size: 0.75rem;
+    color: #636366;
+    margin-top: 2px;
+  }
+
+  .size-selector-box {
+    margin-bottom: 2rem;
+  }
+
+  .size-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .size-guide-link {
+    color: #ff3b30;
+    text-decoration: underline;
+  }
+
+  .size-options {
+    display: flex;
+    gap: 10px;
+  }
+
+  .size-btn {
+    width: 50px;
+    height: 46px;
+    border: 1px solid #c7c7cc;
+    background: #ffffff;
+    border-radius: 6px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .size-btn.active, .size-btn:hover {
+    border-color: #000000;
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .btn-add-bag {
+    flex: 1;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .btn-buy-now {
+    flex: 1;
+    background: #ff3b30;
+    color: #ffffff;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+
+  .trust-list {
+    font-size: 0.85rem;
+    color: #636366;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .product-detail-grid { grid-template-columns: 1fr; }
+  }
+</style>

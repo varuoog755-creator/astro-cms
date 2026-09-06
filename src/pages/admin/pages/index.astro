@@ -1,0 +1,69 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import prisma from '../../../lib/db';
+
+const pages = await prisma.page.findMany({
+  where: { status: { not: 'trash' } },
+  orderBy: { sortOrder: 'asc' },
+  include: {
+    author: true,
+    parent: true,
+  },
+});
+---
+
+<AdminLayout title="Pages" activeNav="pages">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Site Pages ({pages.length})</h2>
+    <a href="/admin/pages/new" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition">
+      + Create Page
+    </a>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs text-gray-700">
+      <thead class="bg-gray-100 text-gray-600 font-bold uppercase tracking-wider border-b border-gray-200">
+        <tr>
+          <th class="px-6 py-3.5">Title</th>
+          <th class="px-6 py-3.5">Parent Page</th>
+          <th class="px-6 py-3.5">Template</th>
+          <th class="px-6 py-3.5">Status</th>
+          <th class="px-6 py-3.5 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {pages.length === 0 ? (
+          <tr>
+            <td colspan="5" class="px-6 py-8 text-center text-gray-500">No pages created yet.</td>
+          </tr>
+        ) : (
+          pages.map((p) => (
+            <tr class="hover:bg-gray-50/80 transition">
+              <td class="px-6 py-4">
+                <div class="font-bold text-gray-900 text-sm">{p.title}</div>
+                <div class="text-[11px] text-gray-400 font-mono">/{p.slug}</div>
+              </td>
+              <td class="px-6 py-4 font-medium text-gray-600">{p.parent ? p.parent.title : '— (Root)'}</td>
+              <td class="px-6 py-4 font-mono text-[11px] text-gray-500">{p.template}</td>
+              <td class="px-6 py-4">
+                <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[10px] uppercase">
+                  {p.status}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <a href={`/admin/pages/${p.id}`} class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2.5 py-1 rounded text-[11px]">
+                    Edit
+                  </a>
+                  <a href={`/${p.slug}`} target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2.5 py-1 rounded text-[11px]">
+                    View ↗
+                  </a>
+                </div>
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

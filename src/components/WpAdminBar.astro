@@ -1,0 +1,213 @@
+---
+interface Props {
+  siteTitle?: string;
+  isLoggedIn?: boolean;
+}
+
+const { siteTitle = "teepul.com | WordPress CMS", isLoggedIn = false } = Astro.props;
+---
+
+<div id="wpadminbar" role="navigation" aria-label="WordPress Toolbar">
+  <div class="quicklinks" id="wp-toolbar">
+    <!-- Left items -->
+    <ul id="wp-admin-bar-root-default" class="ab-top-menu">
+      <li id="wp-admin-bar-wp-logo" class="menupop">
+        <a class="ab-item" href="https://wordpress.org" target="_blank" title="About WordPress">
+          <svg class="ab-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm0 1.25a8.75 8.75 0 0 1 7.22 3.84l-4.14 11.34-3.08-8.91 1.05-.06a.63.63 0 0 0 0-1.25h-4.38a.63.63 0 0 0 0 1.25l.98.06-2.5 7.23L4.78 7.09A8.75 8.75 0 0 1 12 3.25ZM3.25 12c0-.77.1-1.52.29-2.24l3.87 11.2A8.75 8.75 0 0 1 3.25 12Zm8.75 8.75a8.69 8.69 0 0 1-2.41-.34l2.76-8 2.76 8c-.8.22-1.64.34-2.41.34Zm4.77-1.4 3.73-10.22c.47.88.75 1.88.75 2.95a8.7 8.7 0 0 1-4.48 7.27Z"/>
+          </svg>
+        </a>
+      </li>
+
+      <li id="wp-admin-bar-site-name" class="menupop">
+        <a class="ab-item" href="/admin">
+          <svg class="ab-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="ab-label">{siteTitle}</span>
+        </a>
+      </li>
+
+      <li id="wp-admin-bar-updates">
+        <a class="ab-item" href="/admin" title="1 Update Available">
+          <svg class="ab-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          <span class="ab-label ab-update-bubble">1</span>
+        </a>
+      </li>
+
+      <li id="wp-admin-bar-comments">
+        <a class="ab-item" href="/admin/reviews" title="3 Comments awaiting moderation">
+          <svg class="ab-icon" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+          </svg>
+          <span class="ab-label count-3">3</span>
+        </a>
+      </li>
+
+      <li id="wp-admin-bar-new-content" class="menupop">
+        <a class="ab-item" href="/admin/posts/new">
+          <span class="ab-icon">+</span>
+          <span class="ab-label">New Post</span>
+        </a>
+      </li>
+
+      <li id="wp-admin-bar-customize">
+        <a class="ab-item" href="/admin/settings">
+          <svg class="ab-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+          </svg>
+          <span class="ab-label">Customize</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Right items -->
+    <ul id="wp-admin-bar-top-secondary" class="ab-top-menu ab-right">
+      <li id="wp-admin-bar-my-account" class="menupop with-avatar">
+        <a class="ab-item" href="/admin">
+          <span class="ab-text" id="wp-bar-user-name">Howdy, Admin</span>
+          <img 
+            src="https://secure.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=26&d=mm&r=g" 
+            alt="Admin Gravatar" 
+            class="avatar avatar-26 photo" 
+            width="26" 
+            height="26"
+          />
+        </a>
+      </li>
+      <li id="wp-admin-bar-logout">
+        <a class="ab-item" href="/login" id="wp-bar-auth-btn">Log In</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  #wpadminbar {
+    direction: ltr;
+    color: #f0f0f1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 2.46153846;
+    height: 32px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-width: 320px;
+    z-index: 99999;
+    background: #1d2327;
+  }
+
+  #wp-toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+
+  .ab-top-menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ab-top-menu li {
+    position: relative;
+  }
+
+  .ab-item {
+    color: #f0f0f1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    height: 32px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .ab-item:hover {
+    background: #2c3338;
+    color: #72aee6;
+  }
+
+  .ab-icon {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .ab-update-bubble {
+    background: #d63638;
+    color: #fff;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .count-3 {
+    background: #2271b1;
+    color: #fff;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .avatar-26 {
+    border-radius: 50%;
+    margin-left: 6px;
+  }
+
+  @media (max-width: 782px) {
+    #wpadminbar {
+      height: 46px;
+      line-height: 3.53846153;
+    }
+    .ab-item {
+      height: 46px;
+      padding: 0 12px;
+    }
+    #wp-admin-bar-customize,
+    #wp-admin-bar-comments,
+    #wp-admin-bar-updates {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const isLogged = localStorage.getItem('wp_logged_in') === 'true';
+    const username = localStorage.getItem('wp_user_name') || 'Admin';
+    const authBtn = document.getElementById('wp-bar-auth-btn');
+    const userNameEl = document.getElementById('wp-bar-user-name');
+
+    if (userNameEl) {
+      userNameEl.textContent = isLogged ? `Howdy, ${username}` : 'Guest User';
+    }
+
+    if (authBtn) {
+      if (isLogged) {
+        authBtn.textContent = 'Log Out';
+        authBtn.setAttribute('href', '#');
+        authBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('wp_logged_in');
+          localStorage.removeItem('wp_user_name');
+          window.location.reload();
+        });
+      } else {
+        authBtn.textContent = 'Log In';
+        authBtn.setAttribute('href', '/login');
+      }
+    }
+  });
+</script>

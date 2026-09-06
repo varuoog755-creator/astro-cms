@@ -1,0 +1,160 @@
+---
+interface Props {
+  post: {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt?: string;
+    content: string;
+    category?: string;
+    author?: string;
+    image_url?: string;
+    created_at?: string;
+  };
+}
+
+const { post } = Astro.props;
+const formattedDate = post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+---
+
+<article class="wp-card">
+  {post.image_url && (
+    <a href={`/blog/${post.slug}`} class="wp-card-img-link">
+      <img src={post.image_url} alt={post.title} loading="lazy" class="wp-card-img" />
+      <span class="wp-card-badge">{post.category || 'WordPress'}</span>
+    </a>
+  )}
+  <div class="wp-card-body">
+    <div class="wp-card-meta">
+      <span class="wp-card-author">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        {post.author || 'Admin'}
+      </span>
+      &bull;
+      <time class="wp-card-date">{formattedDate}</time>
+    </div>
+    <h3 class="wp-card-title">
+      <a href={`/blog/${post.slug}`}>{post.title}</a>
+    </h3>
+    <p class="wp-card-excerpt">{post.excerpt}</p>
+    <a href={`/blog/${post.slug}`} class="wp-card-readmore">
+      Read Article &rarr;
+    </a>
+  </div>
+</article>
+
+<style>
+  .wp-card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .wp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.12);
+  }
+
+  .wp-card-img-link {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .wp-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .wp-card:hover .wp-card-img {
+    transform: scale(1.04);
+  }
+
+  .wp-card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #2271b1;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .wp-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .wp-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #646970;
+    margin-bottom: 0.6rem;
+  }
+
+  .wp-card-author {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    color: #1d2327;
+  }
+
+  .wp-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 0.6rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .wp-card-title a {
+    color: #1d2327;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .wp-card-title a:hover {
+    color: #2271b1;
+  }
+
+  .wp-card-excerpt {
+    font-size: 0.9rem;
+    color: #50575e;
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+    flex: 1;
+  }
+
+  .wp-card-readmore {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2271b1;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s ease;
+  }
+
+  .wp-card-readmore:hover {
+    color: #135e96;
+  }
+</style>

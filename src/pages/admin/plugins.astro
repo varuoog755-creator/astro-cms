@@ -1,0 +1,37 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const plugins = await prisma.plugin.findMany({ orderBy: { name: 'asc' } });
+---
+
+<AdminLayout title="Plugins" activeNav="plugins">
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h2 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Installed Extensible Plugins</h2>
+      <p class="text-xs text-gray-500 mt-0.5">Extend CMS hooks, shortcodes, and automated routines.</p>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {plugins.map((plugin) => (
+      <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <h3 class="font-bold text-gray-900 text-base">{plugin.name}</h3>
+            <span class="text-[11px] bg-gray-100 text-gray-600 font-mono px-2 py-0.5 rounded">v{plugin.version}</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">{plugin.description}</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class={`font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider ${
+            plugin.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'
+          }`}>
+            {plugin.isActive ? 'Active' : 'Inactive'}
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
+</AdminLayout>

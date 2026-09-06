@@ -1,0 +1,45 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import prisma from '../../lib/db';
+
+const topPosts = await prisma.post.findMany({
+  where: { status: 'published' },
+  orderBy: { viewsCount: 'desc' },
+  take: 5,
+});
+---
+
+<AdminLayout title="Analytics Dashboard" activeNav="analytics">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+      <div class="text-xs font-bold text-gray-500 uppercase">Estimated Pageviews</div>
+      <div class="text-3xl font-extrabold text-gray-900 mt-1">12,450</div>
+      <div class="text-xs text-emerald-600 font-semibold mt-1">↑ +14% this week</div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+      <div class="text-xs font-bold text-gray-500 uppercase">Unique Visitors</div>
+      <div class="text-3xl font-extrabold text-gray-900 mt-1">4,820</div>
+      <div class="text-xs text-emerald-600 font-semibold mt-1">↑ +8% this week</div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+      <div class="text-xs font-bold text-gray-500 uppercase">Avg. Time On Site</div>
+      <div class="text-3xl font-extrabold text-gray-900 mt-1">3m 42s</div>
+      <div class="text-xs text-gray-500 mt-1">High engagement rate</div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+    <h3 class="font-bold text-gray-900 text-base mb-4">Top Performing Posts</h3>
+    <div class="divide-y divide-gray-100">
+      {topPosts.map((post) => (
+        <div class="py-3 flex justify-between items-center text-xs">
+          <div>
+            <div class="font-bold text-gray-900">{post.title}</div>
+            <div class="text-gray-400 font-mono">/{post.slug}</div>
+          </div>
+          <div class="font-bold text-blue-600">{post.viewsCount} Views</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</AdminLayout>

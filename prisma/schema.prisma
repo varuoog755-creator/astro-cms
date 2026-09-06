@@ -1,0 +1,349 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  username     String    @unique
+  passwordHash String
+  displayName  String
+  avatar       String?
+  bio          String?
+  status       String    @default("active") // active, suspended
+  roleId       String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  role         Role      @relation(fields: [roleId], references: [id])
+  posts        Post[]    @relation("PostAuthor")
+  pages        Page[]    @relation("PageAuthor")
+  comments     Comment[]
+  media        Media[]
+  revisions    Revision[]
+  sessions     Session[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // Super Admin, Administrator, Editor, Author, Contributor, Subscriber
+  slug        String   @unique
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique // posts.create, posts.publish, users.manage, etc.
+  name        String
+  description String?
+  module      String   @default("core")
+  createdAt   DateTime @default(now())
+
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Post {
+  id              String         @id @default(uuid())
+  title           String
+  slug            String         @unique
+  excerpt         String?
+  content         String         // Block-based JSON array or HTML string
+  status          String         @default("draft") // draft, published, scheduled, pending, private, trash
+  publishedAt     DateTime?
+  authorId        String
+  featuredImageId String?
+  commentStatus   String         @default("open") // open, closed
+  template        String         @default("default")
+  viewsCount      Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  author        User           @relation("PostAuthor", fields: [authorId], references: [id])
+  featuredImage Media?          @relation("PostFeaturedImage", fields: [featuredImageId], references: [id], onDelete: SetNull)
+  categories    PostCategory[]
+  tags          PostTag[]
+  comments      Comment[]
+
+  @@map("posts")
+}
+
+model Page {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  content         String   // Block JSON / HTML
+  status          String   @default("published") // draft, published, scheduled, trash
+  publishedAt     DateTime?
+  authorId        String
+  parentId        String?
+  template        String   @default("default")
+  featuredImageId String?
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  author        User     @relation("PageAuthor", fields: [authorId], references: [id])
+  parent        Page?    @relation("PageHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children      Page[]   @relation("PageHierarchy")
+  featuredImage Media?   @relation("PageFeaturedImage", fields: [featuredImageId], references: [id], onDelete: SetNull)
+
+  @@map("pages")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   Category?      @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[]      @relation("CategoryHierarchy")
+  posts    PostCategory[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  posts PostTag[]
+
+  @@map("tags")
+}
+
+model PostCategory {
+  postId     String
+  categoryId String
+
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+  @@map("post_categories")
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+model Media {
+  id           String   @id @default(uuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  path         String
+  width        Int?
+  height       Int?
+  altText      String?
+  caption      String?
+  description  String?
+  uploaderId   String?
+  createdAt    DateTime @default(now())
+
+  uploader      User?   @relation(fields: [uploaderId], references: [id], onDelete: SetNull)
+  featuredPosts Post[]  @relation("PostFeaturedImage")
+  featuredPages Page[]  @relation("PageFeaturedImage")
+
+  @@map("media")
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  postId      String
+  authorName  String
+  authorEmail String
+  authorUrl   String?
+  content     String
+  status      String   @default("pending") // pending, approved, spam, trash
+  parentId    String?
+  userId      String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  post     Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies  Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+model Menu {
+  id        String     @id @default(uuid())
+  name      String
+  slug      String     @unique
+  location  String?    // header, footer, sidebar
+  isPrimary Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  items MenuItem[]
+
+  @@map("menus")
+}
+
+model MenuItem {
+  id        String     @id @default(uuid())
+  menuId    String
+  parentId  String?
+  title     String
+  url       String
+  type      String     @default("custom") // custom, post, page, category
+  targetId  String?
+  sortOrder Int        @default(0)
+
+  menu     Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parent   MenuItem?  @relation("MenuItemHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children MenuItem[] @relation("MenuItemHierarchy")
+
+  @@map("menu_items")
+}
+
+model Theme {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  version     String   @default("1.0.0")
+  description String?
+  author      String?
+  isActive    Boolean  @default(false)
+  config      String   @default("{}") // JSON string options
+  createdAt   DateTime @default(now())
+
+  @@map("themes")
+}
+
+model Plugin {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  version     String   @default("1.0.0")
+  description String?
+  isActive    Boolean  @default(false)
+  config      String   @default("{}") // JSON string settings
+  createdAt   DateTime @default(now())
+
+  @@map("plugins")
+}
+
+model Setting {
+  key         String   @id
+  value       String
+  group       String   @default("general") // general, reading, writing, discussion, media, permalinks, seo, security
+  description String?
+  updatedAt   DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model Revision {
+  id         String   @id @default(uuid())
+  entityType String   // post, page
+  entityId   String
+  title      String
+  content    String
+  authorId   String
+  createdAt  DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("revisions")
+}
+
+model Redirect {
+  id         String   @id @default(uuid())
+  sourceUrl  String   @unique
+  targetUrl  String
+  statusCode Int      @default(301)
+  hitCount   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@map("redirects")
+}
+
+model SeoMetadata {
+  id              String   @id @default(uuid())
+  entityType      String   // post, page, category, tag
+  entityId        String   @unique
+  seoTitle        String?
+  metaDescription String?
+  canonicalUrl    String?
+  ogImage         String?
+  robotsMeta      String?  @default("index, follow")
+  jsonLdSchema    String?
+
+  @@map("seo_metadata")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String   // e.g. login, post.create, user.update, setting.change
+  entity    String   // User, Post, Setting, Plugin, etc.
+  entityId  String?
+  ipAddress String?
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}

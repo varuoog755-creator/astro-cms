@@ -1,0 +1,50 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import prisma from '../../lib/db';
+
+const { slug } = Astro.params;
+
+const tag = await prisma.tag.findUnique({
+  where: { slug },
+  include: {
+    posts: {
+      include: {
+        post: {
+          include: { author: true },
+        },
+      },
+    },
+  },
+});
+
+if (!tag) return Astro.redirect('/404');
+---
+
+<PublicLayout seo={{ title: `Tag: #${tag.name}` }}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-12 border-b border-gray-200 pb-6">
+      <span class="text-xs font-bold uppercase text-blue-600 tracking-wider">Tag Archive</span>
+      <h1 class="text-4xl font-extrabold text-gray-900 mt-1">#{tag.name}</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {tag.posts.map((item) => (
+        <article class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition">
+          <div class="space-y-3">
+            <h2 class="font-bold text-lg text-gray-900 leading-snug">
+              <a href={`/blog/${item.post.slug}`} class="hover:text-blue-600 transition">
+                {item.post.title}
+              </a>
+            </h2>
+            <p class="text-xs text-gray-600 line-clamp-3">{item.post.excerpt}</p>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+            <span>By {item.post.author.displayName}</span>
+            <span>{new Date(item.post.createdAt).toLocaleDateString()}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</PublicLayout>

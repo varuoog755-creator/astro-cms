@@ -1,0 +1,152 @@
+---
+import type { Block } from '../../types';
+
+interface Props {
+  content: string | Block[];
+}
+
+const { content } = Astro.props;
+
+let blocks: Block[] = [];
+if (typeof content === 'string') {
+  try {
+    blocks = JSON.parse(content);
+  } catch (e) {
+    blocks = [{ id: 'fallback', type: 'paragraph', data: { text: content } }];
+  }
+} else if (Array.isArray(content)) {
+  blocks = content;
+}
+---
+
+<div class="block-content space-y-6 text-gray-800 leading-relaxed">
+  {blocks.map((block) => {
+    switch (block.type) {
+      case 'heading': {
+        const level = block.data?.level || 2;
+        const text = block.data?.text || '';
+        if (level === 1) return <h1 class="text-3xl font-extrabold text-gray-900 mt-8 mb-4">{text}</h1>;
+        if (level === 3) return <h3 class="text-xl font-bold text-gray-900 mt-6 mb-3">{text}</h3>;
+        if (level === 4) return <h4 class="text-lg font-semibold text-gray-900 mt-4 mb-2">{text}</h4>;
+        return <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">{text}</h2>;
+      }
+
+      case 'paragraph': {
+        return <p class="text-base text-gray-700 leading-7">{block.data?.text || ''}</p>;
+      }
+
+      case 'image': {
+        return (
+          <figure class="my-6">
+            <img src={block.data?.url} alt={block.data?.altText || ''} class="w-full h-auto rounded-lg shadow-md max-h-[500px] object-cover" />
+            {block.data?.caption && <figcaption class="text-center text-sm text-gray-500 mt-2">{block.data.caption}</figcaption>}
+          </figure>
+        );
+      }
+
+      case 'gallery': {
+        const images: string[] = block.data?.images || [];
+        return (
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 my-6">
+            {images.map((imgUrl) => (
+              <img src={imgUrl} alt="Gallery Image" class="w-full h-48 object-cover rounded-lg shadow" />
+            ))}
+          </div>
+        );
+      }
+
+      case 'quote': {
+        return (
+          <blockquote class="border-l-4 border-blue-600 pl-4 py-2 my-6 italic text-gray-700 bg-blue-50/50 rounded-r-lg">
+            <p class="text-lg">"{block.data?.text || ''}"</p>
+            {block.data?.cite && <cite class="block text-sm font-semibold text-gray-500 mt-2 not-italic">— {block.data.cite}</cite>}
+          </blockquote>
+        );
+      }
+
+      case 'list': {
+        const items: string[] = block.data?.items || [];
+        return (
+          <ul class="list-disc list-inside space-y-1 my-4 text-gray-700">
+            {items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        );
+      }
+
+      case 'code': {
+        return (
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto font-mono text-sm my-6">
+            <code>{block.data?.code || ''}</code>
+          </pre>
+        );
+      }
+
+      case 'divider': {
+        return <hr class="my-8 border-gray-200" />;
+      }
+
+      case 'button': {
+        return (
+          <div class="my-6">
+            <a href={block.data?.url || '#'} class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg shadow transition">
+              {block.data?.text || 'Click Here'}
+            </a>
+          </div>
+        );
+      }
+
+      case 'embed': {
+        return (
+          <div class="my-6 aspect-video w-full">
+            <iframe src={block.data?.url} class="w-full h-full rounded-lg shadow" allowfullscreen></iframe>
+          </div>
+        );
+      }
+
+      case 'table': {
+        const rows: string[][] = block.data?.rows || [];
+        return (
+          <div class="overflow-x-auto my-6">
+            <table class="min-w-full border border-gray-200 rounded-lg">
+              {rows.map((row, rIdx) => (
+                <tr class={rIdx === 0 ? 'bg-gray-100 font-semibold' : 'border-t border-gray-200'}>
+                  {row.map((cell) => (
+                    <td class="px-4 py-2 border-r border-gray-200 text-sm text-gray-700">{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+          </div>
+        );
+      }
+
+      case 'video': {
+        return (
+          <video controls src={block.data?.url} class="w-full rounded-lg shadow my-6"></video>
+        );
+      }
+
+      case 'audio': {
+        return (
+          <audio controls src={block.data?.url} class="w-full my-6"></audio>
+        );
+      }
+
+      case 'columns': {
+        const col1 = block.data?.col1 || '';
+        const col2 = block.data?.col2 || '';
+        return (
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">{col1}</div>
+            <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">{col2}</div>
+          </div>
+        );
+      }
+
+      default:
+        return <p class="text-gray-700">{block.data?.text || ''}</p>;
+    }
+  })}
+</div>

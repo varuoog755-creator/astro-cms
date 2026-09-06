@@ -1,0 +1,294 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+import SEO from '../components/SEO.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article' | 'product';
+  jsonLd?: Record<string, any> | Array<Record<string, any>>;
+  activeNav?: string;
+}
+
+const { 
+  title = 'Teepul | Heavyweight 240 GSM Oversized Streetwear Apparel India', 
+  description = 'Shop 240 GSM Heavyweight Terry Cotton Oversized T-Shirts & 500 GSM Anime Hoodies in India. Free Express Shipping & Cash on Delivery Available.',
+  image = '/uploads/oversized_tee.jpg',
+  type = 'website',
+  jsonLd,
+  activeNav = 'home'
+} = Astro.props;
+
+// Global Site Organization & WebSite Schema
+const defaultOrganizationSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://teepul.com/#organization",
+      "name": "Teepul Streetwear India",
+      "url": "https://teepul.com",
+      "logo": "https://teepul.com/uploads/oversized_tee.jpg",
+      "sameAs": [
+        "https://instagram.com/teepul_official",
+        "https://facebook.com/teepul"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://teepul.com/#website",
+      "url": "https://teepul.com",
+      "name": "Teepul Streetwear",
+      "publisher": { "@id": "https://teepul.com/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://teepul.com/products?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+};
+
+const combinedJsonLd = jsonLd ? [defaultOrganizationSchema, jsonLd] : [defaultOrganizationSchema];
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <SEO 
+    title={title} 
+    description={description} 
+    image={image} 
+    type={type} 
+    jsonLd={combinedJsonLd} 
+  />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script is:inline>
+    const savedTheme = localStorage.getItem('aura_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
+</head>
+<body>
+  <Header activeNav={activeNav} />
+  
+  <main style="flex: 1;">
+    <slot />
+  </main>
+
+  <!-- Live Indian Social Proof Toast -->
+  <div id="social-proof-toast" style="position: fixed; bottom: 24px; left: 24px; z-index: 999; background: #ffffff; border: 1px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 0.85rem 1.25rem; box-shadow: 0 12px 32px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 0.85rem; transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-width: 340px;">
+    <div style="width: 42px; height: 42px; border-radius: 8px; overflow: hidden; background: #fafafa; flex-shrink: 0;">
+      <img src="/uploads/oversized_tee.jpg" alt="Teepul Tee" style="width: 100%; height: 100%; object-fit: cover;" />
+    </div>
+    <div>
+      <div style="font-size: 0.82rem; font-weight: 800; color: #000000;" id="toast-title">Kabir from Hyderabad</div>
+      <div style="font-size: 0.78rem; color: #636366;" id="toast-subtitle">Purchased Axel 240 GSM Oversized Tee &bull; 2 mins ago</div>
+    </div>
+  </div>
+
+  <Footer />
+  <CartDrawer />
+
+  <script>
+    interface CartItem {
+      id: number;
+      title: string;
+      price: number;
+      image_url: string;
+      quantity: number;
+    }
+
+    function getCart(): CartItem[] {
+      try {
+        return JSON.parse(localStorage.getItem('aura_cart') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCart(cart: CartItem[]) {
+      localStorage.setItem('aura_cart', JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const cart = getCart();
+      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+      const discount = parseFloat(localStorage.getItem('aura_discount') || '0');
+      const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+      const total = Math.max(0, subtotal - discount);
+
+      document.querySelectorAll('.cart-count-badge').forEach(badge => {
+        badge.textContent = count.toString();
+      });
+
+      const cartItemsContainer = document.getElementById('cart-drawer-items');
+      const cartSubtotalEl = document.getElementById('cart-drawer-subtotal');
+      const cartDiscountEl = document.getElementById('cart-drawer-discount');
+      const cartTotalEl = document.getElementById('cart-drawer-total');
+      const progressFill = document.getElementById('shipping-progress-fill');
+      const shippingMsg = document.getElementById('shipping-msg');
+
+      if (cartSubtotalEl) cartSubtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+      if (cartDiscountEl) cartDiscountEl.textContent = discount > 0 ? `-₹${discount.toLocaleString('en-IN')}` : '₹0';
+      if (cartTotalEl) cartTotalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+
+      if (progressFill && shippingMsg) {
+        const threshold = 799;
+        const pct = Math.min(100, Math.round((subtotal / threshold) * 100));
+        progressFill.style.width = `${pct}%`;
+        if (subtotal >= threshold) {
+          shippingMsg.textContent = '🎉 Congratulations! You unlocked FREE Express Shipping!';
+          shippingMsg.style.color = '#34c759';
+        } else {
+          const diff = threshold - subtotal;
+          shippingMsg.textContent = `Add ₹${diff.toLocaleString('en-IN')} more for FREE Express Delivery in India!`;
+          shippingMsg.style.color = '#1c1c1e';
+        }
+      }
+
+      if (cartItemsContainer) {
+        if (cart.length === 0) {
+          cartItemsContainer.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem; color: #8e8e93;">
+              <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto 1rem; display: block; opacity: 0.4;">
+                <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p style="font-weight: 700; font-size: 0.95rem;">Your bag is empty</p>
+              <p style="font-size: 0.82rem; margin-top: 4px;">Explore 240 GSM oversized tees & anime hoodies</p>
+            </div>
+          `;
+        } else {
+          cartItemsContainer.innerHTML = cart.map((item) => `
+            <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #e5e5ea; align-items: center;">
+              <img src="${item.image_url}" alt="${item.title}" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px;" />
+              <div style="flex: 1;">
+                <h4 style="font-size: 0.9rem; margin: 0 0 0.2rem; color: #000; font-weight: 700;">${item.title}</h4>
+                <div style="font-weight: 800; color: #000; font-size: 0.9rem;">₹${item.price.toLocaleString('en-IN')}</div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;">
+                  <button class="cart-qty-btn" data-action="dec" data-id="${item.id}" style="padding: 2px 8px; border: 1px solid #c7c7cc; background:#fff; border-radius:4px; font-weight:800; cursor:pointer;">-</button>
+                  <span style="font-size: 0.85rem; font-weight: 800;">${item.quantity}</span>
+                  <button class="cart-qty-btn" data-action="inc" data-id="${item.id}" style="padding: 2px 8px; border: 1px solid #c7c7cc; background:#fff; border-radius:4px; font-weight:800; cursor:pointer;">+</button>
+                </div>
+              </div>
+              <button class="cart-remove-btn" data-id="${item.id}" style="background: none; border: none; color: #8e8e93; cursor: pointer; padding: 4px; font-size: 1.4rem;">
+                &times;
+              </button>
+            </div>
+          `).join('');
+
+          cartItemsContainer.querySelectorAll('.cart-qty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const target = e.currentTarget as HTMLElement;
+              const id = parseInt(target.dataset.id || '0');
+              const action = target.dataset.action;
+              const currentCart = getCart();
+              const item = currentCart.find(i => i.id === id);
+              if (item) {
+                if (action === 'inc') item.quantity += 1;
+                if (action === 'dec') item.quantity -= 1;
+                if (item.quantity <= 0) {
+                  saveCart(currentCart.filter(i => i.id !== id));
+                } else {
+                  saveCart(currentCart);
+                }
+              }
+            });
+          });
+
+          cartItemsContainer.querySelectorAll('.cart-remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const target = e.currentTarget as HTMLElement;
+              const id = parseInt(target.dataset.id || '0');
+              saveCart(getCart().filter(i => i.id !== id));
+            });
+          });
+        }
+      }
+    }
+
+    (window as any).addToCart = function(product: CartItem) {
+      const cart = getCart();
+      const existing = cart.find(i => i.id === product.id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+      saveCart(cart);
+      document.getElementById('cart-drawer')?.classList.add('active');
+      document.getElementById('cart-overlay')?.classList.add('active');
+    };
+
+    (window as any).updateCartUI = updateCartUI;
+
+    const buyers = [
+      { name: 'Kabir from Hyderabad', item: 'Axel 240 GSM Oversized Tee', time: '2 mins ago' },
+      { name: 'Priya from Bangalore', item: 'Neo Tokyo Anime Hoodie', time: '4 mins ago' },
+      { name: 'Aarav from Mumbai', item: 'Overthinking Society Graphic Tee', time: '1 min ago' },
+      { name: 'Rohan from Delhi', item: 'Desi Hustle Heavyweight Zip Hoodie', time: '6 mins ago' }
+    ];
+
+    let toastIdx = 0;
+    function cycleToast() {
+      const toast = document.getElementById('social-proof-toast');
+      const title = document.getElementById('toast-title');
+      const subtitle = document.getElementById('toast-subtitle');
+      if (toast && title && subtitle) {
+        const current = buyers[toastIdx % buyers.length];
+        title.textContent = current.name;
+        subtitle.textContent = `Purchased ${current.item} • ${current.time}`;
+        toast.style.transform = 'translateY(0)';
+
+        setTimeout(() => {
+          toast.style.transform = 'translateY(150%)';
+        }, 4000);
+
+        toastIdx++;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartUI();
+
+      const drawer = document.getElementById('cart-drawer');
+      const overlay = document.getElementById('cart-overlay');
+      const openBtns = document.querySelectorAll('.trigger-cart-open');
+      const closeBtn = document.getElementById('cart-drawer-close');
+
+      openBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          drawer?.classList.add('active');
+          overlay?.classList.add('active');
+        });
+      });
+
+      const closeDrawer = () => {
+        drawer?.classList.remove('active');
+        overlay?.classList.remove('active');
+      };
+
+      closeBtn?.addEventListener('click', closeDrawer);
+      overlay?.addEventListener('click', closeDrawer);
+
+      setTimeout(() => {
+        cycleToast();
+        setInterval(cycleToast, 12000);
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

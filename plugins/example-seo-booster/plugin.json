@@ -1,0 +1,7 @@
+{
+  "name": "SEO Booster Plugin",
+  "slug": "example-seo-booster",
+  "version": "1.0.0",
+  "description": "Demonstrates plugin hook registration and automated SEO schema enhancement.",
+  "author": "Astro CMS Extensions"
+}
