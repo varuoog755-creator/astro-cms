@@ -1,19 +1,19 @@
 ---
-import AuthLayout from '../layouts/AuthLayout.astro';
+import AuthLayout from '../../layouts/AuthLayout.astro';
 
 const error = Astro.url.searchParams.get('error');
 ---
 
-<AuthLayout title="Portal Sign In">
+<AuthLayout title="Admin Sign In">
   {error && (
     <div class="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-xs text-center font-bold">
       {error}
     </div>
   )}
 
-  <form action="/api/auth/login" method="POST" class="space-y-4">
+  <form id="admin-login-form" action="/api/auth/login" method="POST" class="space-y-4">
     <div>
-      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Email or Username</label>
+      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Admin Email or Username</label>
       <input
         type="text"
         name="login"
@@ -36,18 +36,19 @@ const error = Astro.url.searchParams.get('error');
 
     <button
       type="submit"
+      id="submit-btn"
       class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition duration-200 text-sm mt-2 flex items-center justify-center gap-2"
     >
-      <span>Sign In</span>
+      <span>Sign In to Dashboard</span>
       <span>&rarr;</span>
     </button>
   </form>
 
   <div class="mt-6 p-3 bg-slate-950/80 border border-slate-800 rounded-xl text-center text-xs text-slate-400 font-mono">
-    Demo Admin: <span class="text-blue-400 font-bold">admin@example.com</span> / <span class="text-blue-400 font-bold">admin123</span>
+    Default Admin: <span class="text-blue-400 font-bold">admin@example.com</span> / <span class="text-blue-400 font-bold">admin123</span>
   </div>
 
   <div class="mt-4 pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
-    Need an account? <a href="/register" class="text-blue-400 font-bold hover:underline">Register subscriber account</a>
+    Need a public subscriber account? <a href="/register" class="text-blue-400 font-bold hover:underline">Register here</a>
   </div>
 </AuthLayout>

@@ -9,13 +9,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const { pathname } = context.url;
 
+  // Admin login page bypass
+  if (pathname === '/admin/login') {
+    if (sessionUser) {
+      return context.redirect('/admin');
+    }
+    return next();
+  }
+
   // Protect admin routes
   if (pathname.startsWith('/admin')) {
     if (!sessionUser) {
-      return context.redirect(`/login?redirect=${encodeURIComponent(pathname)}`);
+      return context.redirect('/login');
     }
 
-    // Require subscriber+ or specific roles
     if (sessionUser.status === 'suspended') {
       return new Response('Account suspended.', { status: 403 });
     }
