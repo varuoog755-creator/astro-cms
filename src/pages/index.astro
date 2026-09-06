@@ -6,121 +6,161 @@ import { PRODUCTS_CATALOG } from '../lib/products';
 const posts = await prisma.post.findMany({
   where: { status: 'published' },
   orderBy: { publishedAt: 'desc' },
-  take: 6,
+  take: 3,
   include: { author: true, categories: { include: { category: true } } },
 });
 
-const featuredPost = posts[0];
-const recentPosts = posts.slice(1);
 const featuredProducts = PRODUCTS_CATALOG;
 ---
 
-<PublicLayout seo={{ title: 'Astro CMS - Modern Publishing & Storefront Platform' }}>
-  <!-- Hero Section -->
-  <section class="relative bg-slate-950 text-white overflow-hidden py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-b border-slate-900">
-    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#3b82f6_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
+<PublicLayout seo={{ title: 'Teepul - Luxury Door Curtains, Window Drapery & Home Decor Lighting' }}>
+  
+  <!-- Hero Section (Teepul Luxury Light Aesthetic) -->
+  <section class="relative bg-gradient-to-b from-[#f7f4ef] via-[#faf8f4] to-[#f4efe6] text-slate-900 overflow-hidden py-16 lg:py-24 px-4 sm:px-6 lg:px-8 border-b border-amber-900/10">
+    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:28px_28px]"></div>
     
-    <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div class="space-y-6 text-left">
-        <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-inner">
-          <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
-          <span>Enterprise Astro 7.2 Engine</span>
+    <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Hero Copy -->
+      <div class="lg:col-span-7 space-y-6 text-left">
+        <div class="inline-flex items-center gap-2.5 bg-amber-900/5 border border-amber-800/20 text-amber-900 text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
+          <span>TEEPUL LUXURY COLLECTION 2026</span>
         </div>
 
-        <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
-          Next-Gen Content & <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Storefront Platform</span>
+        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-950 leading-[1.15]">
+          Architectural Elegance for <span class="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-900 bg-clip-text text-transparent">Every Living Space</span>
         </h1>
 
-        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl">
-          An open-architecture CMS engineered with Astro, TypeScript, and Prisma ORM. Designed for lightning performance, block content editing, and heavyweight product catalogs.
+        <p class="text-slate-700 text-base sm:text-lg leading-relaxed max-w-2xl font-medium">
+          Transform your home with <strong>Teepul</strong>. Premium 100% Thermal Blackout Door Curtains, French Sheer Linen Window Drapes, and Hand-Blown Warm Brass Decor Lighting. Designed for sophistication and warmth.
         </p>
 
-        <div class="flex flex-wrap items-center gap-4 pt-2">
+        <div class="flex flex-wrap items-center gap-4 pt-3">
           <a
             href="/products"
-            class="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm px-7 py-3.5 rounded-full shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+            class="bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-xs sm:text-sm px-8 py-4 rounded-full shadow-lg shadow-amber-800/20 hover:shadow-amber-800/40 hover:-translate-y-0.5 transition-all flex items-center gap-2"
           >
-            <span>🛍️ Explore Products</span>
+            <span>🛍️ Explore Luxury Catalog</span>
             <span>&rarr;</span>
           </a>
 
           <a
-            href="/blog"
-            class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-sm px-6 py-3.5 rounded-full transition-all"
+            href="https://wa.me/919876543210?text=Hi%20Teepul!%20I%20want%20to%20order%20custom%20curtain%20fitting."
+            target="_blank"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm px-7 py-4 rounded-full shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2"
           >
-            Read Articles
+            <span>💬 Book Custom Fitting</span>
           </a>
         </div>
 
-        <!-- Key Metrics Banner -->
-        <div class="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80 text-xs">
+        <!-- Trust Badges -->
+        <div class="grid grid-cols-3 gap-6 pt-8 border-t border-amber-900/10 text-xs">
           <div>
-            <div class="text-xl font-black text-white">100 / 100</div>
-            <div class="text-slate-400 font-medium mt-0.5">Core Web Vitals</div>
+            <div class="text-2xl font-black text-slate-900">350 GSM</div>
+            <div class="text-slate-600 font-semibold mt-0.5">Heavy Velvet & Linen</div>
           </div>
           <div>
-            <div class="text-xl font-black text-blue-400">240 GSM</div>
-            <div class="text-slate-400 font-medium mt-0.5">Heavyweight Apparel</div>
+            <div class="text-2xl font-black text-amber-800">99% Blackout</div>
+            <div class="text-slate-600 font-semibold mt-0.5">Noise & Heat Shield</div>
           </div>
           <div>
-            <div class="text-xl font-black text-emerald-400">0.0 ms</div>
-            <div class="text-slate-400 font-medium mt-0.5">Hydration Overhead</div>
+            <div class="text-2xl font-black text-emerald-700">★ 4.9 / 5.0</div>
+            <div class="text-slate-600 font-semibold mt-0.5">10,000+ Happy Homes</div>
           </div>
         </div>
       </div>
 
-      <!-- Hero Visual Card -->
-      <div class="relative">
-        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-30 animate-pulse"></div>
-        <div class="relative bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
-              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-            </div>
-            <span class="text-[11px] font-mono text-slate-400">astro-cms-core-v2.0</span>
-          </div>
-
+      <!-- Hero Visual Grid -->
+      <div class="lg:col-span-5 relative">
+        <div class="grid grid-cols-2 gap-4">
           <div class="space-y-4">
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-blue-400 space-y-1">
-              <div><span class="text-purple-400">import</span> &#123; PrismaClient &#125; <span class="text-purple-400">from</span> <span class="text-emerald-400">'@prisma/client'</span>;</div>
-              <div><span class="text-purple-400">export const</span> cms = <span class="text-purple-400">new</span> PrismaClient();</div>
-              <div class="text-slate-500">// ✅ Database Synced & Live Seeding Active</div>
-            </div>
-
-            <!-- Mini Product Card Preview inside Hero -->
-            <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center justify-between gap-4">
-              <div class="flex items-center gap-3">
-                <img src={PRODUCTS_CATALOG[0].images[0]} alt="Featured Product" class="w-12 h-12 rounded-xl object-cover" />
-                <div>
-                  <div class="text-xs font-bold text-white">{PRODUCTS_CATALOG[0].name}</div>
-                  <div class="text-[10px] text-blue-400 font-semibold">{PRODUCTS_CATALOG[0].tagline}</div>
-                </div>
+            <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
+              <img
+                src={PRODUCTS_CATALOG[0].images[0]}
+                alt="Teepul Door Curtains"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div class="p-3 bg-white/90 backdrop-blur-md -mt-12 relative text-center">
+                <span class="text-[10px] font-black uppercase text-amber-900 tracking-wider">Door Curtains</span>
               </div>
-              <a href={`/products/${PRODUCTS_CATALOG[0].slug}`} class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg">
-                View
-              </a>
+            </div>
+            <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
+              <img
+                src={PRODUCTS_CATALOG[2].images[0]}
+                alt="Teepul Decor Lighting"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-8">
+            <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
+              <img
+                src={PRODUCTS_CATALOG[3].images[0]}
+                alt="Teepul Cushion Covers"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
+              <img
+                src={PRODUCTS_CATALOG[1].images[0]}
+                alt="Teepul Window Curtains"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div class="p-3 bg-white/90 backdrop-blur-md -mt-12 relative text-center">
+                <span class="text-[10px] font-black uppercase text-amber-900 tracking-wider">Window Curtains</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+    </div>
+  </section>
+
+  <!-- Categories Showcase Bar -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🚪</div>
+        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Door Curtains</h3>
+        <p class="text-[10px] text-slate-500 mt-1">7ft & 9ft Velvet Blackout</p>
+      </a>
+
+      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🪟</div>
+        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Window Curtains</h3>
+        <p class="text-[10px] text-slate-500 mt-1">Light Filtering Sheer Linen</p>
+      </a>
+
+      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">💡</div>
+        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Ambient Lighting</h3>
+        <p class="text-[10px] text-slate-500 mt-1">Brass & Frosted Globes</p>
+      </a>
+
+      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🛋️</div>
+        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Luxury Cushions</h3>
+        <p class="text-[10px] text-slate-500 mt-1">3D Woven Jacquard Covers</p>
+      </a>
     </div>
   </section>
 
   <!-- Storefront Products Showcase Section -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex flex-col sm:flex-row items-baseline justify-between mb-10 pb-4 border-b border-slate-200">
       <div>
-        <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">Official Merchandise</span>
-        <h2 class="text-3xl font-black text-slate-900 mt-2">Heavyweight Apparel Collection</h2>
+        <span class="text-xs font-extrabold text-amber-800 uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full border border-amber-200">Featured Teepul Collection</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Luxury Drapery & Decor Products</h2>
       </div>
-      <a href="/products" class="text-xs font-bold text-blue-600 hover:underline mt-2 sm:mt-0">
-        View All Products ({featuredProducts.length}) &rarr;
+      <a href="/products" class="text-xs font-bold text-amber-800 hover:underline mt-2 sm:mt-0">
+        View Full Storefront Catalog ({featuredProducts.length}) &rarr;
       </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {featuredProducts.map((product) => (
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
           <div class="relative aspect-square bg-slate-100 overflow-hidden">
@@ -130,19 +170,21 @@ const featuredProducts = PRODUCTS_CATALOG;
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             {product.badge && (
-              <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
+              <span class="absolute top-3 left-3 bg-slate-900/90 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
                 {product.badge}
               </span>
             )}
-            <span class="absolute top-4 right-4 bg-blue-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-md">
-              {product.fabricSpecs.gsm} GSM
-            </span>
+            {product.fabricSpecs.gsm > 0 && (
+              <span class="absolute top-3 right-3 bg-amber-800 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg shadow-md">
+                {product.fabricSpecs.gsm} GSM
+              </span>
+            )}
           </div>
 
-          <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+          <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
             <div class="space-y-2">
               <div class="flex items-center justify-between text-xs">
-                <span class="text-blue-600 font-bold uppercase tracking-wider text-[10px] bg-blue-50 px-2 py-0.5 rounded-md">
+                <span class="text-amber-800 font-bold uppercase tracking-wider text-[10px] bg-amber-50 px-2 py-0.5 rounded-md">
                   {product.category}
                 </span>
                 <div class="flex items-center gap-1 text-amber-500 font-bold text-xs">
@@ -151,24 +193,24 @@ const featuredProducts = PRODUCTS_CATALOG;
                 </div>
               </div>
 
-              <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+              <h3 class="text-sm font-extrabold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug">
                 <a href={`/products/${product.slug}`}>{product.name}</a>
               </h3>
               
               <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.tagline}</p>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
               <div>
-                <span class="text-xl font-black text-slate-900">{product.currency}{product.price}</span>
+                <span class="text-lg font-black text-slate-900">{product.currency}{product.price.toLocaleString('en-IN')}</span>
                 {product.originalPrice && (
-                  <span class="text-xs text-slate-400 line-through font-medium ml-1.5">{product.currency}{product.originalPrice}</span>
+                  <span class="text-xs text-slate-400 line-through font-medium ml-1">{product.currency}{product.originalPrice.toLocaleString('en-IN')}</span>
                 )}
               </div>
 
               <a
                 href={`/products/${product.slug}`}
-                class="bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition-colors"
+                class="bg-slate-900 hover:bg-amber-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition-colors"
               >
                 View Item &rarr;
               </a>
@@ -179,95 +221,94 @@ const featuredProducts = PRODUCTS_CATALOG;
     </div>
   </section>
 
-  <!-- Featured Blog Post Banner -->
-  {featuredPost && (
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
-        <div class="p-8 sm:p-12 flex flex-col justify-between space-y-6">
-          <div class="space-y-4">
-            <div class="flex items-center gap-2">
-              <span class="bg-blue-500/20 text-blue-300 font-extrabold px-3 py-1 rounded-full text-xs uppercase tracking-wider border border-blue-500/30">
-                ⭐ Featured Article
-              </span>
-              {featuredPost.categories.map((c) => (
-                <span class="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-full text-xs">
-                  {c.category.name}
-                </span>
-              ))}
-            </div>
+  <!-- Customer Verified Reviews Section -->
+  <section class="bg-[#f7f5f0] border-y border-amber-900/10 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-xl mx-auto mb-12">
+        <span class="text-xs font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100/60 px-3 py-1 rounded-full">CUSTOMER REVIEWS</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-3">Loved by 10,000+ Indian Homes</h2>
+      </div>
 
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-snug">
-              <a href={`/blog/${featuredPost.slug}`} class="hover:text-blue-400 transition">
-                {featuredPost.title}
-              </a>
-            </h2>
-
-            <p class="text-slate-300 text-sm leading-relaxed line-clamp-3">
-              {featuredPost.excerpt}
-            </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
+            ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
           </div>
-
-          <div class="pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white">
-                {featuredPost.author.displayName[0]}
-              </div>
-              <span class="font-bold text-white">{featuredPost.author.displayName}</span>
-            </div>
-            <a
-              href={`/blog/${featuredPost.slug}`}
-              class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-2.5 rounded-full transition shadow-md"
-            >
-              Read Story &rarr;
-            </a>
+          <p class="text-xs text-slate-600 leading-relaxed italic">
+            "The 9ft Velvet Door Curtains from Teepul completely changed the vibe of our living room. 100% blackout and heavy quality brass eyelets!"
+          </p>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-900">Ananya R. (South Delhi)</span>
+            <span class="text-emerald-600 font-semibold">✓ Verified Buyer</span>
           </div>
         </div>
 
-        <div class="bg-slate-900/60 p-8 lg:p-12 flex items-center justify-center border-t lg:border-t-0 lg:border-l border-slate-800">
-          <div class="text-center space-y-3 max-w-sm">
-            <div class="text-6xl">🚀</div>
-            <div class="font-black text-2xl text-white">Zero JS Overhead</div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Astro SSR delivers pure HTML and minimal hydrated components for ultra-fast rendering on all desktop & mobile devices.
-            </p>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
+            ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed italic">
+            "Sheer linen window drapes diffuses light beautifully during morning sunshine. Delivered in 2 days to Bangalore. Extremely impressed with Teepul!"
+          </p>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-900">Vikram S. (Bengaluru)</span>
+            <span class="text-emerald-600 font-semibold">✓ Verified Buyer</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
+            ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed italic">
+            "Ordered the Nordic Brass Globe Lamp along with Jacquard Cushions. The warm lighting creates such a luxurious aesthetic."
+          </p>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-900">Pooja M. (Mumbai)</span>
+            <span class="text-emerald-600 font-semibold">✓ Verified Buyer</span>
           </div>
         </div>
       </div>
-    </section>
-  )}
-
-  <!-- Latest Articles Grid -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="flex items-baseline justify-between mb-8 pb-4 border-b border-slate-200">
-      <h2 class="text-2xl font-black text-slate-900">Latest Editorial Posts</h2>
-      <a href="/blog" class="text-xs font-bold text-blue-600 hover:underline">Browse All Articles &rarr;</a>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {recentPosts.map((post) => (
-        <article class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-          <div class="space-y-3">
-            <div class="flex items-center gap-2">
-              {post.categories.map((c) => (
-                <span class="bg-slate-100 text-slate-700 font-extrabold px-2.5 py-0.5 rounded text-[10px]">
-                  {c.category.name}
-                </span>
-              ))}
-            </div>
-            <h3 class="font-bold text-lg text-slate-900 leading-snug">
-              <a href={`/blog/${post.slug}`} class="hover:text-blue-600 transition">
-                {post.title}
-              </a>
-            </h3>
-            <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed">{post.excerpt}</p>
-          </div>
-
-          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span class="font-semibold text-slate-800">By {post.author.displayName}</span>
-            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-          </div>
-        </article>
-      ))}
     </div>
   </section>
+
+  <!-- Latest Editorial Posts -->
+  {posts.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="flex items-baseline justify-between mb-8 pb-4 border-b border-slate-200">
+        <div>
+          <span class="text-xs font-extrabold text-amber-800 uppercase tracking-widest">Home Decor Guide</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Teepul Interior Design Blog</h2>
+        </div>
+        <a href="/blog" class="text-xs font-bold text-amber-800 hover:underline">Read All Guides &rarr;</a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <article class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                {post.categories.map((c) => (
+                  <span class="bg-amber-50 text-amber-900 font-extrabold px-2.5 py-0.5 rounded text-[10px]">
+                    {c.category.name}
+                  </span>
+                ))}
+              </div>
+              <h3 class="font-bold text-base text-slate-900 leading-snug">
+                <a href={`/blog/${post.slug}`} class="hover:text-amber-800 transition">
+                  {post.title}
+                </a>
+              </h3>
+              <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed">{post.excerpt}</p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span class="font-semibold text-slate-800">By {post.author.displayName}</span>
+              <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
 </PublicLayout>

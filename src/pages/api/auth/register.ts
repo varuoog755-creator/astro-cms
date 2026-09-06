@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
       entityId: newUser.id,
     });
 
-    return redirect('/admin');
+    return redirect('/products?registered=true');
   } catch (err: any) {
     console.error('Registration error:', err);
     return redirect('/register?error=Registration failed.');

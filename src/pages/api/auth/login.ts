@@ -50,7 +50,10 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
       metadata: { username: user.username },
     });
 
-    return redirect('/admin');
+    const url = new URL(request.url);
+    const targetRedirect = url.searchParams.get('redirect') || (user.roleId ? '/admin' : '/products');
+
+    return redirect(targetRedirect);
   } catch (err: any) {
     console.error('Login error:', err);
     return redirect('/login?error=An unexpected error occurred.');
