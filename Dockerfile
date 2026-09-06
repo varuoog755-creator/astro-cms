@@ -28,7 +28,5 @@ RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/prisma/cms.db ./prisma/cms.db || true
-
 EXPOSE 4321
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js || true && node ./dist/server/entry.mjs"]
