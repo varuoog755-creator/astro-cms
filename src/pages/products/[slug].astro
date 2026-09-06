@@ -39,18 +39,21 @@ const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
       
       <!-- Gallery Column -->
       <div class="p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200">
-        <div class="relative aspect-square rounded-2xl overflow-hidden shadow-inner bg-slate-200">
+        <div class="relative aspect-square rounded-2xl overflow-hidden shadow-inner bg-slate-200 group">
           <img
             id="main-product-img"
             src={product.images[0]}
             alt={product.name}
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-all duration-300"
           />
           {product.badge && (
-            <span class="absolute top-4 left-4 bg-slate-900 text-white text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+            <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
               {product.badge}
             </span>
           )}
+          <span class="absolute bottom-4 left-4 bg-slate-900/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+            {product.fabricSpecs.gsm} GSM Heavyweight Cotton
+          </span>
         </div>
 
         <!-- Thumbnails -->
@@ -58,8 +61,9 @@ const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
           <div class="flex gap-4 mt-6">
             {product.images.map((img, idx) => (
               <button
-                onclick={`document.getElementById('main-product-img').src='${img}'`}
-                class="w-20 h-20 rounded-xl overflow-hidden border-2 border-slate-300 hover:border-blue-600 transition shadow-sm focus:outline-none"
+                type="button"
+                data-img={img}
+                class={`thumb-btn w-20 h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none ${idx === 0 ? 'border-blue-600 ring-2 ring-blue-600/30' : 'border-slate-300 hover:border-blue-400'}`}
               >
                 <img src={img} alt={`Thumbnail ${idx + 1}`} class="w-full h-full object-cover" />
               </button>
@@ -99,7 +103,7 @@ const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
 
           <!-- Price Header -->
           <div class="pt-4 pb-2 border-y border-slate-100 flex items-baseline gap-3">
-            <span class="text-3xl font-black text-slate-900">{product.currency}{product.price}</span>
+            <span class="text-3xl font-black text-slate-900">{product.currency}<span id="unit-price">{product.price}</span></span>
             {product.originalPrice && (
               <span class="text-base text-slate-400 line-through font-semibold">{product.currency}{product.originalPrice}</span>
             )}
@@ -110,31 +114,58 @@ const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
 
           <!-- Color Selector -->
           <div class="space-y-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Select Color</label>
-            <div class="flex gap-3">
-              {product.colors.map((c) => (
-                <div class="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800">
-                  <span class="w-3.5 h-3.5 rounded-full border border-slate-400" style={`background-color: ${c.hex}`}></span>
-                  {c.name}
-                </div>
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span class="uppercase tracking-wider">Select Color</span>
+              <span id="selected-color-label" class="text-blue-600 font-semibold">{product.colors[0].name}</span>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              {product.colors.map((c, idx) => (
+                <button
+                  type="button"
+                  data-color={c.name}
+                  class={`color-chip-btn flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition focus:outline-none ${idx === 0 ? 'border-blue-600 ring-2 ring-blue-600/30 bg-blue-50/60 text-blue-900' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
+                >
+                  <span class="w-4 h-4 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
+                  <span>{c.name}</span>
+                </button>
               ))}
             </div>
           </div>
 
           <!-- Size Selector -->
           <div class="space-y-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Select Size (Oversized Fit)</label>
-            <div class="flex gap-2">
-              {product.sizes.map((sz) => (
-                <button class="w-12 h-10 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:bg-blue-50 font-extrabold text-xs text-slate-800 transition">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span class="uppercase tracking-wider">Select Size (Oversized Fit)</span>
+              <span id="selected-size-label" class="text-blue-600 font-semibold">{product.sizes[1] || product.sizes[0]}</span>
+            </div>
+            <div class="flex flex-wrap gap-2.5">
+              {product.sizes.map((sz, idx) => (
+                <button
+                  type="button"
+                  data-size={sz}
+                  class={`size-btn w-12 h-11 rounded-xl border-2 font-black text-xs transition focus:outline-none ${idx === 1 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-800'}`}
+                >
                   {sz}
                 </button>
               ))}
             </div>
           </div>
 
+          <!-- Quantity Selector -->
+          <div class="space-y-2 pt-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Quantity</label>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                <button type="button" id="qty-minus-btn" class="w-10 h-10 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition">-</button>
+                <span id="qty-display" class="w-12 text-center font-extrabold text-sm text-slate-900">1</span>
+                <button type="button" id="qty-plus-btn" class="w-10 h-10 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition">+</button>
+              </div>
+              <span class="text-xs text-slate-500 font-medium">Subtotal: {product.currency}<span id="subtotal-price">{product.price}</span></span>
+            </div>
+          </div>
+
           <!-- Technical Specs Card -->
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2">
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2 mt-4">
             <div class="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Fabric & Specifications</div>
             <div class="grid grid-cols-2 gap-2 text-slate-600">
               <div>• <strong>GSM:</strong> {product.fabricSpecs.gsm} GSM</div>
@@ -148,16 +179,17 @@ const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
         <!-- Action Buttons -->
         <div class="pt-6 border-t border-slate-100 space-y-3">
           <button
-            onclick="alert('Order inquiry added successfully! Super Admin will contact you.')"
-            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2"
+            type="button"
+            id="order-btn"
+            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-sm py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
           >
-            <span>🛍️ Order Now / Add to Cart</span>
+            <span>🛍️ Add to Cart / Order Now</span>
           </button>
           
           <div class="flex items-center justify-center gap-6 text-[11px] text-slate-500 font-semibold pt-1">
             <span>🔒 Secure Checkout</span>
-            <span>⚡ 7-Day Replacement Guarantee</span>
-            <span>🚚 Express Delivery</span>
+            <span>⚡ 7-Day Replacement</span>
+            <span>🚚 Free Express Shipping</span>
           </div>
         </div>
       </div>
@@ -183,4 +215,133 @@ const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
       </div>
     )}
   </div>
+
+  <!-- Interactive Order Toast / Modal Overlay -->
+  <div id="order-toast" class="fixed bottom-6 right-6 z-50 max-w-md bg-slate-900 text-white p-6 rounded-3xl shadow-2xl border border-slate-700 hidden transform transition-all duration-300">
+    <div class="flex items-start justify-between gap-4">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2">
+          <span class="bg-emerald-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">Item Added</span>
+          <span class="text-xs text-slate-400 font-semibold">Shopping Cart</span>
+        </div>
+        <h4 class="font-extrabold text-sm text-white">{product.name}</h4>
+        <div class="text-xs text-slate-300 space-y-0.5 font-medium">
+          <div>Color: <span id="toast-color" class="font-bold text-blue-400"></span></div>
+          <div>Size: <span id="toast-size" class="font-bold text-blue-400"></span></div>
+          <div>Quantity: <span id="toast-qty" class="font-bold text-blue-400"></span></div>
+          <div>Total Price: <span id="toast-price" class="font-black text-emerald-400"></span></div>
+        </div>
+      </div>
+      <button type="button" id="close-toast-btn" class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
+    </div>
+    <div class="mt-4 pt-3 border-t border-slate-800 flex gap-2">
+      <a href="/admin/login" class="w-full bg-blue-600 hover:bg-blue-500 text-center font-bold text-xs py-2.5 rounded-xl transition">
+        Proceed to Checkout &rarr;
+      </a>
+    </div>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
+      let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || 'M';
+      let quantity = 1;
+      const unitPrice = parseFloat(document.getElementById('unit-price')?.innerText || '0');
+
+      // Update subtotal price
+      function updateSubtotal() {
+        const subtotal = unitPrice * quantity;
+        const subtotalEl = document.getElementById('subtotal-price');
+        const qtyDisplay = document.getElementById('qty-display');
+        if (subtotalEl) subtotalEl.innerText = subtotal.toLocaleString();
+        if (qtyDisplay) qtyDisplay.innerText = quantity;
+      }
+
+      // Thumbnail Click Handlers
+      document.querySelectorAll('.thumb-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const imgSrc = btn.getAttribute('data-img');
+          const mainImg = document.getElementById('main-product-img');
+          if (mainImg && imgSrc) mainImg.src = imgSrc;
+
+          document.querySelectorAll('.thumb-btn').forEach((b) => {
+            b.classList.remove('border-blue-600', 'ring-2', 'ring-blue-600/30');
+            b.classList.add('border-slate-300');
+          });
+          btn.classList.remove('border-slate-300');
+          btn.classList.add('border-blue-600', 'ring-2', 'ring-blue-600/30');
+        });
+      });
+
+      // Color Chip Click Handlers
+      document.querySelectorAll('.color-chip-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedColor = btn.getAttribute('data-color') || '';
+          const label = document.getElementById('selected-color-label');
+          if (label) label.innerText = selectedColor;
+
+          document.querySelectorAll('.color-chip-btn').forEach((b) => {
+            b.classList.remove('border-blue-600', 'ring-2', 'ring-blue-600/30', 'bg-blue-50/60', 'text-blue-900');
+            b.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-800');
+          });
+          btn.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-800');
+          btn.classList.add('border-blue-600', 'ring-2', 'ring-blue-600/30', 'bg-blue-50/60', 'text-blue-900');
+        });
+      });
+
+      // Size Button Click Handlers
+      document.querySelectorAll('.size-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedSize = btn.getAttribute('data-size') || '';
+          const label = document.getElementById('selected-size-label');
+          if (label) label.innerText = selectedSize;
+
+          document.querySelectorAll('.size-btn').forEach((b) => {
+            b.classList.remove('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-md');
+            b.classList.add('border-slate-200', 'text-slate-800');
+          });
+          btn.classList.remove('border-slate-200', 'text-slate-800');
+          btn.classList.add('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-md');
+        });
+      });
+
+      // Quantity Plus & Minus
+      document.getElementById('qty-minus-btn')?.addEventListener('click', () => {
+        if (quantity > 1) {
+          quantity--;
+          updateSubtotal();
+        }
+      });
+
+      document.getElementById('qty-plus-btn')?.addEventListener('click', () => {
+        quantity++;
+        updateSubtotal();
+      });
+
+      // Order / Add to Cart Click Handler
+      document.getElementById('order-btn')?.addEventListener('click', () => {
+        const toast = document.getElementById('order-toast');
+        const toastColor = document.getElementById('toast-color');
+        const toastSize = document.getElementById('toast-size');
+        const toastQty = document.getElementById('toast-qty');
+        const toastPrice = document.getElementById('toast-price');
+
+        if (toastColor) toastColor.innerText = selectedColor;
+        if (toastSize) toastSize.innerText = selectedSize;
+        if (toastQty) toastQty.innerText = quantity;
+        if (toastPrice) toastPrice.innerText = '₹' + (unitPrice * quantity).toLocaleString();
+
+        if (toast) {
+          toast.classList.remove('hidden');
+          toast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+
+      // Close Toast Handler
+      document.getElementById('close-toast-btn')?.addEventListener('click', () => {
+        const toast = document.getElementById('order-toast');
+        if (toast) toast.classList.add('hidden');
+      });
+    });
+  </script>
 </PublicLayout>
