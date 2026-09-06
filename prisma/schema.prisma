@@ -347,3 +347,45 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique // e.g. ORD-10023
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String
+  pincode         String
+  city            String?
+  state           String?
+  totalAmount     Float
+  currency        String      @default("INR")
+  paymentMethod   String      @default("RAZORPAY") // RAZORPAY, PAYTM, COD, WHATSAPP
+  paymentStatus   String      @default("PENDING") // PENDING, PAID, FAILED, COD_PENDING
+  orderStatus     String      @default("PROCESSING") // PROCESSING, SHIPPED, DELIVERED, CANCELLED
+  razorpayOrderId String?
+  razorpayPaymentId String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  items           OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  productId   String
+  productTitle String
+  color       String?
+  size        String?
+  unitPrice   Float
+  quantity    Int      @default(1)
+  totalPrice  Float
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}

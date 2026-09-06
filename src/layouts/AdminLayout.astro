@@ -13,6 +13,8 @@ const user: UserSession | null = Astro.locals.user;
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: '📊', href: '/admin' },
+  { id: 'orders', label: 'Customer Orders', icon: '🛍️', href: '/admin/orders' },
+  { id: 'integrations', label: 'Payments & Growth', icon: '⚡', href: '/admin/integrations' },
   { id: 'posts', label: 'Posts', icon: '📝', href: '/admin/posts' },
   { id: 'pages', label: 'Pages', icon: '📄', href: '/admin/pages' },
   { id: 'media', label: 'Media Library', icon: '🖼️', href: '/admin/media' },

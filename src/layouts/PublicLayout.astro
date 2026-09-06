@@ -2,6 +2,7 @@
 import { generateSeoMetadata } from '../lib/seo/meta';
 import type { SeoOptions } from '../lib/seo/meta';
 import prisma from '../lib/db';
+import { getIntegrationSettings } from '../lib/settings';
 import '../styles/global.css';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 
 const { seo = { title: 'Home' } } = Astro.props;
 const meta = generateSeoMetadata(seo);
+const integrationSettings = await getIntegrationSettings();
 
 // Fetch primary menu
 const primaryMenu = await prisma.menu.findFirst({
@@ -57,6 +59,47 @@ const menuItems = primaryMenu?.items.length ? primaryMenu.items : defaultMenuIte
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     
+    <!-- Google Search Console Verification Tag -->
+    {integrationSettings.gsc_enabled && integrationSettings.gsc_verification_tag && (
+      integrationSettings.gsc_verification_tag.startsWith('<meta') ? (
+        <Fragment set:html={integrationSettings.gsc_verification_tag} />
+      ) : (
+        <meta name="google-site-verification" content={integrationSettings.gsc_verification_tag} />
+      )
+    )}
+
+    <!-- Razorpay Checkout SDK -->
+    <script is:inline src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Google Analytics 4 (GA4) -->
+    {integrationSettings.ga_enabled && integrationSettings.ga_measurement_id && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${integrationSettings.ga_measurement_id}`}></script>
+        <script is:inline define:vars={{ gaId: integrationSettings.ga_measurement_id }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
+
+    <!-- Meta Pixel Code -->
+    {integrationSettings.meta_pixel_enabled && integrationSettings.meta_pixel_id && (
+      <script is:inline define:vars={{ pixelId: integrationSettings.meta_pixel_id }}>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', pixelId);
+        fbq('track', 'PageView');
+      </script>
+    )}
+
     <style>
       .glass-header {
         background: rgba(255, 255, 255, 0.85);
@@ -217,5 +260,22 @@ const menuItems = primaryMenu?.items.length ? primaryMenu.items : defaultMenuIte
         </div>
       </div>
     </footer>
+    <!-- Floating WhatsApp Sales Widget -->
+    {integrationSettings.whatsapp_enabled && integrationSettings.whatsapp_floating_widget && (
+      <a
+        href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi! I am browsing the store and have a question about products.')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-2 font-bold text-xs group"
+        title="Chat on WhatsApp"
+      >
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.156 4.223 4.299-1.127z"/>
+        </svg>
+        <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">
+          Chat with Us
+        </span>
+      </a>
+    )}
   </body>
 </html>

@@ -1,0 +1,74 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import prisma from '../../lib/db';
+
+const orderNumber = Astro.url.searchParams.get('orderNumber') || 'ORD-10029';
+
+const order = await prisma.order.findUnique({
+  where: { orderNumber },
+  include: { items: true },
+});
+---
+
+<PublicLayout seo={{ title: 'Order Confirmed - Teepul Store', description: 'Thank you for your order!' }}>
+  <div class="bg-slate-50 min-h-screen py-16 flex items-center justify-center">
+    <div class="max-w-md w-full mx-auto px-4">
+      <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
+        
+        <!-- Success Icon -->
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner animate-bounce">
+          ✓
+        </div>
+
+        <div>
+          <span class="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">
+            ORDER CONFIRMED
+          </span>
+          <h1 class="text-2xl font-extrabold text-slate-900 mt-2">Thank You for Your Order!</h1>
+          <p class="text-xs text-slate-500 mt-1">Order #{orderNumber} has been received and is being processed.</p>
+        </div>
+
+        {order && (
+          <div class="bg-slate-50 rounded-2xl p-4 text-left border border-slate-200 space-y-3 text-xs">
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+              <span class="text-slate-500 font-medium">Customer:</span>
+              <span class="font-bold text-slate-900">{order.customerName}</span>
+            </div>
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+              <span class="text-slate-500 font-medium">Payment Status:</span>
+              <span class="font-bold text-emerald-600">{order.paymentStatus}</span>
+            </div>
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+              <span class="text-slate-500 font-medium">Total Paid:</span>
+              <span class="font-extrabold text-slate-900 text-sm">₹{order.totalAmount.toLocaleString('en-IN')}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 font-medium block mb-1">Items:</span>
+              {order.items.map((i) => (
+                <div class="font-bold text-slate-800">
+                  {i.quantity}x {i.productTitle} ({i.color}, {i.size})
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div class="pt-4 space-y-3">
+          <a
+            href="/products"
+            class="block w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs py-3.5 rounded-xl transition shadow-md shadow-blue-500/20"
+          >
+            Continue Shopping →
+          </a>
+          <a
+            href="/"
+            class="block w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition"
+          >
+            Return to Home
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</PublicLayout>
