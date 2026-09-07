@@ -19,7 +19,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
-ENV DATABASE_URL="file:./cms.db"
+ENV DATABASE_URL="file:./prisma/cms.db"
 
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -29,4 +29,4 @@ RUN npx prisma generate
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
 EXPOSE 4321
-CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js || true && node ./dist/server/entry.mjs"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate || true; node ./dist/server/entry.mjs"]
