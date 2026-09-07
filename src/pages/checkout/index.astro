@@ -1,6 +1,6 @@
 ---
 import PublicLayout from '../../layouts/PublicLayout.astro';
-import { getStorefrontProducts } from '../../lib/products';
+import { getStorefrontProducts, PRODUCTS_CATALOG } from '../../lib/products';
 import { getIntegrationSettings } from '../../lib/settings';
 
 const settings = await getIntegrationSettings();
@@ -11,9 +11,13 @@ const size = Astro.url.searchParams.get('size') || 'XL';
 const quantityStr = Astro.url.searchParams.get('qty') || '1';
 const quantity = Math.max(1, parseInt(quantityStr, 10) || 1);
 
-const allProducts = await getStorefrontProducts();
-const product = (slug ? allProducts.find((p) => p.slug === slug) : null) || allProducts[0];
-const itemTotal = product.price * quantity;
+const rawProducts = await getStorefrontProducts();
+const allProducts = (rawProducts?.length ? rawProducts : PRODUCTS_CATALOG).filter(Boolean);
+let product = slug ? allProducts.find((p) => p?.slug === slug) : null;
+if (!product) {
+  product = allProducts[0] || PRODUCTS_CATALOG[0];
+}
+const itemTotal = (product?.price || 0) * quantity;
 ---
 
 <PublicLayout seo={{ title: `Checkout - ${product.name}`, description: `Complete your order for ${product.name}` }}>

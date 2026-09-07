@@ -252,7 +252,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     </div>
   </div>
 
-  <script is:inline>
+  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
       let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || 'M';
@@ -331,14 +331,14 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
 
       // Order / Buy Now Click Handler
       document.getElementById('order-btn')?.addEventListener('click', () => {
-        const checkoutUrl = `/checkout?product=${encodeURIComponent('${product.slug}')}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(selectedSize)}&qty=${quantity}`;
+        const checkoutUrl = `/checkout?product=${encodeURIComponent(currentProductSlug)}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(selectedSize)}&qty=${quantity}`;
         window.location.href = checkoutUrl;
       });
 
       // WhatsApp Direct Order Handler
       document.getElementById('whatsapp-direct-btn')?.addEventListener('click', () => {
-        const msg = `Hi Teepul Store! I want to order:\n\n*Product:* ${encodeURIComponent('${product.name}')}\n*Color:* ${selectedColor}\n*Size:* ${selectedSize}\n*Quantity:* ${quantity}\n*Price:* ₹${(unitPrice * quantity).toLocaleString()}`;
-        window.open(`https://wa.me/919876543210?text=${msg}`, '_blank');
+        const msg = `Hi Teepul Store! I want to order:\n\n*Product:* ${currentProductName}\n*Color:* ${selectedColor}\n*Size:* ${selectedSize}\n*Quantity:* ${quantity}\n*Price:* ₹${(unitPrice * quantity).toLocaleString()}`;
+        window.open(`https://wa.me/919876543210?text=${encodeURIComponent(msg)}`, '_blank');
       });
 
       // Close Toast Handler

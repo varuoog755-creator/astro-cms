@@ -63,7 +63,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       'Noise & Heat Shield Fabric',
       'Machine & Hand Washable',
     ],
-  },,
+  },
   {
     id: 'meesho-eupceo',
     slug: 'stylish-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-eupceo',
@@ -233,7 +233,7 @@ export async function getStorefrontProducts(): Promise<Product[]> {
     });
 
     if (!dbProducts || dbProducts.length === 0) {
-      return PRODUCTS_CATALOG;
+      return PRODUCTS_CATALOG.filter(Boolean);
     }
 
     const mapped = dbProducts.map((p) => {
@@ -277,9 +277,9 @@ export async function getStorefrontProducts(): Promise<Product[]> {
       }
     }).filter(Boolean) as Product[];
 
-    return mapped.length > 0 ? mapped : PRODUCTS_CATALOG;
+    return mapped.length > 0 ? mapped : PRODUCTS_CATALOG.filter(Boolean);
   } catch (error) {
     console.error('Failed to load DB products:', error);
-    return PRODUCTS_CATALOG;
+    return PRODUCTS_CATALOG.filter(Boolean);
   }
 }
