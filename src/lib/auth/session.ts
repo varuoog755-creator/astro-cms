@@ -39,47 +39,52 @@ export async function createSession(userId: string, ipAddress?: string, userAgen
 export async function getSession(token?: string): Promise<UserSession | null> {
   if (!token) return null;
 
-  const sessionRecord = await prisma.session.findUnique({
-    where: { token },
-    include: {
-      user: {
-        include: {
-          role: {
-            include: {
-              permissions: {
-                include: {
-                  permission: true,
+  try {
+    const sessionRecord = await prisma.session.findUnique({
+      where: { token },
+      include: {
+        user: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  include: {
+                    permission: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  });
+    });
 
-  if (!sessionRecord || sessionRecord.expiresAt < new Date()) {
-    if (sessionRecord) {
-      await prisma.session.delete({ where: { id: sessionRecord.id } }).catch(() => {});
+    if (!sessionRecord || sessionRecord.expiresAt < new Date()) {
+      if (sessionRecord) {
+        await prisma.session.delete({ where: { id: sessionRecord.id } }).catch(() => {});
+      }
+      return null;
     }
+
+    const { user } = sessionRecord;
+    if (user.status !== 'active') return null;
+
+    const permissions = user.role.permissions.map((rp) => rp.permission.code);
+
+    return {
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+      displayName: user.displayName,
+      role: user.role.name as any,
+      roleId: user.role.id,
+      permissions,
+      avatar: user.avatar || undefined,
+    };
+  } catch (error) {
+    console.error('Failed to retrieve session:', error);
     return null;
   }
-
-  const { user } = sessionRecord;
-  if (user.status !== 'active') return null;
-
-  const permissions = user.role.permissions.map((rp) => rp.permission.code);
-
-  return {
-    userId: user.id,
-    email: user.email,
-    username: user.username,
-    displayName: user.displayName,
-    role: user.role.name as any,
-    roleId: user.role.id,
-    permissions,
-    avatar: user.avatar || undefined,
-  };
 }
 
 export async function destroySession(token: string): Promise<void> {
