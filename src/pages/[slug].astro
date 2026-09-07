@@ -5,8 +5,9 @@ import prisma from '../lib/db';
 
 const { slug } = Astro.params;
 
-if (slug === '404') {
-  Astro.response.status = 404;
+// Ignore asset / system queries
+if (slug && (slug.includes('.') || slug.startsWith('_'))) {
+  return new Response(null, { status: 404 });
 }
 
 let page: any = null;
@@ -18,15 +19,13 @@ try {
   console.error('Failed to fetch page:', error);
 }
 
-if (!page || page.status === 'trash') {
-  if (slug === '404') {
-    page = {
-      title: '404 - Page Not Found',
-      content: JSON.stringify([]),
-    };
-  } else {
-    return Astro.redirect('/404');
-  }
+const isNotFound = !page || page.status === 'trash';
+if (isNotFound) {
+  Astro.response.status = 404;
+  page = {
+    title: '404 - Page Not Found',
+    content: JSON.stringify([{ type: 'paragraph', data: { text: 'The page or post you requested could not be located or has been moved.' } }]),
+  };
 }
 ---
 
