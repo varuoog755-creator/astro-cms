@@ -1,0 +1,113 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getStorefrontProducts } from '../../../lib/products';
+
+const products = await getStorefrontProducts();
+const saved = Astro.url.searchParams.get('saved') === 'true';
+const deleted = Astro.url.searchParams.get('deleted') === 'true';
+---
+
+<AdminLayout title="Product Catalog Management" activeNav="products_catalog">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Products Catalog ({products.length})</h1>
+        <p class="text-sm text-slate-500 mt-1">Manage door curtains, window drapes, ambient lighting, and home decor items.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a
+          href="/admin/products/new"
+          class="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-5 py-3 rounded-xl transition shadow-md shadow-blue-500/20 flex items-center gap-2"
+        >
+          <span>+ Add New Product</span>
+        </a>
+      </div>
+    </div>
+
+    {saved && (
+      <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm">
+        ✓ Product Saved Successfully & Updated Live on Storefront!
+      </div>
+    )}
+
+    {deleted && (
+      <div class="bg-rose-50 border border-rose-300 text-rose-800 text-xs font-bold px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm">
+        ✓ Product Removed from Catalog.
+      </div>
+    )}
+
+    <!-- Products Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-600">
+          <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+            <tr>
+              <th class="p-4">Product</th>
+              <th class="p-4">Category</th>
+              <th class="p-4">Price</th>
+              <th class="p-4">Specifications</th>
+              <th class="p-4">Status</th>
+              <th class="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {products.map((p) => (
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="p-4">
+                  <div class="flex items-center gap-3">
+                    <img src={p.images[0]} alt={p.name} class="w-12 h-12 rounded-xl object-cover border border-slate-200" />
+                    <div>
+                      <div class="font-extrabold text-slate-900 text-xs">{p.name}</div>
+                      <div class="text-[10px] text-slate-500 truncate max-w-xs">{p.tagline}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="p-4">
+                  <span class="bg-amber-50 text-amber-900 font-bold px-2.5 py-1 rounded-full text-[10px] border border-amber-200">
+                    {p.category}
+                  </span>
+                </td>
+                <td class="p-4 font-black text-slate-900 text-sm">
+                  {p.currency}{p.price.toLocaleString('en-IN')}
+                  {p.originalPrice && <span class="text-xs text-slate-400 line-through font-normal block">{p.currency}{p.originalPrice.toLocaleString('en-IN')}</span>}
+                </td>
+                <td class="p-4 text-[11px] text-slate-500">
+                  {p.fabricSpecs.gsm > 0 && <div>{p.fabricSpecs.gsm} GSM</div>}
+                  <div>{p.fabricSpecs.material}</div>
+                </td>
+                <td class="p-4">
+                  {p.inStock ? (
+                    <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-emerald-300">
+                      ✓ In Stock
+                    </span>
+                  ) : (
+                    <span class="bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-rose-300">
+                      Out of Stock
+                    </span>
+                  )}
+                </td>
+                <td class="p-4 text-right space-x-2">
+                  <a
+                    href={`/products/${p.slug}`}
+                    target="_blank"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] px-3 py-1.5 rounded-lg transition"
+                  >
+                    View ↗
+                  </a>
+                  <a
+                    href={`/admin/products/new?id=${p.id}`}
+                    class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition shadow-sm"
+                  >
+                    Edit
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

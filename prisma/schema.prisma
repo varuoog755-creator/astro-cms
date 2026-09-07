@@ -389,3 +389,31 @@ model OrderItem {
 
   @@map("order_items")
 }
+
+model Product {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  name          String
+  tagline       String?
+  description   String
+  price         Float
+  originalPrice Float?
+  currency      String   @default("INR")
+  category      String   @default("Door Curtains")
+  badge         String?
+  rating        Float    @default(5.0)
+  reviewCount   Int      @default(0)
+  inStock       Boolean  @default(true)
+  colorsJson    String   @default("[]") // JSON string of colors
+  sizesJson     String   @default("[]") // JSON string of sizes
+  imagesJson    String   @default("[]") // JSON string of images
+  featuresJson  String   @default("[]") // JSON string of features
+  gsm           Int      @default(350)
+  material      String   @default("Micro-Velvet")
+  fit           String   @default("Grommet Top")
+  care          String   @default("Dry Clean")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("products")
+}

@@ -1,3 +1,5 @@
+import prisma from './db';
+
 export interface Product {
   id: string;
   slug: string;
@@ -173,3 +175,44 @@ export const PRODUCTS_CATALOG: Product[] = [
     ],
   },
 ];
+
+export async function getStorefrontProducts(): Promise<Product[]> {
+  try {
+    const dbProducts = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (dbProducts.length === 0) {
+      return PRODUCTS_CATALOG;
+    }
+
+    return dbProducts.map((p) => ({
+      id: p.id,
+      slug: p.slug,
+      name: p.name,
+      tagline: p.tagline || '',
+      description: p.description,
+      price: p.price,
+      originalPrice: p.originalPrice || undefined,
+      currency: p.currency || '₹',
+      category: p.category,
+      badge: p.badge || undefined,
+      rating: p.rating,
+      reviewCount: p.reviewCount,
+      inStock: p.inStock,
+      colors: JSON.parse(p.colorsJson || '[]'),
+      sizes: JSON.parse(p.sizesJson || '[]'),
+      fabricSpecs: {
+        gsm: p.gsm,
+        material: p.material,
+        fit: p.fit,
+        care: p.care,
+      },
+      images: JSON.parse(p.imagesJson || '[]'),
+      features: JSON.parse(p.featuresJson || '[]'),
+    }));
+  } catch (error) {
+    console.error('Failed to load DB products:', error);
+    return PRODUCTS_CATALOG;
+  }
+}
