@@ -1,7 +1,7 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import prisma from '../lib/db';
-import { getStorefrontProducts } from '../lib/products';
+import { getStorefrontProducts, PRODUCTS_CATALOG } from '../lib/products';
 
 let posts: any[] = [];
 try {
@@ -82,7 +82,7 @@ const featuredProducts = await getStorefrontProducts();
           <div class="space-y-4">
             <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
               <img
-                src={PRODUCTS_CATALOG[0].images[0]}
+                src={featuredProducts[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0]}
                 alt="Teepul Door Curtains"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -92,7 +92,7 @@ const featuredProducts = await getStorefrontProducts();
             </div>
             <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
               <img
-                src={PRODUCTS_CATALOG[2].images[0]}
+                src={featuredProducts[2]?.images?.[0] || PRODUCTS_CATALOG[2]?.images?.[0]}
                 alt="Teepul Decor Lighting"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -102,14 +102,14 @@ const featuredProducts = await getStorefrontProducts();
           <div class="space-y-4 pt-8">
             <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
               <img
-                src={PRODUCTS_CATALOG[3].images[0]}
+                src={featuredProducts[3]?.images?.[0] || PRODUCTS_CATALOG[3]?.images?.[0]}
                 alt="Teepul Cushion Covers"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
               <img
-                src={PRODUCTS_CATALOG[1].images[0]}
+                src={featuredProducts[1]?.images?.[0] || PRODUCTS_CATALOG[1]?.images?.[0]}
                 alt="Teepul Window Curtains"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
