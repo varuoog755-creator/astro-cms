@@ -4,13 +4,17 @@ import { createSession, SESSION_COOKIE_NAME, verifyPassword } from '../../../lib
 import { logAudit } from '../../../lib/utilities/audit';
 
 export const POST: APIRoute = async ({ request, redirect, cookies }) => {
+  const referer = request.headers.get('referer') || '';
+  const isAdminLogin = referer.includes('/admin/login');
+  const errorRedirect = (msg: string) => redirect(`${isAdminLogin ? '/admin/login' : '/login'}?error=${encodeURIComponent(msg)}`);
+
   try {
     const formData = await request.formData();
     const login = formData.get('login')?.toString().trim();
     const password = formData.get('password')?.toString();
 
     if (!login || !password) {
-      return redirect('/login?error=Please fill in all fields.');
+      return errorRedirect('Please fill in all fields.');
     }
 
     const user = await prisma.user.findFirst({
@@ -20,16 +24,16 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     });
 
     if (!user) {
-      return redirect('/login?error=Invalid email/username or password.');
+      return errorRedirect('Invalid email/username or password.');
     }
 
     if (user.status === 'suspended') {
-      return redirect('/login?error=Account is suspended. Please contact admin.');
+      return errorRedirect('Account is suspended. Please contact admin.');
     }
 
     const validPassword = await verifyPassword(password, user.passwordHash);
     if (!validPassword) {
-      return redirect('/login?error=Invalid email/username or password.');
+      return errorRedirect('Invalid email/username or password.');
     }
 
     const token = await createSession(user.id, request.headers.get('x-forwarded-for') || undefined, request.headers.get('user-agent') || undefined);
@@ -56,6 +60,6 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     return redirect(targetRedirect);
   } catch (err: any) {
     console.error('Login error:', err);
-    return redirect('/login?error=An unexpected error occurred.');
+    return errorRedirect('An unexpected error occurred.');
   }
 };

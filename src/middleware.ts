@@ -21,7 +21,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // Protect admin routes
     if (pathname.startsWith('/admin')) {
       if (!sessionUser) {
-        return context.redirect('/login');
+        return context.redirect('/admin/login');
       }
 
       if (sessionUser.status === 'suspended') {
