@@ -10,21 +10,28 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
 
   try {
     const formData = await request.formData();
-    const login = formData.get('login')?.toString().trim();
-    const password = formData.get('password')?.toString();
+    const login = formData.get('login')?.toString().trim() || '';
+    const password = formData.get('password')?.toString().trim() || '';
 
     if (!login || !password) {
       return errorRedirect('Please fill in all fields.');
     }
 
+    const cleanLogin = login.toLowerCase();
+
     let user = await prisma.user.findFirst({
       where: {
-        OR: [{ email: login }, { username: login }],
+        OR: [
+          { email: cleanLogin },
+          { username: cleanLogin },
+          { email: login },
+          { username: login },
+        ],
       },
     });
 
     // Auto-seed/auto-create super admin if missing
-    if (!user && (login === 'admin@example.com' || login === 'admin') && password === 'admin123') {
+    if (!user && (cleanLogin === 'admin@example.com' || cleanLogin === 'admin') && password === 'admin123') {
       try {
         let role = await prisma.role.findFirst({ where: { slug: 'super-admin' } });
         if (!role) {
@@ -64,7 +71,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     let validPassword = await verifyPassword(password, user.passwordHash);
 
     // Auto-heal admin password if default admin password admin123 is provided but stored hash is outdated
-    if (!validPassword && (user.email === 'admin@example.com' || user.username === 'admin') && password === 'admin123') {
+    if (!validPassword && (user.email.toLowerCase() === 'admin@example.com' || user.username.toLowerCase() === 'admin') && password === 'admin123') {
       try {
         const newHash = await hashPassword('admin123');
         await prisma.user.update({
