@@ -174,6 +174,43 @@ export const PRODUCTS_CATALOG: Product[] = [
       'Machine Washable Heavy Fabric',
     ],
   },
+  {
+    id: 'prod-5',
+    slug: 'premium-brown-thermal-blackout-door-curtain',
+    name: 'Premium Brown Thermal Blackout Door Curtain',
+    tagline: 'Pack of 1 | Silver Eyelets 100% Light Blocking Thermal Insulated Curtain',
+    description: 'Transform your bedroom or living room with Teepul Premium Brown Thermal Blackout Curtains. Features heavy-duty silver ring eyelets, 100% noise and light blocking thermal insulation, and rich solid texture.',
+    price: 301,
+    originalPrice: 699,
+    currency: '₹',
+    category: 'Door Curtains',
+    badge: 'Meesho Choice',
+    rating: 4.8,
+    reviewCount: 94,
+    inStock: true,
+    colors: [
+      { name: 'Premium Dark Brown', hex: '#3e2723' },
+      { name: 'Warm Chocolate', hex: '#4e342e' },
+    ],
+    sizes: ['7 Feet (Door Curtain)', '9 Feet (Long Door)'],
+    fabricSpecs: {
+      gsm: 320,
+      material: 'Polyester Thermal Fabric',
+      fit: 'Silver Eyelet Grommets',
+      care: 'Hand & Machine Washable',
+    },
+    images: [
+      'https://images.meesho.com/images/products/1060934359/8exub_512.avif?width=512',
+      'https://images.meesho.com/images/products/1060934359/ibskg_512.avif?width=512',
+      'https://images.meesho.com/images/products/1060934359/z3epy_512.avif?width=512',
+    ],
+    features: [
+      '100% Light Blocking Thermal Insulation',
+      'Rust-Proof Stainless Steel Eyelet Rings',
+      'Noise & Heat Shield Fabric',
+      'Machine & Hand Washable',
+    ],
+  },
 ];
 
 export async function getStorefrontProducts(): Promise<Product[]> {
