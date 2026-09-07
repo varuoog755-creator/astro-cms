@@ -1,17 +1,18 @@
 ---
 import PublicLayout from '../../layouts/PublicLayout.astro';
-import { PRODUCTS_CATALOG } from '../../lib/products';
+import { getStorefrontProducts } from '../../lib/products';
 import { getIntegrationSettings } from '../../lib/settings';
 
 const settings = await getIntegrationSettings();
 
-const slug = Astro.url.searchParams.get('product') || 'astro-developer-oversized-tee';
+const slug = Astro.url.searchParams.get('product') || '';
 const color = Astro.url.searchParams.get('color') || 'Onyx Black';
 const size = Astro.url.searchParams.get('size') || 'XL';
 const quantityStr = Astro.url.searchParams.get('qty') || '1';
 const quantity = Math.max(1, parseInt(quantityStr, 10) || 1);
 
-const product = PRODUCTS_CATALOG.find((p) => p.slug === slug) || PRODUCTS_CATALOG[1];
+const allProducts = await getStorefrontProducts();
+const product = (slug ? allProducts.find((p) => p.slug === slug) : null) || allProducts[0];
 const itemTotal = product.price * quantity;
 ---
 

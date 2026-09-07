@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { PRODUCTS_CATALOG } from '../../lib/products';
+import { getStorefrontProducts } from '../../lib/products';
 import { getIntegrationSettings } from '../../lib/settings';
 
 export const GET: APIRoute = async ({ request }) => {
@@ -9,7 +9,8 @@ export const GET: APIRoute = async ({ request }) => {
   const brandName = settings.gmc_brand_name || 'Teepul Streetwear';
   const currency = settings.gmc_currency || 'INR';
 
-  const itemsXml = PRODUCTS_CATALOG.map((p) => {
+  const products = await getStorefrontProducts();
+  const itemsXml = products.map((p) => {
     const productUrl = `${origin}/products/${p.slug}`;
     const imageUrl = p.images[0]?.startsWith('http') ? p.images[0] : `${origin}${p.images[0]}`;
     const availability = p.inStock ? 'in_stock' : 'out_of_stock';

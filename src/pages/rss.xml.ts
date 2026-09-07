@@ -4,12 +4,17 @@ import prisma from '../lib/db';
 export const GET: APIRoute = async () => {
   const baseUrl = process.env.PUBLIC_SITE_URL || 'http://localhost:4321';
 
-  const posts = await prisma.post.findMany({
-    where: { status: 'published' },
-    orderBy: { publishedAt: 'desc' },
-    take: 20,
-    include: { author: true },
-  });
+  let posts: any[] = [];
+  try {
+    posts = await prisma.post.findMany({
+      where: { status: 'published' },
+      orderBy: { publishedAt: 'desc' },
+      take: 20,
+      include: { author: true },
+    });
+  } catch (error) {
+    console.error('Failed to fetch posts for RSS:', error);
+  }
 
   const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">

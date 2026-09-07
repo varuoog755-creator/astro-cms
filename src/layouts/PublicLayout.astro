@@ -14,14 +14,19 @@ const meta = generateSeoMetadata(seo);
 const integrationSettings = await getIntegrationSettings();
 
 // Fetch primary menu
-const primaryMenu = await prisma.menu.findFirst({
-  where: { isPrimary: true },
-  include: {
-    items: {
-      orderBy: { sortOrder: 'asc' },
+let primaryMenu: any = null;
+try {
+  primaryMenu = await prisma.menu.findFirst({
+    where: { isPrimary: true },
+    include: {
+      items: {
+        orderBy: { sortOrder: 'asc' },
+      },
     },
-  },
-});
+  });
+} catch (error) {
+  console.error('Failed to fetch primary menu:', error);
+}
 
 const defaultMenuItems = [
   { id: '1', title: 'Home', url: '/' },
@@ -30,7 +35,7 @@ const defaultMenuItems = [
   { id: '4', title: 'About', url: '/about' },
 ];
 
-const menuItems = primaryMenu?.items.length ? primaryMenu.items : defaultMenuItems;
+const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuItems;
 ---
 
 <!DOCTYPE html>

@@ -4,16 +4,21 @@ import prisma from '../../lib/db';
 
 const { slug } = Astro.params;
 
-const user = await prisma.user.findFirst({
-  where: { username: slug },
-  include: {
-    posts: {
-      where: { status: 'published' },
-      orderBy: { createdAt: 'desc' },
-      include: { author: true },
+let user: any = null;
+try {
+  user = await prisma.user.findFirst({
+    where: { username: slug },
+    include: {
+      posts: {
+        where: { status: 'published' },
+        orderBy: { createdAt: 'desc' },
+        include: { author: true },
+      },
     },
-  },
-});
+  });
+} catch (error) {
+  console.error('Failed to fetch author:', error);
+}
 
 if (!user) return Astro.redirect('/404');
 ---

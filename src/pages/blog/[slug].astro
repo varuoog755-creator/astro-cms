@@ -6,32 +6,40 @@ import prisma from '../../lib/db';
 const { slug } = Astro.params;
 
 // Check redirect table first
-const redirectRecord = await prisma.redirect.findUnique({
-  where: { sourceUrl: `/blog/${slug}` },
-});
+try {
+  const redirectRecord = await prisma.redirect.findUnique({
+    where: { sourceUrl: `/blog/${slug}` },
+  });
 
-if (redirectRecord) {
-  // Update hit count asynchronously
-  await prisma.redirect.update({
-    where: { id: redirectRecord.id },
-    data: { hitCount: { increment: 1 } },
-  }).catch(() => {});
+  if (redirectRecord) {
+    await prisma.redirect.update({
+      where: { id: redirectRecord.id },
+      data: { hitCount: { increment: 1 } },
+    }).catch(() => {});
 
-  return Astro.redirect(redirectRecord.targetUrl, redirectRecord.statusCode);
+    return Astro.redirect(redirectRecord.targetUrl, redirectRecord.statusCode);
+  }
+} catch (error) {
+  console.error('Failed to check redirect record:', error);
 }
 
-const post = await prisma.post.findUnique({
-  where: { slug },
-  include: {
-    author: true,
-    categories: { include: { category: true } },
-    tags: { include: { tag: true } },
-    comments: {
-      where: { status: 'approved' },
-      orderBy: { createdAt: 'desc' },
+let post: any = null;
+try {
+  post = await prisma.post.findUnique({
+    where: { slug },
+    include: {
+      author: true,
+      categories: { include: { category: true } },
+      tags: { include: { tag: true } },
+      comments: {
+        where: { status: 'approved' },
+        orderBy: { createdAt: 'desc' },
+      },
     },
-  },
-});
+  });
+} catch (error) {
+  console.error('Failed to fetch post:', error);
+}
 
 if (!post || post.status === 'trash') {
   return Astro.redirect('/404');

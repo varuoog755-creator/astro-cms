@@ -1,14 +1,21 @@
 import type { APIRoute } from 'astro';
-import { PRODUCTS_CATALOG } from '../lib/products';
+import { getStorefrontProducts } from '../lib/products';
 import prisma from '../lib/db';
 
 export const GET: APIRoute = async ({ request }) => {
   const origin = new URL(request.url).origin;
 
-  const posts = await prisma.post.findMany({
-    where: { status: 'published' },
-    select: { slug: true, updatedAt: true },
-  });
+  let posts: any[] = [];
+  try {
+    posts = await prisma.post.findMany({
+      where: { status: 'published' },
+      select: { slug: true, updatedAt: true },
+    });
+  } catch (error) {
+    console.error('Failed to fetch posts for sitemap:', error);
+  }
+
+  const products = await getStorefrontProducts();
 
   const staticUrls = [
     { loc: '/', priority: '1.0', changefreq: 'daily' },
@@ -17,7 +24,7 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: '/about', priority: '0.5', changefreq: 'monthly' },
   ];
 
-  const productUrls = PRODUCTS_CATALOG.map((p) => ({
+  const productUrls = products.map((p) => ({
     loc: `/products/${p.slug}`,
     priority: '0.9',
     changefreq: 'weekly',

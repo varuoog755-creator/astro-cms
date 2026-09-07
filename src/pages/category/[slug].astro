@@ -4,18 +4,23 @@ import prisma from '../../lib/db';
 
 const { slug } = Astro.params;
 
-const category = await prisma.category.findUnique({
-  where: { slug },
-  include: {
-    posts: {
-      include: {
-        post: {
-          include: { author: true },
+let category: any = null;
+try {
+  category = await prisma.category.findUnique({
+    where: { slug },
+    include: {
+      posts: {
+        include: {
+          post: {
+            include: { author: true },
+          },
         },
       },
     },
-  },
-});
+  });
+} catch (error) {
+  console.error('Failed to fetch category:', error);
+}
 
 if (!category) return Astro.redirect('/404');
 ---

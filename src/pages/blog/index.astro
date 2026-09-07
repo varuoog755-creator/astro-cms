@@ -2,11 +2,16 @@
 import PublicLayout from '../../layouts/PublicLayout.astro';
 import prisma from '../../lib/db';
 
-const posts = await prisma.post.findMany({
-  where: { status: 'published' },
-  orderBy: { publishedAt: 'desc' },
-  include: { author: true, categories: { include: { category: true } } },
-});
+let posts: any[] = [];
+try {
+  posts = await prisma.post.findMany({
+    where: { status: 'published' },
+    orderBy: { publishedAt: 'desc' },
+    include: { author: true, categories: { include: { category: true } } },
+  });
+} catch (error) {
+  console.error('Failed to fetch blog posts:', error);
+}
 ---
 
 <PublicLayout seo={{ title: 'Blog Archive' }}>

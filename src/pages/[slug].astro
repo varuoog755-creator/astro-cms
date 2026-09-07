@@ -5,9 +5,14 @@ import prisma from '../lib/db';
 
 const { slug } = Astro.params;
 
-const page = await prisma.page.findUnique({
-  where: { slug },
-});
+let page: any = null;
+try {
+  page = await prisma.page.findUnique({
+    where: { slug },
+  });
+} catch (error) {
+  console.error('Failed to fetch page:', error);
+}
 
 if (!page || page.status === 'trash') {
   return Astro.redirect('/404');

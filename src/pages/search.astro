@@ -1,7 +1,7 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import prisma from '../lib/db';
-import { PRODUCTS_CATALOG } from '../lib/products';
+import { getStorefrontProducts } from '../lib/products';
 
 const query = Astro.url.searchParams.get('q') || '';
 
@@ -11,36 +11,45 @@ let matchingProducts: any[] = [];
 
 if (query.trim().length > 0) {
   const qLower = query.toLowerCase();
+  const allProducts = await getStorefrontProducts();
 
-  matchingProducts = PRODUCTS_CATALOG.filter(
+  matchingProducts = allProducts.filter(
     (p) =>
       p.name.toLowerCase().includes(qLower) ||
       p.description.toLowerCase().includes(qLower) ||
       p.category.toLowerCase().includes(qLower) ||
-      p.tagline.toLowerCase().includes(qLower)
+      (p.tagline && p.tagline.toLowerCase().includes(qLower))
   );
 
-  matchingPosts = await prisma.post.findMany({
-    where: {
-      status: 'published',
-      OR: [
-        { title: { contains: query } },
-        { excerpt: { contains: query } },
-        { content: { contains: query } },
-      ],
-    },
-    include: { author: true },
-  });
+  try {
+    matchingPosts = await prisma.post.findMany({
+      where: {
+        status: 'published',
+        OR: [
+          { title: { contains: query } },
+          { excerpt: { contains: query } },
+          { content: { contains: query } },
+        ],
+      },
+      include: { author: true },
+    });
+  } catch (error) {
+    console.error('Failed to search posts:', error);
+  }
 
-  matchingPages = await prisma.page.findMany({
-    where: {
-      status: 'published',
-      OR: [
-        { title: { contains: query } },
-        { content: { contains: query } },
-      ],
-    },
-  });
+  try {
+    matchingPages = await prisma.page.findMany({
+      where: {
+        status: 'published',
+        OR: [
+          { title: { contains: query } },
+          { content: { contains: query } },
+        ],
+      },
+    });
+  } catch (error) {
+    console.error('Failed to search pages:', error);
+  }
 }
 
 const totalCount = matchingPosts.length + matchingPages.length + matchingProducts.length;

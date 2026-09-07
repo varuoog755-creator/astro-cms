@@ -4,18 +4,23 @@ import prisma from '../../lib/db';
 
 const { slug } = Astro.params;
 
-const tag = await prisma.tag.findUnique({
-  where: { slug },
-  include: {
-    posts: {
-      include: {
-        post: {
-          include: { author: true },
+let tag: any = null;
+try {
+  tag = await prisma.tag.findUnique({
+    where: { slug },
+    include: {
+      posts: {
+        include: {
+          post: {
+            include: { author: true },
+          },
         },
       },
     },
-  },
-});
+  });
+} catch (error) {
+  console.error('Failed to fetch tag:', error);
+}
 
 if (!tag) return Astro.redirect('/404');
 ---
