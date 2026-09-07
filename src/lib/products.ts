@@ -232,35 +232,52 @@ export async function getStorefrontProducts(): Promise<Product[]> {
       orderBy: { createdAt: 'desc' },
     });
 
-    if (dbProducts.length === 0) {
+    if (!dbProducts || dbProducts.length === 0) {
       return PRODUCTS_CATALOG;
     }
 
-    return dbProducts.map((p) => ({
-      id: p.id,
-      slug: p.slug,
-      name: p.name,
-      tagline: p.tagline || '',
-      description: p.description,
-      price: p.price,
-      originalPrice: p.originalPrice || undefined,
-      currency: p.currency || '₹',
-      category: p.category,
-      badge: p.badge || undefined,
-      rating: p.rating,
-      reviewCount: p.reviewCount,
-      inStock: p.inStock,
-      colors: JSON.parse(p.colorsJson || '[]'),
-      sizes: JSON.parse(p.sizesJson || '[]'),
-      fabricSpecs: {
-        gsm: p.gsm,
-        material: p.material,
-        fit: p.fit,
-        care: p.care,
-      },
-      images: JSON.parse(p.imagesJson || '[]'),
-      features: JSON.parse(p.featuresJson || '[]'),
-    }));
+    const mapped = dbProducts.map((p) => {
+      try {
+        const parseJson = (str: string) => {
+          try {
+            return JSON.parse(str || '[]');
+          } catch {
+            return [];
+          }
+        };
+
+        return {
+          id: p.id,
+          slug: p.slug,
+          name: p.name,
+          tagline: p.tagline || '',
+          description: p.description,
+          price: p.price,
+          originalPrice: p.originalPrice || undefined,
+          currency: p.currency || '₹',
+          category: p.category,
+          badge: p.badge || undefined,
+          rating: p.rating,
+          reviewCount: p.reviewCount,
+          inStock: p.inStock,
+          colors: parseJson(p.colorsJson),
+          sizes: parseJson(p.sizesJson),
+          fabricSpecs: {
+            gsm: p.gsm || 280,
+            material: p.material || '100% Premium Polyester',
+            fit: p.fit || 'Silver Eyelet Grommets',
+            care: p.care || 'Hand & Machine Wash Cold',
+          },
+          images: parseJson(p.imagesJson),
+          features: parseJson(p.featuresJson),
+        };
+      } catch (err) {
+        console.error('Failed to map product item:', err);
+        return null;
+      }
+    }).filter(Boolean) as Product[];
+
+    return mapped.length > 0 ? mapped : PRODUCTS_CATALOG;
   } catch (error) {
     console.error('Failed to load DB products:', error);
     return PRODUCTS_CATALOG;

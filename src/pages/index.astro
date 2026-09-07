@@ -1,16 +1,21 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import prisma from '../lib/db';
-import { PRODUCTS_CATALOG } from '../lib/products';
+import { getStorefrontProducts } from '../lib/products';
 
-const posts = await prisma.post.findMany({
-  where: { status: 'published' },
-  orderBy: { publishedAt: 'desc' },
-  take: 3,
-  include: { author: true, categories: { include: { category: true } } },
-});
+let posts: any[] = [];
+try {
+  posts = await prisma.post.findMany({
+    where: { status: 'published' },
+    orderBy: { publishedAt: 'desc' },
+    take: 3,
+    include: { author: true, categories: { include: { category: true } } },
+  });
+} catch (error) {
+  console.error('Failed to load posts for homepage:', error);
+}
 
-const featuredProducts = PRODUCTS_CATALOG;
+const featuredProducts = await getStorefrontProducts();
 ---
 
 <PublicLayout seo={{ title: 'Teepul - Luxury Door Curtains, Window Drapery & Home Decor Lighting' }}>

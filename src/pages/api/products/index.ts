@@ -1,12 +1,13 @@
 import type { APIRoute } from 'astro';
-import { PRODUCTS_CATALOG } from '../../../lib/products';
+import { getStorefrontProducts } from '../../../lib/products';
 
 export const GET: APIRoute = async () => {
+  const products = await getStorefrontProducts();
   return new Response(
     JSON.stringify({
       success: true,
-      count: PRODUCTS_CATALOG.length,
-      data: PRODUCTS_CATALOG,
+      count: products.length,
+      data: products,
     }),
     {
       status: 200,

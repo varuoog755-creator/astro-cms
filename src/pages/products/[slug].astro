@@ -1,16 +1,17 @@
 ---
 import PublicLayout from '../../layouts/PublicLayout.astro';
-import { PRODUCTS_CATALOG } from '../../lib/products';
+import { getStorefrontProducts } from '../../lib/products';
 
 const { slug } = Astro.params;
 
-const product = PRODUCTS_CATALOG.find((p) => p.slug === slug);
+const allProducts = await getStorefrontProducts();
+const product = allProducts.find((p) => p.slug === slug);
 
 if (!product) {
   return Astro.redirect('/products');
 }
 
-const relatedProducts = PRODUCTS_CATALOG.filter((p) => p.id !== product.id);
+const relatedProducts = allProducts.filter((p) => p.id !== product.id);
 ---
 
 <PublicLayout
