@@ -5,17 +5,28 @@ import prisma from '../lib/db';
 
 const { slug } = Astro.params;
 
+if (slug === '404') {
+  Astro.response.status = 404;
+}
+
 let page: any = null;
 try {
   page = await prisma.page.findUnique({
-    where: { slug },
+    where: { slug: slug || '' },
   });
 } catch (error) {
   console.error('Failed to fetch page:', error);
 }
 
 if (!page || page.status === 'trash') {
-  return Astro.redirect('/404');
+  if (slug === '404') {
+    page = {
+      title: '404 - Page Not Found',
+      content: JSON.stringify([]),
+    };
+  } else {
+    return Astro.redirect('/404');
+  }
 }
 ---
 
