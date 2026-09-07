@@ -231,56 +231,74 @@ export const PRODUCTS_CATALOG: Product[] = [
 
 export async function getStorefrontProducts(): Promise<Product[]> {
   try {
-    const dbProducts = await prisma.product.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
+    let mappedDb: Product[] = [];
+    try {
+      const dbProducts = await prisma.product.findMany({
+        orderBy: { createdAt: 'desc' },
+      });
 
-    if (!dbProducts || dbProducts.length === 0) {
-      return PRODUCTS_CATALOG.filter(Boolean);
+      if (dbProducts && dbProducts.length > 0) {
+        mappedDb = dbProducts.map((p) => {
+          try {
+            const parseJson = (str: string) => {
+              try {
+                return JSON.parse(str || '[]');
+              } catch {
+                return [];
+              }
+            };
+
+            return {
+              id: p.id,
+              slug: p.slug,
+              name: p.name,
+              tagline: p.tagline || '',
+              description: p.description,
+              price: p.price,
+              originalPrice: p.originalPrice || undefined,
+              currency: p.currency || '₹',
+              category: p.category,
+              badge: p.badge || undefined,
+              rating: p.rating,
+              reviewCount: p.reviewCount,
+              inStock: p.inStock,
+              colors: parseJson(p.colorsJson),
+              sizes: parseJson(p.sizesJson),
+              fabricSpecs: {
+                gsm: p.gsm || 280,
+                material: p.material || '100% Premium Polyester',
+                fit: p.fit || 'Silver Eyelet Grommets',
+                care: p.care || 'Hand & Machine Wash Cold',
+              },
+              images: parseJson(p.imagesJson),
+              features: parseJson(p.featuresJson),
+            };
+          } catch (err) {
+            console.error('Failed to map product item:', err);
+            return null;
+          }
+        }).filter(Boolean) as Product[];
+      }
+    } catch (dbErr) {
+      console.error('Failed to query DB products:', dbErr);
     }
 
-    const mapped = dbProducts.map((p) => {
-      try {
-        const parseJson = (str: string) => {
-          try {
-            return JSON.parse(str || '[]');
-          } catch {
-            return [];
-          }
-        };
+    const catalog = PRODUCTS_CATALOG.filter(Boolean);
+    const combinedMap = new Map<string, Product>();
 
-        return {
-          id: p.id,
-          slug: p.slug,
-          name: p.name,
-          tagline: p.tagline || '',
-          description: p.description,
-          price: p.price,
-          originalPrice: p.originalPrice || undefined,
-          currency: p.currency || '₹',
-          category: p.category,
-          badge: p.badge || undefined,
-          rating: p.rating,
-          reviewCount: p.reviewCount,
-          inStock: p.inStock,
-          colors: parseJson(p.colorsJson),
-          sizes: parseJson(p.sizesJson),
-          fabricSpecs: {
-            gsm: p.gsm || 280,
-            material: p.material || '100% Premium Polyester',
-            fit: p.fit || 'Silver Eyelet Grommets',
-            care: p.care || 'Hand & Machine Wash Cold',
-          },
-          images: parseJson(p.imagesJson),
-          features: parseJson(p.featuresJson),
-        };
-      } catch (err) {
-        console.error('Failed to map product item:', err);
-        return null;
+    // Add catalog items first so the 10 new Meesho seller products are always present
+    for (const p of catalog) {
+      combinedMap.set(p.slug, p);
+    }
+
+    // Add DB items if new ones were added via admin panel
+    for (const p of mappedDb) {
+      if (!combinedMap.has(p.slug)) {
+        combinedMap.set(p.slug, p);
       }
-    }).filter(Boolean) as Product[];
+    }
 
-    return mapped.length > 0 ? mapped : PRODUCTS_CATALOG.filter(Boolean);
+    return Array.from(combinedMap.values());
   } catch (error) {
     console.error('Failed to load DB products:', error);
     return PRODUCTS_CATALOG.filter(Boolean);
