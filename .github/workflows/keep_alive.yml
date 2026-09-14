@@ -1,0 +1,15 @@
+name: Keep Website Alive (Anti-Sleep Ping)
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Web Service
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" https://astro-cms-8n2y.onrender.com || true
