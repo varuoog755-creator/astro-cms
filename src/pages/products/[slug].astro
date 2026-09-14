@@ -113,11 +113,11 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
             </span>
           </div>
 
-          <!-- Color Selector -->
+          <!-- Color Display -->
           <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-              <span class="uppercase tracking-wider">Select Color</span>
-              <span id="selected-color-label" class="text-blue-600 font-semibold">{product.colors[0].name}</span>
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+              <span class="uppercase tracking-wider">Color:</span>
+              <span id="selected-color-label" class="text-blue-600 font-bold">{product.colors[0]?.name}</span>
             </div>
             <div class="flex flex-wrap gap-3">
               {product.colors.map((c, idx) => (
