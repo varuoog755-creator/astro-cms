@@ -62,7 +62,7 @@ const featuredProducts = await getStorefrontProducts();
         <!-- Trust Badges -->
         <div class="grid grid-cols-3 gap-6 pt-8 border-t border-amber-900/10 text-xs">
           <div>
-            <div class="text-2xl font-black text-slate-900">350 GSM</div>
+            <div class="text-2xl font-black text-slate-900">Heavy Weave</div>
             <div class="text-slate-600 font-semibold mt-0.5">Heavy Velvet & Linen</div>
           </div>
           <div>
@@ -177,11 +177,6 @@ const featuredProducts = await getStorefrontProducts();
             {product.badge && (
               <span class="absolute top-3 left-3 bg-slate-900/90 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
                 {product.badge}
-              </span>
-            )}
-            {product.fabricSpecs?.gsm > 0 && (
-              <span class="absolute top-3 right-3 bg-amber-800 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg shadow-md">
-                {product.fabricSpecs.gsm} GSM
               </span>
             )}
           </div>

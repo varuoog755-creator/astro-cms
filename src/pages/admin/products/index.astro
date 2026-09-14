@@ -74,8 +74,8 @@ const deleted = Astro.url.searchParams.get('deleted') === 'true';
                   {p.originalPrice && <span class="text-xs text-slate-400 line-through font-normal block">{p.currency}{p.originalPrice.toLocaleString('en-IN')}</span>}
                 </td>
                 <td class="p-4 text-[11px] text-slate-500">
-                  {p.fabricSpecs.gsm > 0 && <div>{p.fabricSpecs.gsm} GSM</div>}
                   <div>{p.fabricSpecs.material}</div>
+                  <div>{p.fabricSpecs.fit}</div>
                 </td>
                 <td class="p-4">
                   {p.inStock ? (
