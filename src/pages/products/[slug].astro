@@ -136,15 +136,15 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
           <!-- Size Selector -->
           <div class="space-y-2">
             <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-              <span class="uppercase tracking-wider">Select Size (Oversized Fit)</span>
-              <span id="selected-size-label" class="text-blue-600 font-semibold">{product.sizes[1] || product.sizes[0]}</span>
+              <span class="uppercase tracking-wider">Select Size / Length</span>
+              <span id="selected-size-label" class="text-blue-600 font-semibold">{product.sizes[0]}</span>
             </div>
             <div class="flex flex-wrap gap-2.5">
               {product.sizes.map((sz, idx) => (
                 <button
                   type="button"
                   data-size={sz}
-                  class={`size-btn w-12 h-11 rounded-xl border-2 font-black text-xs transition focus:outline-none ${idx === 1 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-800'}`}
+                  class={`size-btn px-4 py-2.5 rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap ${idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-800'}`}
                 >
                   {sz}
                 </button>
@@ -255,7 +255,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
   <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
-      let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || 'M';
+      let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || '';
       let quantity = 1;
       const unitPrice = parseFloat(document.getElementById('unit-price')?.innerText || '0');
 
