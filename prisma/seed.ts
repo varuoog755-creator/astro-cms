@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { seed19Blogs } from './seed_blogs';
 
 const prisma = new PrismaClient();
 
@@ -330,6 +331,8 @@ async function main() {
       config: JSON.stringify({ autoSchema: true }),
     },
   });
+
+  await seed19Blogs();
 
   console.log('✅ Database seed completed successfully!');
 }

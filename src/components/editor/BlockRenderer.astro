@@ -8,17 +8,29 @@ interface Props {
 const { content } = Astro.props;
 
 let blocks: Block[] = [];
+let isHtml = false;
+
 if (typeof content === 'string') {
-  try {
-    blocks = JSON.parse(content);
-  } catch (e) {
-    blocks = [{ id: 'fallback', type: 'paragraph', data: { text: content } }];
+  const trimmed = content.trim();
+  if (trimmed.startsWith('<')) {
+    isHtml = true;
+  } else {
+    try {
+      blocks = JSON.parse(content);
+    } catch (e) {
+      blocks = [{ id: 'fallback', type: 'paragraph', data: { text: content } }];
+    }
   }
 } else if (Array.isArray(content)) {
   blocks = content;
 }
 ---
 
+{isHtml ? (
+  <div class="block-content space-y-6 text-gray-800 leading-relaxed">
+    <Fragment set:html={content as string} />
+  </div>
+) : (
 <div class="block-content space-y-6 text-gray-800 leading-relaxed">
   {blocks.map((block) => {
     switch (block.type) {
@@ -150,3 +162,4 @@ if (typeof content === 'string') {
     }
   })}
 </div>
+)}
