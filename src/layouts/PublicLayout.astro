@@ -135,15 +135,11 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
         
         <!-- Brand Logo -->
         <a href="/" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 bg-gradient-to-tr from-amber-700 via-amber-600 to-amber-500 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-md shadow-amber-600/20 group-hover:scale-105 transition-transform">
-            T
-          </div>
-          <div class="flex flex-col">
-            <span class="font-extrabold text-2xl tracking-tight text-slate-900 group-hover:text-amber-700 transition-colors">
-              TEEPUL
-            </span>
-            <span class="text-[9px] font-bold tracking-widest text-amber-700 uppercase -mt-1">Luxury Home & Drapery</span>
-          </div>
+          <img
+            src="/teepul-logo-transparent.png"
+            alt="Teepul Luxury Home & Drapery"
+            class="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform"
+          />
         </a>
 
         <!-- Desktop Navigation Menu -->
@@ -248,10 +244,9 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
           
           <!-- Column 1: Brand Info -->
           <div class="space-y-4 md:col-span-1">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 bg-gradient-to-tr from-amber-700 via-amber-600 to-amber-500 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md">T</div>
-              <span class="text-white font-extrabold text-xl tracking-tight">TEEPUL</span>
-            </div>
+            <a href="/" class="inline-block bg-white/95 backdrop-blur px-3.5 py-2 rounded-2xl border border-white/20 shadow-md">
+              <img src="/teepul-logo.png" alt="Teepul Luxury Home & Drapery" class="h-8 w-auto object-contain" />
+            </a>
             <p class="text-xs leading-relaxed text-slate-400">
               Luxury Door Curtains, French Sheer Window Drapery, Ambient Lighting & Home Decoration Accents. Designed for timeless elegance in Indian living spaces.
             </p>
