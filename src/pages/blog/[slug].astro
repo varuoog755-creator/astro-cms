@@ -23,33 +23,29 @@ try {
   console.error('Failed to check redirect record:', error);
 }
 
-let post: any = null;
-try {
-  post = await prisma.post.findUnique({
-    where: { slug },
-    include: {
-      author: true,
-      categories: { include: { category: true } },
-      tags: { include: { tag: true } },
-      comments: {
-        where: { status: 'approved' },
-        orderBy: { createdAt: 'desc' },
+import { getStorefrontBlogs } from '../../lib/blogs';
+
+const blogs = await getStorefrontBlogs();
+let post: any = blogs.find((b) => b.slug === slug);
+
+if (!post) {
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug },
+      include: {
+        author: true,
+        categories: { include: { category: true } },
+        tags: { include: { tag: true } },
       },
-    },
-  });
-} catch (error) {
-  console.error('Failed to fetch post:', error);
+    });
+  } catch (error) {
+    console.error('Failed to fetch post:', error);
+  }
 }
 
-if (!post || post.status === 'trash') {
+if (!post) {
   return Astro.redirect('/404');
 }
-
-// Increment post views count
-await prisma.post.update({
-  where: { id: post.id },
-  data: { viewsCount: { increment: 1 } },
-}).catch(() => {});
 ---
 
 <PublicLayout
@@ -57,7 +53,7 @@ await prisma.post.update({
     title: post.title,
     description: post.excerpt || undefined,
     type: 'article',
-    publishedTime: post.publishedAt?.toISOString(),
+    publishedTime: typeof post.publishedAt === 'string' ? post.publishedAt : post.publishedAt?.toISOString(),
     authorName: post.author.displayName,
     breadcrumbs: [
       { name: 'Home', url: '/' },
@@ -118,11 +114,11 @@ await prisma.post.update({
 
     <!-- Comments Section -->
     <section class="space-y-8">
-      <h3 class="text-2xl font-bold text-gray-900">Comments ({post.comments.length})</h3>
+      <h3 class="text-2xl font-bold text-gray-900">Comments ({(post.comments || []).length})</h3>
 
       <!-- Approved Comments List -->
       <div class="space-y-4">
-        {post.comments.map((comment) => (
+        {(post.comments || []).map((comment: any) => (
           <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2">
             <div class="flex items-center justify-between text-xs text-gray-500">
               <span class="font-bold text-gray-900">{comment.authorName}</span>
