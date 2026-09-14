@@ -98,9 +98,10 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
             <span class="text-slate-500">{product.reviewCount} Verified Customer Reviews</span>
           </div>
 
-          <p class="text-slate-600 text-sm leading-relaxed">
-            {product.description}
-          </p>
+          <div class="bg-blue-50/60 border border-blue-100 p-3.5 rounded-2xl flex items-center gap-3 text-xs sm:text-sm font-semibold text-slate-700">
+            <span class="text-blue-600 font-bold text-base shrink-0">✨</span>
+            <span>{product.tagline || (product.description ? product.description.split('.')[0] + '.' : 'Premium Quality Panipat Curtain')}</span>
+          </div>
 
           <!-- Price Header -->
           <div class="pt-4 pb-2 border-y border-slate-100 flex items-baseline gap-3">
@@ -243,6 +244,102 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
           </div>
           <div class="bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/10 text-center">
             ✨ QC Verified
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Product Description & Specifications Section -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-8 my-8">
+      <div class="border-b border-slate-100 pb-4 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Complete Overview</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Product Details & Features</h2>
+        </div>
+        <div class="flex items-center gap-3 text-xs font-bold text-slate-500">
+          <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">📦 Direct Factory Shipping</span>
+          <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-lg border border-amber-200">🛡️ 100% Inspected Quality</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left: Formatted Description Paragraphs & Highlights -->
+        <div class="lg:col-span-8 space-y-6 text-slate-700 text-sm leading-relaxed">
+          {product.description ? (
+            <div class="space-y-4">
+              {product.description.split('\n\n').map((paragraph) => {
+                const trimmed = paragraph.trim();
+                if (!trimmed) return null;
+                
+                // If it looks like bullet points or key features list
+                if (trimmed.startsWith('✔') || trimmed.startsWith('•') || trimmed.includes('\n•') || trimmed.includes('\n✔')) {
+                  const lines = trimmed.split('\n').map(l => l.trim()).filter(Boolean);
+                  return (
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 my-4 space-y-2">
+                      {lines.map((line) => (
+                        <div class="flex items-start gap-2.5 text-xs sm:text-sm font-medium text-slate-800">
+                          <span class="text-emerald-600 font-bold shrink-0">✓</span>
+                          <span>{line.replace(/^[✔•\s\-\u2714]+/, '')}</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+                
+                return <p class="text-slate-600 text-sm sm:text-base leading-relaxed">{trimmed}</p>;
+              })}
+            </div>
+          ) : (
+            <p class="text-slate-600 text-sm leading-relaxed">
+              Crafted in our Panipat manufacturing unit, this curtain panel combines heavyweight thermal fabric with precision eyelet stitching to deliver superior light blocking, thermal regulation, and seamless interior aesthetic.
+            </p>
+          )}
+
+          <!-- Highlights Grid -->
+          {product.features && product.features.length > 0 && (
+            <div class="pt-4 space-y-3 border-t border-slate-100">
+              <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-widest">Key Performance Highlights</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {product.features.map((feat) => (
+                  <div class="flex items-center gap-3 bg-blue-50/60 border border-blue-100 p-3 rounded-xl text-xs font-bold text-blue-950">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 font-black">✓</span>
+                    <span>{feat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Right: Technical Specifications Box -->
+        <div class="lg:col-span-4 space-y-4">
+          <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-4 border border-slate-800">
+            <h3 class="font-extrabold text-xs text-amber-400 uppercase tracking-widest flex items-center gap-2">
+              <span>🧵</span> Fabric Specifications
+            </h3>
+            
+            <div class="space-y-3 text-xs divide-y divide-slate-800">
+              <div class="pt-2 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Fabric GSM</span>
+                <span class="font-bold text-white bg-slate-800 px-2.5 py-1 rounded-md">{product.fabricSpecs?.gsm || 280} GSM</span>
+              </div>
+              <div class="pt-3 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Material</span>
+                <span class="font-bold text-white text-right">{product.fabricSpecs?.material || '100% Premium Polyester'}</span>
+              </div>
+              <div class="pt-3 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Fitting Style</span>
+                <span class="font-bold text-white text-right">{product.fabricSpecs?.fit || 'Silver Eyelet Grommets'}</span>
+              </div>
+              <div class="pt-3 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Care</span>
+                <span class="font-bold text-white text-right">{product.fabricSpecs?.care || 'Hand & Machine Wash Cold'}</span>
+              </div>
+              <div class="pt-3 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Origin</span>
+                <span class="font-black text-amber-300">Panipat, Haryana (India)</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
