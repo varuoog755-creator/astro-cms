@@ -13,7 +13,7 @@ const totalRevenue = orders
 
 const paidOrdersCount = orders.filter((o) => o.paymentStatus === 'PAID').length;
 const pendingOrdersCount = orders.filter((o) => o.paymentStatus === 'PENDING' || o.paymentStatus === 'COD_PENDING').length;
-const bookedEKartCount = orders.filter((o) => o.courierPartner?.includes('EKart')).length;
+const bookedEKartCount = orders.filter((o) => o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber)).length;
 
 // Helper to calculate estimated EKart shipping rate
 function getEkartRate(pincode: string) {
@@ -26,7 +26,7 @@ function getEkartRate(pincode: string) {
 ---
 
 <AdminLayout title="Teepul Orders & EKart Courier Booking" activeNav="orders">
-  <div class="space-y-8">
+  <div class="space-y-6">
 
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
@@ -35,7 +35,7 @@ function getEkartRate(pincode: string) {
           <span>📦 LIVE CURTAIN FULFILLMENT</span>
         </div>
         <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Customer Orders & EKart Logistics</h1>
-        <p class="text-sm text-slate-500 mt-1">Review curtain color, size, customer address & book EKart courier pickup after order confirmation.</p>
+        <p class="text-sm text-slate-500 mt-1">Permanent order records, day-by-day filters, curtain specifications & EKart courier booking.</p>
       </div>
 
       <div class="flex items-center gap-3">
@@ -54,9 +54,9 @@ function getEkartRate(pincode: string) {
       </div>
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Orders</span>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Orders Count</span>
         <div class="text-2xl font-black text-blue-600 mt-1">{orders.length}</div>
-        <span class="text-[10px] text-slate-500 mt-1 block">Door & Window Curtain Sales</span>
+        <span class="text-[10px] text-slate-500 mt-1 block">Permanent Order Log</span>
       </div>
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -72,13 +72,44 @@ function getEkartRate(pincode: string) {
       </div>
     </div>
 
-    <!-- Orders Cards / Detailed List -->
+    <!-- Day-by-Day & Status Filter Control Bar -->
+    <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 text-xs">
+      
+      <!-- Date Filter Buttons -->
+      <div class="flex flex-wrap items-center gap-2" id="date-filter-group">
+        <span class="font-extrabold text-slate-800 uppercase tracking-wider text-[10px] mr-1">📅 Date Filter:</span>
+        <button data-date="all" class="date-btn bg-amber-800 text-white font-bold px-3.5 py-1.5 rounded-full shadow-sm transition">All Time ({orders.length})</button>
+        <button data-date="today" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">☀️ Today</button>
+        <button data-date="yesterday" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">🌙 Yesterday</button>
+        <button data-date="7days" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">🗓️ Last 7 Days</button>
+        <button data-date="month" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">📊 This Month</button>
+      </div>
+
+      <!-- Status & Search Inputs -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <select id="status-filter" class="bg-slate-100 text-xs font-bold text-slate-800 rounded-2xl px-3 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500">
+          <option value="all">Fulfillment: All Statuses</option>
+          <option value="PROCESSING">PROCESSING (Unbooked)</option>
+          <option value="SHIPPED">SHIPPED (EKart Active)</option>
+          <option value="DELIVERED">DELIVERED</option>
+        </select>
+
+        <input
+          type="text"
+          id="order-search-input"
+          placeholder="Search Order #, Phone, Name..."
+          class="bg-slate-100 text-xs font-medium text-slate-800 rounded-2xl px-4 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-56"
+        />
+      </div>
+    </div>
+
+    <!-- Orders Cards / Detailed Permanent List -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-6 border-b border-slate-200 flex items-center justify-between">
         <h2 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
-          <span>🛍️</span> Customer Orders ({orders.length})
+          <span>🛍️</span> Orders Records (<span id="visible-order-count">{orders.length}</span>)
         </h2>
-        <span class="text-xs text-slate-500 font-medium">Click "Book EKart Courier" to schedule pickup</span>
+        <span class="text-xs text-slate-500 font-medium">All orders remain permanently saved in database</span>
       </div>
 
       {orders.length === 0 ? (
@@ -88,13 +119,20 @@ function getEkartRate(pincode: string) {
           <p class="text-xs text-slate-400 mt-1">Storefront orders will appear here automatically.</p>
         </div>
       ) : (
-        <div class="divide-y divide-slate-200">
+        <div class="divide-y divide-slate-200" id="orders-list-container">
           {orders.map((o) => {
             const ekartFee = getEkartRate(o.pincode);
             const isBooked = o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber);
+            const isoDate = new Date(o.createdAt).toISOString();
+            const searchText = `${o.orderNumber} ${o.customerName} ${o.customerPhone} ${o.customerEmail} ${o.shippingAddress} ${o.pincode}`.toLowerCase();
 
             return (
-              <div class="p-6 hover:bg-slate-50/50 transition space-y-4">
+              <div
+                class="order-card-row p-6 hover:bg-slate-50/50 transition space-y-4"
+                data-created-at={isoDate}
+                data-status={o.orderStatus}
+                data-search={searchText}
+              >
                 
                 <!-- Top Row: Order ID, Date, Payment Status & EKart Rate -->
                 <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -245,6 +283,7 @@ function getEkartRate(pincode: string) {
   </div>
 
   <script is:inline>
+    // EKart Booking Handler
     document.querySelectorAll('.book-ekart-btn').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         const orderId = btn.getAttribute('data-order-id');
@@ -275,6 +314,85 @@ function getEkartRate(pincode: string) {
           btn.disabled = false;
           btn.innerHTML = '📦 Confirm & Book EKart Pickup';
         }
+      });
+    });
+
+    // Day-by-Day & Status Interactive Filter Script
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateBtns = document.querySelectorAll('.date-btn');
+      const statusSelect = document.getElementById('status-filter');
+      const searchInput = document.getElementById('order-search-input');
+      const orderRows = document.querySelectorAll('.order-card-row');
+      const visibleCountEl = document.getElementById('visible-order-count');
+
+      let currentDateFilter = 'all';
+      let currentStatusFilter = 'all';
+      let currentQuery = '';
+
+      function applyFilters() {
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const yesterdayStart = todayStart - (24 * 60 * 60 * 1000);
+        const sevenDaysAgo = todayStart - (7 * 24 * 60 * 60 * 1000);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+        let visibleCount = 0;
+
+        orderRows.forEach((row) => {
+          const rawDate = row.getAttribute('data-created-at');
+          const rowTime = rawDate ? new Date(rawDate).getTime() : 0;
+          const rowStatus = row.getAttribute('data-status') || '';
+          const rowSearch = row.getAttribute('data-search') || '';
+
+          // 1. Date filter condition
+          let passDate = false;
+          if (currentDateFilter === 'all') passDate = true;
+          else if (currentDateFilter === 'today' && rowTime >= todayStart) passDate = true;
+          else if (currentDateFilter === 'yesterday' && rowTime >= yesterdayStart && rowTime < todayStart) passDate = true;
+          else if (currentDateFilter === '7days' && rowTime >= sevenDaysAgo) passDate = true;
+          else if (currentDateFilter === 'month' && rowTime >= monthStart) passDate = true;
+
+          // 2. Status filter condition
+          let passStatus = false;
+          if (currentStatusFilter === 'all' || rowStatus === currentStatusFilter) passStatus = true;
+
+          // 3. Search query condition
+          let passSearch = false;
+          if (!currentQuery || rowSearch.includes(currentQuery)) passSearch = true;
+
+          if (passDate && passStatus && passSearch) {
+            row.style.display = 'block';
+            visibleCount += 1;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+
+        if (visibleCountEl) visibleCountEl.innerText = String(visibleCount);
+      }
+
+      dateBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          dateBtns.forEach((b) => {
+            b.classList.remove('bg-amber-800', 'text-white');
+            b.classList.add('bg-slate-100', 'text-slate-700');
+          });
+          btn.classList.remove('bg-slate-100', 'text-slate-700');
+          btn.classList.add('bg-amber-800', 'text-white');
+
+          currentDateFilter = btn.getAttribute('data-date') || 'all';
+          applyFilters();
+        });
+      });
+
+      statusSelect?.addEventListener('change', (e) => {
+        currentStatusFilter = e.target.value;
+        applyFilters();
+      });
+
+      searchInput?.addEventListener('input', (e) => {
+        currentQuery = e.target.value.toLowerCase().trim();
+        applyFilters();
       });
     });
   </script>
