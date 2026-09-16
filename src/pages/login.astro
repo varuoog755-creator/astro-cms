@@ -4,47 +4,277 @@ import AuthLayout from '../layouts/AuthLayout.astro';
 const error = Astro.url.searchParams.get('error');
 ---
 
-<AuthLayout title="Portal Sign In">
+<AuthLayout title="Sign In">
   {error && (
     <div class="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-xs text-center font-bold">
       {error}
     </div>
   )}
 
-  <form action="/api/auth/login" method="POST" class="space-y-4">
-    <div>
-      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Email or Username</label>
-      <input
-        type="text"
-        name="login"
-        required
-        placeholder="govinda755rock755@gmail.com"
-        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium"
-      />
-    </div>
-
-    <div>
-      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Password</label>
-      <input
-        type="password"
-        name="password"
-        required
-        placeholder="••••••••"
-        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium"
-      />
-    </div>
-
+  <!-- Tab Switcher -->
+  <div class="flex rounded-xl bg-slate-950 p-1 border border-slate-800 mb-6">
     <button
-      type="submit"
-      class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition duration-200 text-sm mt-2 flex items-center justify-center gap-2"
+      id="tab-phone-btn"
+      type="button"
+      class="flex-1 py-2.5 rounded-lg text-xs font-bold text-white bg-blue-600 shadow transition duration-200"
     >
-      <span>Sign In</span>
-      <span>&rarr;</span>
+      📱 Mobile OTP (Customer)
     </button>
-  </form>
-
-  <div class="mt-6 p-3 bg-slate-950/80 border border-slate-800 rounded-xl text-center text-xs text-slate-400 font-mono">
-    Admin: <span class="text-blue-400 font-bold">govinda755rock755@gmail.com</span> / <span class="text-blue-400 font-bold">Govinda@755</span>
+    <button
+      id="tab-admin-btn"
+      type="button"
+      class="flex-1 py-2.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition duration-200"
+    >
+      🔒 Admin Login
+    </button>
   </div>
 
+  <!-- CUSTOMER PHONE LOGIN FORM -->
+  <div id="phone-login-section" class="space-y-4">
+    <div id="status-msg" class="hidden p-3 rounded-xl text-xs text-center font-bold"></div>
+
+    <!-- Step 1: Send OTP -->
+    <div id="step-send-otp" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Mobile Number</label>
+        <div class="relative flex items-center">
+          <span class="absolute left-4 text-sm font-bold text-slate-400">+91</span>
+          <input
+            type="tel"
+            id="phone-input"
+            maxlength="10"
+            placeholder="9876543210"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-14 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium tracking-wide"
+          />
+        </div>
+        <p class="text-[11px] text-slate-400 mt-1">We will send a 6-digit SMS OTP to verify.</p>
+      </div>
+
+      <div id="recaptcha-container"></div>
+
+      <button
+        id="send-otp-btn"
+        type="button"
+        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition duration-200 text-sm flex items-center justify-center gap-2"
+      >
+        <span id="send-otp-text">Send OTP via SMS</span>
+        <span id="send-otp-spinner" class="hidden animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+      </button>
+    </div>
+
+    <!-- Step 2: Verify OTP -->
+    <div id="step-verify-otp" class="hidden space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Enter 6-Digit OTP</label>
+        <input
+          type="text"
+          id="otp-input"
+          maxlength="6"
+          placeholder="123456"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white text-center font-mono font-extrabold tracking-[0.5em] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <button
+        id="verify-otp-btn"
+        type="button"
+        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition duration-200 text-sm flex items-center justify-center gap-2"
+      >
+        <span id="verify-otp-text">Verify & Sign In</span>
+        <span id="verify-otp-spinner" class="hidden animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+      </button>
+
+      <div class="text-center pt-2">
+        <button id="resend-otp-btn" type="button" class="text-xs font-bold text-blue-400 hover:underline">
+          Resend OTP / Change Number
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN EMAIL LOGIN FORM (Hidden by default) -->
+  <div id="admin-login-section" class="hidden">
+    <form action="/api/auth/login" method="POST" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Email or Username</label>
+        <input
+          type="text"
+          name="login"
+          required
+          placeholder="govinda755rock755@gmail.com"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+        <input
+          type="password"
+          name="password"
+          required
+          placeholder="••••••••"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition duration-200 text-sm mt-2 flex items-center justify-center gap-2"
+      >
+        <span>Admin Sign In</span>
+        <span>&rarr;</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Firebase Web SDK Compat -->
+  <script is:inline src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script is:inline src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <script is:inline>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYqvsMKhrWZsBU_3nAVsidKd9BMR1IbrI",
+      authDomain: "teepul-official.firebaseapp.com",
+      projectId: "teepul-official",
+      storageBucket: "teepul-official.firebasestorage.app",
+      messagingSenderId: "550446095392",
+      appId: "1:550446095392:web:e7593de6524583b49f7045"
+    };
+
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    // UI Tab Elements
+    const tabPhoneBtn = document.getElementById('tab-phone-btn');
+    const tabAdminBtn = document.getElementById('tab-admin-btn');
+    const phoneLoginSection = document.getElementById('phone-login-section');
+    const adminLoginSection = document.getElementById('admin-login-section');
+
+    tabPhoneBtn.addEventListener('click', () => {
+      tabPhoneBtn.className = 'flex-1 py-2.5 rounded-lg text-xs font-bold text-white bg-blue-600 shadow transition duration-200';
+      tabAdminBtn.className = 'flex-1 py-2.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition duration-200';
+      phoneLoginSection.classList.remove('hidden');
+      adminLoginSection.classList.add('hidden');
+    });
+
+    tabAdminBtn.addEventListener('click', () => {
+      tabAdminBtn.className = 'flex-1 py-2.5 rounded-lg text-xs font-bold text-white bg-blue-600 shadow transition duration-200';
+      tabPhoneBtn.className = 'flex-1 py-2.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition duration-200';
+      adminLoginSection.classList.remove('hidden');
+      phoneLoginSection.classList.add('hidden');
+    });
+
+    // Firebase Phone Auth Logic
+    let confirmationResult = null;
+    let recaptchaVerifier = null;
+
+    const phoneInput = document.getElementById('phone-input');
+    const otpInput = document.getElementById('otp-input');
+    const sendOtpBtn = document.getElementById('send-otp-btn');
+    const verifyOtpBtn = document.getElementById('verify-otp-btn');
+    const resendOtpBtn = document.getElementById('resend-otp-btn');
+    const statusMsg = document.getElementById('status-msg');
+
+    const stepSendOtp = document.getElementById('step-send-otp');
+    const stepVerifyOtp = document.getElementById('step-verify-otp');
+
+    function showStatus(msg, isError = false) {
+      statusMsg.classList.remove('hidden', 'bg-red-500/20', 'border-red-500/50', 'text-red-200', 'bg-emerald-500/20', 'border-emerald-500/50', 'text-emerald-200');
+      if (isError) {
+        statusMsg.classList.add('bg-red-500/20', 'border', 'border-red-500/50', 'text-red-200');
+      } else {
+        statusMsg.classList.add('bg-emerald-500/20', 'border', 'border-emerald-500/50', 'text-emerald-200');
+      }
+      statusMsg.textContent = msg;
+    }
+
+    function initRecaptcha() {
+      if (!recaptchaVerifier && typeof firebase !== 'undefined') {
+        recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          size: 'invisible',
+          callback: () => {},
+          'expired-callback': () => {
+            showStatus('reCAPTCHA expired. Please try again.', true);
+          }
+        });
+      }
+    }
+
+    sendOtpBtn.addEventListener('click', async () => {
+      const rawNumber = phoneInput.value.trim();
+      if (!rawNumber || rawNumber.length !== 10 || !/^\d{10}$/.test(rawNumber)) {
+        showStatus('Please enter a valid 10-digit mobile number.', true);
+        return;
+      }
+
+      const formattedNumber = `+91${rawNumber}`;
+
+      document.getElementById('send-otp-text').classList.add('hidden');
+      document.getElementById('send-otp-spinner').classList.remove('hidden');
+      sendOtpBtn.disabled = true;
+
+      try {
+        initRecaptcha();
+        confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedNumber, recaptchaVerifier);
+        showStatus(`OTP sent to +91 ${rawNumber}`);
+        stepSendOtp.classList.add('hidden');
+        stepVerifyOtp.classList.remove('hidden');
+      } catch (err) {
+        console.error('Firebase SMS error:', err);
+        showStatus(err.message || 'Failed to send OTP SMS. Please check number.', true);
+        if (recaptchaVerifier) recaptchaVerifier.render().then(widgetId => grecaptcha.reset(widgetId));
+      } finally {
+        document.getElementById('send-otp-text').classList.remove('hidden');
+        document.getElementById('send-otp-spinner').classList.add('hidden');
+        sendOtpBtn.disabled = false;
+      }
+    });
+
+    verifyOtpBtn.addEventListener('click', async () => {
+      const code = otpInput.value.trim();
+      if (!code || code.length !== 6) {
+        showStatus('Please enter the full 6-digit OTP code.', true);
+        return;
+      }
+
+      document.getElementById('verify-otp-text').classList.add('hidden');
+      document.getElementById('verify-otp-spinner').classList.remove('hidden');
+      verifyOtpBtn.disabled = true;
+
+      try {
+        const result = await confirmationResult.confirm(code);
+        const user = result.user;
+        showStatus('OTP Verified! Logging in...');
+
+        // Call backend to set session
+        const resp = await fetch('/api/auth/phone-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: user.phoneNumber, firebaseUid: user.uid }),
+        });
+
+        const data = await resp.json();
+        if (data.success) {
+          window.location.href = data.redirect || '/';
+        } else {
+          showStatus(data.error || 'Login session creation failed.', true);
+        }
+      } catch (err) {
+        console.error('OTP Verification error:', err);
+        showStatus('Invalid OTP code. Please try again.', true);
+      } finally {
+        document.getElementById('verify-otp-text').classList.remove('hidden');
+        document.getElementById('verify-otp-spinner').classList.add('hidden');
+        verifyOtpBtn.disabled = false;
+      }
+    });
+
+    resendOtpBtn.addEventListener('click', () => {
+      stepVerifyOtp.classList.add('hidden');
+      stepSendOtp.classList.remove('hidden');
+      statusMsg.classList.add('hidden');
+      otpInput.value = '';
+    });
+  </script>
 </AuthLayout>
