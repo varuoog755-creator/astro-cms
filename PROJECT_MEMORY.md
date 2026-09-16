@@ -23,9 +23,11 @@
    - **Customer Portal (`https://teepul.com/login`)**: Strictly for customers (Google Sign-In + Email Sign In/Register). Authenticated customers land on `/account`. Public headers, footers, and customer views MUST NOT contain any links, buttons, or references to the Admin Panel.
    - **Secret Admin Portal (`https://teepul.com/admin/login`)**: Accessible strictly via secret URL `/admin/login` for the store owner/admin (`govinda755rock755@gmail.com`).
 
-5. **PERMANENT DATA RETENTION (ZERO DISAPPEARING DATA)**
-   - All orders, customer profile details, shipping addresses, products, and sessions MUST persist permanently in the SQLite database (`prisma/cms.db`).
-   - Order status updates or EKart courier bookings MUST NOT remove or hide orders from order history views.
+5. **PERMANENT DATA RETENTION & ZERO DATA-LOSS POLICY (CRITICAL)**
+   - All 19 Curtain & Decor Products, Customer Orders, Order Items, Customer Profiles, and Integration Settings MUST persist 100% permanently in the SQLite database (`prisma/cms.db`).
+   - NEVER execute `prisma migrate reset`, `prisma db push --force-reset`, `prisma db seed`, or any command that drops or truncates database tables.
+   - Code edits or Render auto-deployments MUST NEVER reset, wipe, or overwrite the database.
+   - Automatic database backups are taken via `python scripts/backup_db.py` before any database operation.
 
 ---
 
