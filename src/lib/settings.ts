@@ -20,6 +20,17 @@ export interface IntegrationSettings {
   whatsapp_buy_button: boolean;
   whatsapp_default_message: string;
 
+  // EKart Courier & Logistics
+  ekart_enabled: boolean;
+  ekart_merchant_id: string;
+  ekart_api_key: string;
+  ekart_pickup_pincode: string;
+
+  // Firebase Google Auth
+  firebase_api_key: string;
+  firebase_auth_domain: string;
+  firebase_project_id: string;
+
   // Google Search Console & SEO
   gsc_verification_tag: string;
   gsc_enabled: boolean;
@@ -55,11 +66,20 @@ export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
   whatsapp_buy_button: true,
   whatsapp_default_message: 'Hi Teepul Store! I am interested in ordering: {product_title} (Color: {color}, Size: {size}). Total: ₹{price}. Please assist with my order.',
 
+  ekart_enabled: true,
+  ekart_merchant_id: 'EKART_PANIPAT_01',
+  ekart_api_key: '',
+  ekart_pickup_pincode: '132103',
+
+  firebase_api_key: '',
+  firebase_auth_domain: 'teepul-official.firebaseapp.com',
+  firebase_project_id: 'teepul-official',
+
   gsc_verification_tag: '',
   gsc_enabled: true,
 
   gmc_enabled: true,
-  gmc_brand_name: 'Teepul Streetwear',
+  gmc_brand_name: 'Teepul Luxury Curtains',
   gmc_currency: 'INR',
 
   ga_measurement_id: '',
@@ -73,7 +93,7 @@ export async function getIntegrationSettings(): Promise<IntegrationSettings> {
   try {
     const settingsRows = await prisma.setting.findMany({
       where: {
-        group: { in: ['integrations', 'payments', 'seo', 'analytics'] },
+        group: { in: ['integrations', 'payments', 'seo', 'analytics', 'logistics'] },
       },
     });
 
@@ -98,6 +118,15 @@ export async function getIntegrationSettings(): Promise<IntegrationSettings> {
       whatsapp_floating_widget: settingsMap.whatsapp_floating_widget !== undefined ? settingsMap.whatsapp_floating_widget === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_floating_widget,
       whatsapp_buy_button: settingsMap.whatsapp_buy_button !== undefined ? settingsMap.whatsapp_buy_button === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_buy_button,
       whatsapp_default_message: settingsMap.whatsapp_default_message ?? DEFAULT_INTEGRATION_SETTINGS.whatsapp_default_message,
+
+      ekart_enabled: settingsMap.ekart_enabled !== undefined ? settingsMap.ekart_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.ekart_enabled,
+      ekart_merchant_id: settingsMap.ekart_merchant_id ?? DEFAULT_INTEGRATION_SETTINGS.ekart_merchant_id,
+      ekart_api_key: settingsMap.ekart_api_key ?? DEFAULT_INTEGRATION_SETTINGS.ekart_api_key,
+      ekart_pickup_pincode: settingsMap.ekart_pickup_pincode ?? DEFAULT_INTEGRATION_SETTINGS.ekart_pickup_pincode,
+
+      firebase_api_key: settingsMap.firebase_api_key ?? DEFAULT_INTEGRATION_SETTINGS.firebase_api_key,
+      firebase_auth_domain: settingsMap.firebase_auth_domain ?? DEFAULT_INTEGRATION_SETTINGS.firebase_auth_domain,
+      firebase_project_id: settingsMap.firebase_project_id ?? DEFAULT_INTEGRATION_SETTINGS.firebase_project_id,
 
       gsc_verification_tag: settingsMap.gsc_verification_tag ?? DEFAULT_INTEGRATION_SETTINGS.gsc_verification_tag,
       gsc_enabled: settingsMap.gsc_enabled !== undefined ? settingsMap.gsc_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.gsc_enabled,

@@ -2,168 +2,248 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import prisma from '../../lib/db';
 
-const totalPosts = await prisma.post.count({ where: { status: { not: 'trash' } } });
-const publishedPosts = await prisma.post.count({ where: { status: 'published' } });
-const draftPosts = await prisma.post.count({ where: { status: 'draft' } });
-const totalPages = await prisma.page.count({ where: { status: { not: 'trash' } } });
-const totalUsers = await prisma.user.count();
-const totalComments = await prisma.comment.count({ where: { status: { not: 'trash' } } });
-const pendingComments = await prisma.comment.count({ where: { status: 'pending' } });
+let orders: any[] = [];
+let totalProducts = 0;
+let totalUsers = 0;
+let totalPosts = 0;
+let recentLogs: any[] = [];
 
-const recentPosts = await prisma.post.findMany({
-  take: 5,
-  orderBy: { createdAt: 'desc' },
-  include: { author: true },
-});
+try {
+  orders = await prisma.order.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: { items: true },
+  });
+  totalProducts = await prisma.product.count();
+  totalUsers = await prisma.user.count();
+  totalPosts = await prisma.post.count({ where: { status: 'published' } });
+  recentLogs = await prisma.auditLog.findMany({
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+    include: { user: true },
+  });
+} catch (e) {
+  console.error('Failed to query dashboard metrics:', e);
+}
 
-const recentLogs = await prisma.auditLog.findMany({
-  take: 6,
-  orderBy: { createdAt: 'desc' },
-  include: { user: true },
-});
+const totalRevenue = orders
+  .filter((o) => o.paymentStatus === 'PAID')
+  .reduce((sum, o) => sum + o.totalAmount, 0);
+
+const totalOrdersCount = orders.length;
+const pendingOrdersCount = orders.filter((o) => o.paymentStatus === 'PENDING' || o.paymentStatus === 'COD_PENDING').length;
+const ekartBookedCount = orders.filter((o) => o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber)).length;
+const recentOrders = orders.slice(0, 5);
 ---
 
-<AdminLayout title="Dashboard" activeNav="dashboard">
-  <!-- Key Metrics Row -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Posts</div>
-        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalPosts}</div>
-        <div class="text-xs text-gray-500 mt-1">{publishedPosts} Published · {draftPosts} Drafts</div>
+<AdminLayout title="Teepul Storefront Master Dashboard" activeNav="dashboard">
+  <div class="space-y-8">
+    
+    <!-- Top Welcome Banner -->
+    <div class="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-amber-900/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="space-y-2 z-10">
+        <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider">
+          <span>✨ TEEPUL CURTAIN SELLER PANEL</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          Master Business Overview & Operations 📊
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-300 max-w-xl font-medium">
+          Monitor live sales revenue, curtain orders, EKart courier pickups, and store integrations in real-time.
+        </p>
       </div>
-      <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl font-bold">📝</div>
-    </div>
 
-    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pages</div>
-        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalPages}</div>
-        <div class="text-xs text-gray-500 mt-1">Hierarchical site pages</div>
+      <div class="flex flex-wrap items-center gap-3 z-10">
+        <a
+          href="/admin/orders"
+          class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-5 py-3 rounded-2xl shadow-lg transition flex items-center gap-1.5"
+        >
+          <span>🛍️ Manage Orders ({orders.length})</span>
+        </a>
+
+        <a
+          href="/admin/integrations"
+          class="bg-white/10 hover:bg-white/20 text-white font-extrabold text-xs px-5 py-3 rounded-2xl border border-white/20 transition flex items-center gap-1.5"
+        >
+          <span>⚡ API Settings</span>
+        </a>
       </div>
-      <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl font-bold">📄</div>
     </div>
 
-    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Users</div>
-        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalUsers}</div>
-        <div class="text-xs text-gray-500 mt-1">RBAC Accounts</div>
+    <!-- 4 Live Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Sales Revenue</div>
+          <div class="text-3xl font-black text-slate-900">₹{totalRevenue.toLocaleString('en-IN')}</div>
+          <div class="text-xs text-emerald-600 font-bold">✓ Verified Paid Revenue</div>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner">
+          💰
+        </div>
       </div>
-      <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-2xl font-bold">👥</div>
-    </div>
 
-    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-      <div>
-        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Comments</div>
-        <div class="text-3xl font-extrabold text-gray-900 mt-1">{totalComments}</div>
-        <div class="text-xs text-amber-600 font-semibold mt-1">{pendingComments} Pending Moderation</div>
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Customer Orders</div>
+          <div class="text-3xl font-black text-blue-600">{totalOrdersCount}</div>
+          <div class="text-xs text-slate-500 font-medium">{pendingOrdersCount} Pending Confirmation</div>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner">
+          🛍️
+        </div>
       </div>
-      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-2xl font-bold">💬</div>
-    </div>
-  </div>
 
-  <!-- Quick Actions Banner -->
-  <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-    <div>
-      <h2 class="text-xl font-bold text-white">Quick Actions</h2>
-      <p class="text-xs text-slate-300 mt-1">Create posts, add pages, or manage site media with a single click.</p>
-    </div>
-    <div class="flex flex-wrap gap-3">
-      <a href="/admin/posts/new" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
-        <span>+ New Post</span>
-      </a>
-      <a href="/admin/pages/new" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
-        <span>+ New Page</span>
-      </a>
-      <a href="/admin/media" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
-        <span>🖼️ Media Library</span>
-      </a>
-    </div>
-  </div>
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Curtain Catalog Items</div>
+          <div class="text-3xl font-black text-amber-800">{totalProducts}</div>
+          <div class="text-xs text-amber-800 font-medium">Door & Window Curtains</div>
+        </div>
+        <div class="w-12 h-12 bg-amber-50 text-amber-800 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner">
+          🚪
+        </div>
+      </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Recent Posts Column -->
-    <div class="lg:col-span-2 space-y-8">
-      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
-          <h3 class="font-bold text-gray-900 text-base">Recent Posts</h3>
-          <a href="/admin/posts" class="text-xs text-blue-600 font-semibold hover:underline">View All →</a>
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">EKart Pickups Booked</div>
+          <div class="text-3xl font-black text-emerald-600">{ekartBookedCount}</div>
+          <div class="text-xs text-emerald-600 font-bold">🚚 Active Shipments</div>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner">
+          🚚
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Action Bar -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        <h2 class="text-base font-extrabold text-slate-900">Quick Storefront Actions</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Manage live orders, catalog products, and API keys instantly.</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <a
+          href="/admin/orders"
+          class="bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow transition"
+        >
+          📦 Process Orders & Book EKart
+        </a>
+        <a
+          href="/admin/products/new"
+          class="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow transition"
+        >
+          + Add New Curtain Product
+        </a>
+        <a
+          href="/admin/integrations"
+          class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-4 py-2.5 rounded-xl transition border border-slate-300"
+        >
+          ⚡ API & Payment Settings
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Grid: Recent Customer Orders & System Status -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left Column: Recent Orders Table -->
+      <div class="lg:col-span-8 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+            <span>🛍️</span> Recent Customer Orders
+          </h3>
+          <a href="/admin/orders" class="text-xs font-bold text-amber-800 hover:underline">View All Orders ({totalOrdersCount}) &rarr;</a>
         </div>
 
-        <div class="divide-y divide-gray-100">
-          {recentPosts.length === 0 ? (
-            <p class="text-sm text-gray-500 py-4 text-center">No posts created yet.</p>
-          ) : (
-            recentPosts.map((post) => (
-              <div class="py-3 flex items-center justify-between gap-4">
+        {recentOrders.length === 0 ? (
+          <div class="p-8 text-center text-slate-500">
+            <span class="text-3xl block mb-2">📦</span>
+            <p class="font-semibold text-xs">No orders placed yet.</p>
+          </div>
+        ) : (
+          <div class="space-y-3">
+            {recentOrders.map((o) => (
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                 <div>
-                  <a href={`/admin/posts/${post.id}`} class="font-semibold text-sm text-gray-900 hover:text-blue-600 transition">
-                    {post.title}
-                  </a>
-                  <div class="text-xs text-gray-500 mt-0.5">
-                    By <span class="font-medium text-gray-700">{post.author?.displayName}</span> · {new Date(post.createdAt).toLocaleDateString()}
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-black text-slate-900">#{o.orderNumber}</span>
+                    <span class="font-bold text-slate-900">{o.customerName}</span>
+                    <span class="text-slate-400">({o.customerPhone})</span>
+                  </div>
+                  <div class="text-slate-500 text-[11px] mt-0.5">
+                    {o.items?.[0]?.productTitle || 'Curtain Product'} · Color: {o.items?.[0]?.color || 'Default'} · Size: {o.items?.[0]?.size || 'Standard'}
                   </div>
                 </div>
-                <span class={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                  post.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                }`}>
-                  {post.status}
-                </span>
+
+                <div class="flex items-center gap-3">
+                  <span class="font-extrabold text-slate-900">₹{o.totalAmount?.toLocaleString('en-IN')}</span>
+                  <span class={`font-black px-2.5 py-0.5 rounded-full text-[10px] uppercase ${
+                    o.orderStatus === 'DELIVERED'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : o.orderStatus === 'SHIPPED'
+                      ? 'bg-amber-100 text-amber-900'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {o.orderStatus}
+                  </span>
+                </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
 
-    <!-- Recent System Activity / Audit Log -->
-    <div class="space-y-6">
-      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
-          <h3 class="font-bold text-gray-900 text-base">Audit Trail</h3>
-          <a href="/admin/audit-logs" class="text-xs text-blue-600 font-semibold hover:underline">All Logs →</a>
-        </div>
+      <!-- Right Column: Live Integrations & Health Status -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <h3 class="font-extrabold text-slate-900 text-base border-b border-slate-100 pb-3 flex items-center justify-between">
+            <span>⚡</span> Real Live Systems Status
+          </h3>
 
-        <div class="space-y-3">
-          {recentLogs.map((log) => (
-            <div class="text-xs p-3 bg-gray-50 rounded-xl border border-gray-100">
-              <div class="font-semibold text-gray-800 flex items-center justify-between">
-                <span>{log.action}</span>
-                <span class="text-[10px] text-gray-400">{new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-              </div>
-              <div class="text-gray-500 text-[11px] mt-1">
-                By {log.user?.displayName || 'System'} ({log.entity})
-              </div>
+          <div class="space-y-3 text-xs">
+            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">SQLite Database</span>
+              <span class="font-bold text-emerald-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Active (`cms.db`)
+              </span>
             </div>
-          ))}
+
+            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Render Deployment</span>
+              <span class="font-bold text-emerald-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Node.js SSR Live
+              </span>
+            </div>
+
+            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Razorpay & Paytm</span>
+              <span class="font-bold text-blue-600">Configured in API Hub</span>
+            </div>
+
+            <div class="flex justify-between items-center py-2">
+              <span class="text-slate-500 font-medium">EKart Logistics</span>
+              <span class="font-bold text-amber-800">Panipat Unit Pincode 132103</span>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <a
+              href="/admin/integrations"
+              class="block w-full text-center bg-slate-900 hover:bg-amber-800 text-white font-extrabold text-xs py-3 rounded-2xl transition shadow"
+            >
+              Configure Live API Keys &rarr;
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- System Health Card -->
-      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-        <h3 class="font-bold text-gray-900 text-base mb-4">System Health</h3>
-        <div class="space-y-3 text-xs">
-          <div class="flex justify-between items-center py-1 border-b border-gray-100">
-            <span class="text-gray-500">Database Connection</span>
-            <span class="font-bold text-emerald-600 flex items-center gap-1">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Connected
-            </span>
-          </div>
-          <div class="flex justify-between items-center py-1 border-b border-gray-100">
-            <span class="text-gray-500">Environment</span>
-            <span class="font-semibold text-gray-800">Astro 7.2 + Node SSR</span>
-          </div>
-          <div class="flex justify-between items-center py-1 border-b border-gray-100">
-            <span class="text-gray-500">Object Storage</span>
-            <span class="font-semibold text-gray-800">Local Disk Adapter</span>
-          </div>
-          <div class="flex justify-between items-center py-1">
-            <span class="text-gray-500">RBAC Status</span>
-            <span class="font-semibold text-emerald-600">Active</span>
-          </div>
-        </div>
-      </div>
     </div>
+
   </div>
 </AdminLayout>

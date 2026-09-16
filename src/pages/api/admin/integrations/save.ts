@@ -22,6 +22,17 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     paytm_enabled: 'payments',
     cod_enabled: 'payments',
 
+    // EKart Courier & Logistics
+    ekart_enabled: 'logistics',
+    ekart_merchant_id: 'logistics',
+    ekart_api_key: 'logistics',
+    ekart_pickup_pincode: 'logistics',
+
+    // Firebase Google Auth
+    firebase_api_key: 'integrations',
+    firebase_auth_domain: 'integrations',
+    firebase_project_id: 'integrations',
+
     // WhatsApp
     whatsapp_number: 'integrations',
     whatsapp_enabled: 'integrations',
@@ -45,7 +56,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
 
   // Set boolean defaults to false if missing from unchecked checkboxes
   const checkboxKeys = [
-    'razorpay_enabled', 'paytm_enabled', 'cod_enabled',
+    'razorpay_enabled', 'paytm_enabled', 'cod_enabled', 'ekart_enabled',
     'whatsapp_enabled', 'whatsapp_floating_widget', 'whatsapp_buy_button',
     'gsc_enabled', 'gmc_enabled', 'ga_enabled', 'meta_pixel_enabled'
   ];
@@ -69,7 +80,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     userId: locals.user.userId,
     action: 'integrations.update',
     entity: 'Setting',
-    metadata: { action: 'Updated Payments & Marketing Integration Keys' },
+    metadata: { action: 'Updated Payments, EKart & Marketing Integration Keys' },
   });
 
   return redirect('/admin/integrations?saved=true');
