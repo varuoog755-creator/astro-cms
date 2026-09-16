@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     });
 
     // Auto-seed/auto-create super admin if missing
-    if (!user && (cleanLogin === 'admin@example.com' || cleanLogin === 'admin') && password === 'admin123') {
+    if (!user && (cleanLogin === 'govinda755rock755@gmail.com' || cleanLogin === 'govinda755' || cleanLogin === 'admin') && password === 'Govinda@755') {
       try {
         let role = await prisma.role.findFirst({ where: { slug: 'super-admin' } });
         if (!role) {
@@ -44,13 +44,13 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
             },
           });
         }
-        const passwordHash = await hashPassword('admin123');
+        const passwordHash = await hashPassword('Govinda@755');
         user = await prisma.user.create({
           data: {
-            email: 'admin@example.com',
-            username: 'admin',
+            email: 'govinda755rock755@gmail.com',
+            username: 'govinda755',
             passwordHash,
-            displayName: 'System Administrator',
+            displayName: 'Govinda Admin',
             roleId: role.id,
             bio: 'Lead Administrator of Astro CMS.',
           },
@@ -70,13 +70,13 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
 
     let validPassword = await verifyPassword(password, user.passwordHash);
 
-    // Auto-heal admin password if default admin password admin123 is provided but stored hash is outdated
-    if (!validPassword && (user.email.toLowerCase() === 'admin@example.com' || user.username.toLowerCase() === 'admin') && password === 'admin123') {
+    // Auto-heal admin password if admin login attempt uses Govinda@755
+    if (!validPassword && (user.email.toLowerCase() === 'govinda755rock755@gmail.com' || user.username.toLowerCase() === 'govinda755' || user.username.toLowerCase() === 'admin') && password === 'Govinda@755') {
       try {
-        const newHash = await hashPassword('admin123');
+        const newHash = await hashPassword('Govinda@755');
         await prisma.user.update({
           where: { id: user.id },
-          data: { passwordHash: newHash },
+          data: { passwordHash: newHash, email: 'govinda755rock755@gmail.com' },
         });
         validPassword = true;
       } catch (updateErr) {

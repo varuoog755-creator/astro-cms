@@ -133,15 +133,15 @@ async function main() {
   }
 
   // 3. Super Admin User
-  const passwordHash = await bcrypt.hash('admin123', 12);
+  const passwordHash = await bcrypt.hash('Govinda@755', 12);
   const superAdminUser = await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
+    where: { email: 'govinda755rock755@gmail.com' },
     update: { passwordHash },
     create: {
-      email: 'admin@example.com',
-      username: 'admin',
+      email: 'govinda755rock755@gmail.com',
+      username: 'govinda755',
       passwordHash,
-      displayName: 'System Administrator',
+      displayName: 'Govinda Admin',
       roleId: superAdminRole.id,
       bio: 'Lead Administrator of Astro CMS.',
     },
