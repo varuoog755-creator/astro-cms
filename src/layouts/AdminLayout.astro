@@ -12,24 +12,16 @@ const { title = 'Admin Dashboard', activeNav = 'dashboard' } = Astro.props;
 const user: UserSession | null = Astro.locals.user;
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊', href: '/admin' },
-  { id: 'orders', label: 'Customer Orders', icon: '🛍️', href: '/admin/orders' },
-  { id: 'products_catalog', label: 'Products Catalog', icon: '📦', href: '/admin/products' },
-  { id: 'integrations', label: 'Payments & Growth', icon: '⚡', href: '/admin/integrations' },
-  { id: 'posts', label: 'Posts', icon: '📝', href: '/admin/posts' },
-  { id: 'pages', label: 'Pages', icon: '📄', href: '/admin/pages' },
-  { id: 'media', label: 'Media Library', icon: '🖼️', href: '/admin/media' },
-  { id: 'categories', label: 'Categories', icon: '📁', href: '/admin/categories' },
-  { id: 'tags', label: 'Tags', icon: '🏷️', href: '/admin/tags' },
-  { id: 'comments', label: 'Comments', icon: '💬', href: '/admin/comments' },
-  { id: 'users', label: 'Users & Roles', icon: '👥', href: '/admin/users' },
-  { id: 'appearance', label: 'Themes & Menus', icon: '🎨', href: '/admin/themes' },
-  { id: 'plugins', label: 'Plugins', icon: '🔌', href: '/admin/plugins' },
-  { id: 'settings', label: 'Settings', icon: '⚙️', href: '/admin/settings/general' },
-  { id: 'seo', label: 'SEO & Permalinks', icon: '🔍', href: '/admin/seo' },
-  { id: 'analytics', label: 'Analytics', icon: '📈', href: '/admin/analytics' },
-  { id: 'audit', label: 'Audit Logs', icon: '📜', href: '/admin/audit-logs' },
-  { id: 'tools', label: 'Import / Export', icon: '📦', href: '/admin/tools/export' },
+  { id: 'dashboard', label: '📊 Dashboard Overview', icon: '📊', href: '/admin' },
+  { id: 'orders', label: '🛍️ Orders & EKart Courier', icon: '🛍️', href: '/admin/orders' },
+  { id: 'products_catalog', label: '📦 Curtains & Decor Catalog', icon: '📦', href: '/admin/products' },
+  { id: 'analytics', label: '📈 Live Sales Analytics', icon: '📈', href: '/admin/analytics' },
+  { id: 'integrations', label: '⚡ Payments & Logistics', icon: '⚡', href: '/admin/integrations' },
+  { id: 'categories', label: '📁 Categories & Fabrics', icon: '📁', href: '/admin/categories' },
+  { id: 'users', label: '👥 Customers & Users', icon: '👥', href: '/admin/users' },
+  { id: 'posts', label: '📝 Interior Decor Blog', icon: '📝', href: '/admin/posts' },
+  { id: 'pages', label: '📄 Custom Pages', icon: '📄', href: '/admin/pages' },
+  { id: 'settings', label: '⚙️ Store Settings', icon: '⚙️', href: '/admin/settings/general' },
 ];
 ---
 
@@ -38,7 +30,7 @@ const navItems = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} - Astro CMS Admin</title>
+    <title>{title} - Teepul Curtain Seller Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -48,39 +40,38 @@ const navItems = [
   <body class="bg-gray-100 font-['Inter',sans-serif] text-gray-900 min-h-screen flex flex-col">
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar -->
-      <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col flex-shrink-0 border-r border-slate-800">
+      <aside class="w-64 bg-slate-950 text-slate-200 flex flex-col flex-shrink-0 border-r border-slate-800">
         <div class="p-5 border-b border-slate-800 flex items-center justify-between">
           <a href="/admin" class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center font-black text-white text-xl shadow-lg">A</div>
+            <div class="w-9 h-9 bg-amber-600 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg">T</div>
             <div>
-              <div class="font-bold text-white leading-tight">Astro CMS</div>
-              <div class="text-[11px] text-slate-400">v1.0.0 Enterprise</div>
+              <div class="font-bold text-white leading-tight text-sm">TEEPUL STORE</div>
+              <div class="text-[10px] text-amber-400 font-extrabold uppercase tracking-wider">Curtain Seller Panel</div>
             </div>
           </a>
         </div>
 
         <nav class="flex-1 overflow-y-auto p-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = activeNav === item.id || (item.id === 'appearance' && (activeNav === 'themes' || activeNav === 'menus'));
+            const isActive = activeNav === item.id;
             return (
               <a
                 href={item.href}
-                class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
                   isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-md'
+                    ? 'bg-amber-800 text-white shadow-md'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                <span class="text-base">{item.icon}</span>
                 <span>{item.label}</span>
               </a>
             );
           })}
         </nav>
 
-        <div class="p-4 border-t border-slate-800 bg-slate-950/50">
-          <a href="/" target="_blank" class="flex items-center justify-between text-xs text-slate-400 hover:text-white px-2 py-1 transition">
-            <span>🌐 View Public Site</span>
+        <div class="p-4 border-t border-slate-800 bg-slate-950">
+          <a href="/" target="_blank" class="flex items-center justify-between text-xs text-slate-400 hover:text-white px-2 py-1 transition font-bold">
+            <span>🌐 View Live Store</span>
             <span>↗</span>
           </a>
         </div>
@@ -91,18 +82,18 @@ const navItems = [
         <!-- Top Navigation Header -->
         <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 flex-shrink-0 shadow-sm">
           <div class="flex items-center gap-4">
-            <h1 class="text-lg font-bold text-gray-900">{title}</h1>
+            <h1 class="text-base font-extrabold text-gray-900">{title}</h1>
           </div>
 
           <div class="flex items-center gap-4">
             <div class="text-right hidden sm:block">
-              <div class="text-sm font-semibold text-gray-900">{user?.displayName || 'Admin'}</div>
-              <div class="text-xs text-gray-500">{user?.role || 'Administrator'}</div>
+              <div class="text-xs font-bold text-gray-900">{user?.displayName || 'Teepul Admin'}</div>
+              <div class="text-[10px] text-amber-700 font-extrabold uppercase">{user?.role || 'Store Manager'}</div>
             </div>
 
             <form action="/api/auth/logout" method="POST">
-              <button type="submit" class="text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-300 transition">
-                Logout
+              <button type="submit" class="text-xs font-extrabold bg-red-50 hover:bg-red-100 text-red-600 px-3.5 py-1.5 rounded-xl border border-red-200 transition">
+                Logout 🚪
               </button>
             </form>
           </div>

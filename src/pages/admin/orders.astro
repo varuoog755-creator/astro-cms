@@ -13,114 +13,258 @@ const totalRevenue = orders
 
 const paidOrdersCount = orders.filter((o) => o.paymentStatus === 'PAID').length;
 const pendingOrdersCount = orders.filter((o) => o.paymentStatus === 'PENDING' || o.paymentStatus === 'COD_PENDING').length;
+const bookedEKartCount = orders.filter((o) => o.courierPartner?.includes('EKart')).length;
+
+// Helper to calculate estimated EKart shipping rate
+function getEkartRate(pincode: string) {
+  if (!pincode) return 70;
+  const firstDigit = pincode[0];
+  if (firstDigit === '1' || firstDigit === '2') return 55; // North India / NCR
+  if (firstDigit === '4' || firstDigit === '5') return 75; // West / South
+  return 85; // Rest of India
+}
 ---
 
-<AdminLayout title="Customer Orders Management">
+<AdminLayout title="Teepul Orders & EKart Courier Booking" activeNav="orders">
   <div class="space-y-8">
+
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
       <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Customer Orders</h1>
-        <p class="text-sm text-slate-500 mt-1">Track storefront sales, Razorpay payments, Paytm orders, and Cash on Delivery requests.</p>
+        <div class="inline-flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+          <span>📦 LIVE CURTAIN FULFILLMENT</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Customer Orders & EKart Logistics</h1>
+        <p class="text-sm text-slate-500 mt-1">Review curtain color, size, customer address & book EKart courier pickup after order confirmation.</p>
       </div>
 
       <div class="flex items-center gap-3">
-        <a href="/admin/integrations" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl transition">
-          ⚙️ Payment Settings
+        <a href="/admin/analytics" class="bg-amber-800 hover:bg-amber-900 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow">
+          📈 Live Sales Analytics
         </a>
       </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-5">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Sales Revenue</span>
-        <div class="text-3xl font-black text-slate-900 mt-2">₹{totalRevenue.toLocaleString('en-IN')}</div>
-        <span class="text-[11px] text-emerald-600 font-semibold mt-1 inline-block">Verified Paid Transactions</span>
+        <div class="text-2xl font-black text-slate-900 mt-1">₹{totalRevenue.toLocaleString('en-IN')}</div>
+        <span class="text-[10px] text-emerald-600 font-bold mt-1 block">Verified Customer Payments</span>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paid Orders</span>
-        <div class="text-3xl font-black text-emerald-600 mt-2">{paidOrdersCount}</div>
-        <span class="text-[11px] text-slate-500 mt-1 inline-block">Razorpay / Paytm / Online</span>
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Orders</span>
+        <div class="text-2xl font-black text-blue-600 mt-1">{orders.length}</div>
+        <span class="text-[10px] text-slate-500 mt-1 block">Door & Window Curtain Sales</span>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending / COD</span>
-        <div class="text-3xl font-black text-amber-500 mt-2">{pendingOrdersCount}</div>
-        <span class="text-[11px] text-slate-500 mt-1 inline-block">Awaiting fulfillment</span>
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Orders</span>
+        <div class="text-2xl font-black text-amber-500 mt-1">{pendingOrdersCount}</div>
+        <span class="text-[10px] text-slate-500 mt-1 block">Awaiting Confirmation</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">EKart Pickups Booked</span>
+        <div class="text-2xl font-black text-emerald-600 mt-1">{bookedEKartCount}</div>
+        <span class="text-[10px] text-emerald-600 font-bold mt-1 block">🚚 EKart Courier Active</span>
       </div>
     </div>
 
-    <!-- Orders Table -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <!-- Orders Cards / Detailed List -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-6 border-b border-slate-200 flex items-center justify-between">
-        <h2 class="font-extrabold text-slate-900 text-base">Recent Customer Orders ({orders.length})</h2>
+        <h2 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+          <span>🛍️</span> Customer Orders ({orders.length})
+        </h2>
+        <span class="text-xs text-slate-500 font-medium">Click "Book EKart Courier" to schedule pickup</span>
       </div>
 
       {orders.length === 0 ? (
         <div class="p-12 text-center text-slate-500">
-          <span class="text-4xl block mb-2">🛍️</span>
-          <p class="font-semibold text-sm">No customer orders placed yet.</p>
-          <p class="text-xs text-slate-400 mt-1">Orders placed on the storefront will appear here instantly.</p>
+          <span class="text-4xl block mb-2">📦</span>
+          <p class="font-bold text-sm">No customer orders received yet.</p>
+          <p class="text-xs text-slate-400 mt-1">Storefront orders will appear here automatically.</p>
         </div>
       ) : (
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-600">
-            <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
-              <tr>
-                <th class="p-4">Order ID</th>
-                <th class="p-4">Customer</th>
-                <th class="p-4">Items</th>
-                <th class="p-4">Method</th>
-                <th class="p-4">Payment</th>
-                <th class="p-4">Total</th>
-                <th class="p-4">Date</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              {orders.map((o) => (
-                <tr class="hover:bg-slate-50/80 transition">
-                  <td class="p-4 font-mono font-bold text-slate-900">{o.orderNumber}</td>
-                  <td class="p-4">
-                    <div class="font-bold text-slate-900">{o.customerName}</div>
-                    <div class="text-[11px] text-slate-500">{o.customerPhone} | {o.customerEmail}</div>
-                    <div class="text-[10px] text-slate-400 truncate max-w-xs">{o.shippingAddress}, {o.pincode}</div>
-                  </td>
-                  <td class="p-4 space-y-1">
-                    {o.items.map((item) => (
-                      <div class="text-slate-800 font-medium">
-                        {item.quantity}x {item.productTitle}
-                        {item.color && <span class="text-[10px] text-slate-500"> ({item.color}, {item.size})</span>}
-                      </div>
-                    ))}
-                  </td>
-                  <td class="p-4 font-bold text-slate-700">
-                    <span class="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full text-[10px]">
-                      {o.paymentMethod}
+        <div class="divide-y divide-slate-200">
+          {orders.map((o) => {
+            const ekartFee = getEkartRate(o.pincode);
+            const isBooked = o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber);
+
+            return (
+              <div class="p-6 hover:bg-slate-50/50 transition space-y-4">
+                
+                <!-- Top Row: Order ID, Date, Payment Status & EKart Rate -->
+                <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div class="flex items-center gap-3">
+                    <span class="font-mono font-black text-slate-900 text-base bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
+                      #{o.orderNumber}
                     </span>
-                  </td>
-                  <td class="p-4">
-                    {o.paymentStatus === 'PAID' ? (
-                      <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-emerald-300">
-                        ✓ PAID
-                      </span>
-                    ) : (
-                      <span class="bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-amber-300">
-                        ⏳ {o.paymentStatus}
-                      </span>
-                    )}
-                  </td>
-                  <td class="p-4 font-extrabold text-slate-900 text-sm">₹{o.totalAmount.toLocaleString('en-IN')}</td>
-                  <td class="p-4 text-[11px] text-slate-500">
-                    {new Date(o.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <span class="text-slate-400 font-medium">
+                      {new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <span class="bg-slate-100 text-slate-800 font-bold px-3 py-1 rounded-full text-[10px] uppercase">
+                      Payment: {o.paymentMethod}
+                    </span>
+                    <span class={`font-black px-3 py-1 rounded-full text-[10px] uppercase border ${
+                      o.paymentStatus === 'PAID'
+                        ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                        : 'bg-amber-100 text-amber-800 border-amber-300'
+                    }`}>
+                      {o.paymentStatus}
+                    </span>
+                    <span class={`font-black px-3 py-1 rounded-full text-[10px] uppercase ${
+                      o.orderStatus === 'DELIVERED'
+                        ? 'bg-emerald-600 text-white'
+                        : o.orderStatus === 'SHIPPED'
+                        ? 'bg-amber-800 text-white'
+                        : 'bg-blue-600 text-white'
+                    }`}>
+                      {o.orderStatus}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Middle Content: Customer Address & Curtain Product Specs -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 pt-2">
+                  
+                  <!-- Left: Customer Details & Address -->
+                  <div class="md:col-span-5 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
+                    <span class="font-extrabold text-slate-900 block text-xs border-b border-slate-200 pb-1.5 flex items-center gap-1.5">
+                      <span>👤</span> Customer & Delivery Info
+                    </span>
+
+                    <div class="space-y-1 pt-1">
+                      <div class="font-extrabold text-slate-900 text-sm">{o.customerName}</div>
+                      <div class="font-bold text-amber-900 text-xs">📞 Phone: {o.customerPhone}</div>
+                      <div class="text-slate-500 font-mono text-[11px]">📧 Email: {o.customerEmail}</div>
+                      <div class="text-slate-700 font-medium text-xs pt-1">
+                        📍 <strong>Address:</strong> {o.shippingAddress}
+                      </div>
+                      <div class="text-slate-600 text-xs font-semibold">
+                        City: {o.city || 'N/A'} | State: {o.state || 'N/A'} | Pincode: <span class="font-mono font-bold text-slate-900">{o.pincode}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Center: Curtain Item Specifications (Color & Size) -->
+                  <div class="md:col-span-4 bg-amber-50/50 p-4 rounded-2xl border border-amber-200/80 space-y-2 text-xs">
+                    <span class="font-extrabold text-amber-950 block text-xs border-b border-amber-200 pb-1.5 flex items-center gap-1.5">
+                      <span>🚪</span> Curtain Order Specification
+                    </span>
+
+                    <div class="space-y-2 pt-1">
+                      {o.items.map((item) => (
+                        <div class="bg-white p-3 rounded-xl border border-amber-200 space-y-1">
+                          <div class="font-extrabold text-slate-900 text-xs">{item.productTitle}</div>
+                          <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-700 pt-0.5">
+                            <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
+                              🎨 Color: {item.color || 'Standard'}
+                            </span>
+                            <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
+                              📏 Size: {item.size || '7ft Door'}
+                            </span>
+                          </div>
+                          <div class="text-slate-600 text-[11px] font-semibold pt-1">
+                            Quantity: {item.quantity} × ₹{item.unitPrice?.toLocaleString('en-IN')} = <strong>₹{item.totalPrice?.toLocaleString('en-IN')}</strong>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <!-- Right: EKart Courier Booking Panel -->
+                  <div class="md:col-span-3 bg-white p-4 rounded-2xl border border-slate-300 space-y-3 flex flex-col justify-between text-xs">
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                        <span class="font-black text-slate-900 text-xs flex items-center gap-1">
+                          <span>🚚</span> EKart Logistics
+                        </span>
+                        <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                          EST. ₹{ekartFee}
+                        </span>
+                      </div>
+
+                      <div class="text-[11px] text-slate-500 leading-relaxed">
+                        Pickup charges estimated for pincode <strong class="text-slate-800 font-mono">{o.pincode}</strong>.
+                      </div>
+                    </div>
+
+                    <div class="pt-2">
+                      {isBooked ? (
+                        <div class="bg-emerald-50 border border-emerald-300 p-3 rounded-xl space-y-1 text-[11px]">
+                          <span class="font-extrabold text-emerald-900 block flex items-center gap-1">
+                            <span>✓</span> EKart Pickup Booked!
+                          </span>
+                          <span class="font-mono text-slate-800 font-bold block">AWB: {o.trackingNumber}</span>
+                          <a
+                            href={o.trackingUrl || `https://track.ekartlogistics.com/shipmentTrack/${o.trackingNumber}`}
+                            target="_blank"
+                            class="text-amber-800 font-bold hover:underline inline-block pt-1"
+                          >
+                            Track Shipment ↗
+                          </a>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          data-order-id={o.id}
+                          class="book-ekart-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-3 rounded-xl shadow transition flex items-center justify-center gap-1.5"
+                        >
+                          <span>📦 Confirm & Book EKart Pickup</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
+
   </div>
+
+  <script is:inline>
+    document.querySelectorAll('.book-ekart-btn').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const orderId = btn.getAttribute('data-order-id');
+        if (!orderId) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '⌛ Booking EKart Courier...';
+
+        try {
+          const res = await fetch('/api/admin/book-ekart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, courierPartner: 'EKart Logistics' }),
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            alert(`✨ EKart Courier Pickup Booked Successfully!\nAWB: ${data.order.trackingNumber}`);
+            window.location.reload();
+          } else {
+            alert('Error booking EKart: ' + (data.error || 'Failed to book courier'));
+            btn.disabled = false;
+            btn.innerHTML = '📦 Confirm & Book EKart Pickup';
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Unexpected error booking EKart courier.');
+          btn.disabled = false;
+          btn.innerHTML = '📦 Confirm & Book EKart Pickup';
+        }
+      });
+    });
+  </script>
 </AdminLayout>
