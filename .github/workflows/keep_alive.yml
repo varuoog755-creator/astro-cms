@@ -2,14 +2,18 @@ name: Keep Website Alive (Anti-Sleep Ping)
 
 on:
   schedule:
-    # Run every 10 minutes
-    - cron: '*/10 * * * *'
+    # Run every 5 minutes to prevent Render free instance sleep
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
   ping-website:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Render Web Service
+      - name: Ping Render & Custom Domain
         run: |
-          curl -s -o /dev/null -w "%{http_code}" https://astro-cms-8n2y.onrender.com || true
+          echo "Pinging https://teepul.com/..."
+          curl -s -o /dev/null -w "%{http_code}\n" https://teepul.com || true
+          echo "Pinging https://astro-cms.onrender.com/..."
+          curl -s -o /dev/null -w "%{http_code}\n" https://astro-cms.onrender.com || true
+
