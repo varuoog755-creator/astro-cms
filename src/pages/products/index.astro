@@ -102,12 +102,24 @@ const products = await getStorefrontProducts();
                 <span class="text-[10px] text-emerald-600 font-semibold block">Free Shipping</span>
               </div>
 
-              <a
-                href={`/products/${product.slug}`}
-                class="bg-slate-900 hover:bg-amber-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition-colors"
-              >
-                View & Buy &rarr;
-              </a>
+              <div class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onclick={`window.quickAddToCart('${product.name.replace(/'/g, "\\'")}', '${product.slug}', ${product.price}, '${product.images[0]}')`}
+                  class="bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-xs px-2.5 py-2 rounded-xl shadow-sm transition flex items-center gap-1"
+                  title="Add to Cart"
+                >
+                  <span>🛒</span>
+                  <span>+Add</span>
+                </button>
+
+                <a
+                  href={`/products/${product.slug}`}
+                  class="bg-slate-900 hover:bg-amber-800 text-white font-bold text-xs px-3 py-2 rounded-xl shadow transition-colors"
+                >
+                  View &rarr;
+                </a>
+              </div>
             </div>
           </div>
         </div>

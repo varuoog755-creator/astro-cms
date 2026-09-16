@@ -1,0 +1,226 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import { getSession } from '../../lib/auth/session';
+import prisma from '../../lib/db';
+
+const sessionToken = Astro.cookies.get('cms_session_token')?.value;
+const session = sessionToken ? await getSession(sessionToken) : null;
+
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+let customerOrders: any[] = [];
+try {
+  customerOrders = await prisma.order.findMany({
+    where: {
+      customerEmail: session.email,
+    },
+    include: {
+      items: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+} catch (error) {
+  console.error('Failed to fetch customer orders:', error);
+}
+---
+
+<PublicLayout
+  seo={{
+    title: `My Account - ${session.displayName || session.username}`,
+    description: 'Manage your Teepul customer profile, orders, and account details.',
+  }}
+>
+  <div class="bg-[#faf9f6] min-h-screen py-10 sm:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+      <!-- Header Greeting Banner -->
+      <div class="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-amber-800/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="space-y-2 z-10">
+          <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 text-amber-200 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider">
+            <span>✨ Customer Portal</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+            Welcome back, {session.displayName || session.username}! 👋
+          </h1>
+          <p class="text-xs sm:text-sm text-amber-200/90 font-medium">
+            Member Email: <span class="font-mono underline">{session.email}</span>
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 z-10">
+          <a
+            href="/products"
+            class="bg-white text-slate-900 hover:bg-amber-100 font-extrabold text-xs px-5 py-3 rounded-2xl shadow transition flex items-center gap-1.5"
+          >
+            <span>🛍️ Browse Store</span>
+          </a>
+          
+          <button
+            type="button"
+            id="account-logout-btn"
+            class="bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs px-5 py-3 rounded-2xl shadow transition flex items-center gap-1.5"
+          >
+            <span>🚪 Logout</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: User Profile Card -->
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
+            <h2 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+              <span>👤</span> Profile Details
+            </h2>
+
+            <div class="space-y-4 text-xs">
+              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                <span class="text-slate-400 block font-semibold text-[10px] uppercase">Display Name</span>
+                <span class="font-bold text-slate-900 text-sm">{session.displayName || session.username}</span>
+              </div>
+
+              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                <span class="text-slate-400 block font-semibold text-[10px] uppercase">Email Address</span>
+                <span class="font-bold text-slate-900 font-mono">{session.email}</span>
+              </div>
+
+              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 flex items-center justify-between">
+                <div>
+                  <span class="text-slate-400 block font-semibold text-[10px] uppercase">Account Role</span>
+                  <span class="font-extrabold text-amber-800">{session.role}</span>
+                </div>
+                <span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
+                  ACTIVE
+                </span>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <button
+                type="button"
+                id="account-logout-btn-2"
+                class="w-full bg-slate-100 hover:bg-red-50 hover:text-red-700 text-slate-700 font-bold text-xs py-3 rounded-2xl transition border border-slate-200 flex items-center justify-center gap-2"
+              >
+                <span>Logout from Account</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-amber-50/70 border border-amber-200 p-5 rounded-3xl text-xs space-y-2">
+            <h3 class="font-extrabold text-amber-900 flex items-center gap-1.5">
+              <span>🛡️</span> 100% Buyer Protection
+            </h3>
+            <p class="text-amber-800/90 leading-relaxed text-[11px]">
+              Need help with your curtains order, fitting sizes or invoice? Contact Teepul Customer Care directly on WhatsApp.
+            </p>
+            <a
+              href="https://wa.me/919876543210?text=Hi%20Teepul!%20I%20have%20a%20question%20about%20my%20account."
+              target="_blank"
+              class="inline-flex items-center gap-1.5 font-bold text-emerald-700 hover:underline pt-1"
+            >
+              <span>💬 Open WhatsApp Support &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column: Order History -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <span>📦</span> My Orders ({customerOrders.length})
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">Track your door curtain & decor deliveries</p>
+              </div>
+
+              <a href="/products" class="text-xs font-bold text-amber-800 hover:underline">
+                + New Order
+              </a>
+            </div>
+
+            {customerOrders.length === 0 ? (
+              <div class="text-center py-12 space-y-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="text-4xl">🛍️</div>
+                <h3 class="text-base font-bold text-slate-800">No Orders Placed Yet</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto">
+                  Explore our luxury door curtains, French sheer drapery, and ambient lighting catalog!
+                </p>
+                <a
+                  href="/products"
+                  class="inline-block bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow transition"
+                >
+                  Explore Collection &rarr;
+                </a>
+              </div>
+            ) : (
+              <div class="space-y-4">
+                {customerOrders.map((order) => (
+                  <div class="bg-slate-50/80 rounded-2xl p-5 border border-slate-200 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-3 text-xs">
+                      <div>
+                        <span class="font-extrabold text-slate-900 text-sm">Order #{order.orderNumber}</span>
+                        <span class="text-slate-400 ml-2 font-medium">
+                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                          {order.paymentMethod}
+                        </span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                          {order.orderStatus}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="space-y-2">
+                      {order.items.map((item: any) => (
+                        <div class="flex items-center justify-between text-xs bg-white p-3 rounded-xl border border-slate-200/70">
+                          <div>
+                            <span class="font-bold text-slate-900 block">{item.productTitle}</span>
+                            <span class="text-slate-500 text-[11px]">Qty: {item.quantity} | Size: {item.size || 'Standard'} | Color: {item.color || 'Default'}</span>
+                          </div>
+                          <span class="font-bold text-slate-900">₹{item.totalPrice?.toLocaleString('en-IN')}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 text-xs font-bold">
+                      <span class="text-slate-600">Total Paid:</span>
+                      <span class="text-amber-800 text-sm font-black">₹{order.totalAmount?.toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script is:inline>
+    const handleLogout = async () => {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/login';
+      } catch (err) {
+        console.error('Logout failed:', err);
+        window.location.href = '/login';
+      }
+    };
+
+    document.getElementById('account-logout-btn')?.addEventListener('click', handleLogout);
+    document.getElementById('account-logout-btn-2')?.addEventListener('click', handleLogout);
+  </script>
+</PublicLayout>

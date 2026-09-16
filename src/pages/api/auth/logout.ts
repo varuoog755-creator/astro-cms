@@ -1,21 +1,29 @@
 import type { APIRoute } from 'astro';
-import { destroySession, getSessionTokenFromRequest, SESSION_COOKIE_NAME } from '../../../lib/auth/session';
-import { logAudit } from '../../../lib/utilities/audit';
+import { destroySession, SESSION_COOKIE_NAME } from '../../../lib/auth/session';
 
-export const POST: APIRoute = async ({ request, redirect, cookies, locals }) => {
-  const token = getSessionTokenFromRequest(request);
+export const ALL: APIRoute = async ({ request, cookies, redirect }) => {
+  const token = cookies.get(SESSION_COOKIE_NAME)?.value;
+
   if (token) {
-    if (locals.user) {
-      await logAudit({
-        userId: locals.user.userId,
-        action: 'auth.logout',
-        entity: 'User',
-        entityId: locals.user.userId,
-      });
+    try {
+      await destroySession(token);
+    } catch (e) {
+      console.error('Logout error:', e);
     }
-    await destroySession(token);
   }
 
+  // Clear session cookie
   cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
-  return redirect('/login');
+
+  if (request.headers.get('accept')?.includes('text/html')) {
+    return redirect('/login', 302);
+  }
+
+  return new Response(
+    JSON.stringify({ success: true, message: 'Logged out successfully' }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 };

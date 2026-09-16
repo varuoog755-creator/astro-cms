@@ -3,6 +3,7 @@ import { generateSeoMetadata } from '../lib/seo/meta';
 import type { SeoOptions } from '../lib/seo/meta';
 import prisma from '../lib/db';
 import { getIntegrationSettings } from '../lib/settings';
+import { getSession } from '../lib/auth/session';
 import '../styles/global.css';
 
 interface Props {
@@ -12,6 +13,10 @@ interface Props {
 const { seo = { title: 'Home' } } = Astro.props;
 const meta = generateSeoMetadata(seo);
 const integrationSettings = await getIntegrationSettings();
+
+// Fetch session token
+const sessionToken = Astro.cookies.get('cms_session_token')?.value;
+const currentSession = sessionToken ? await getSession(sessionToken) : null;
 
 // Fetch primary menu
 let primaryMenu: any = null;
@@ -107,7 +112,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
 
     <style>
       .glass-header {
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.90);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
       }
@@ -155,20 +160,59 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
         </nav>
 
         <!-- Search Bar & Actions -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5 sm:gap-3">
           <form action="/search" method="GET" class="relative hidden sm:block">
             <input
               type="text"
               name="q"
               placeholder="Search curtains, lights, decor..."
-              class="w-56 bg-slate-100/80 text-xs font-medium text-slate-800 rounded-full pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 border border-slate-200 focus:bg-white transition-all shadow-inner"
+              class="w-48 lg:w-56 bg-slate-100/80 text-xs font-medium text-slate-800 rounded-full pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 border border-slate-200 focus:bg-white transition-all shadow-inner"
             />
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </form>
 
+          <!-- Cart Icon & Counter -->
+          <a
+            href="/checkout"
+            class="relative bg-amber-100/80 hover:bg-amber-200 text-amber-950 font-bold px-3 py-2 rounded-full flex items-center gap-1.5 text-xs transition border border-amber-300/60 shadow-sm"
+            title="View Cart & Checkout"
+          >
+            <span class="text-sm">🛒</span>
+            <span class="hidden sm:inline font-extrabold text-[11px] uppercase tracking-wider">Cart</span>
+            <span id="cart-badge-count" class="bg-amber-800 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
 
+          <!-- Customer Profile / Login Button -->
+          {currentSession ? (
+            <div class="hidden sm:flex items-center gap-2">
+              <a
+                href="/account"
+                class="flex items-center gap-1.5 bg-slate-900 hover:bg-amber-800 text-white font-bold text-xs px-3.5 py-2 rounded-full transition shadow-sm"
+                title="My Customer Dashboard"
+              >
+                <span>👤</span>
+                <span class="max-w-[110px] truncate">{currentSession.displayName || currentSession.username}</span>
+              </a>
+
+              <button
+                type="button"
+                id="header-logout-btn"
+                class="bg-red-50 hover:bg-red-100 text-red-600 font-extrabold text-xs px-3 py-2 rounded-full transition border border-red-200/60"
+                title="Logout from Account"
+              >
+                🚪
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/login"
+              class="hidden sm:flex items-center gap-1.5 bg-slate-900 hover:bg-amber-800 text-white font-bold text-xs px-4 py-2 rounded-full transition shadow-sm"
+            >
+              <span>👤 Sign In</span>
+            </a>
+          )}
 
           <!-- Mobile Hamburger Toggle Button -->
           <button
@@ -207,22 +251,54 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
               {item.title}
             </a>
           ))}
-          <a
-            href="/login"
-            class="px-4 py-2.5 rounded-xl text-xs font-extrabold text-blue-600 bg-blue-50 uppercase tracking-wider transition"
-          >
-            Customer Login / Register
-          </a>
+
+          {currentSession ? (
+            <>
+              <a
+                href="/account"
+                class="px-4 py-2.5 rounded-xl text-xs font-extrabold text-amber-900 bg-amber-50 flex items-center justify-between border border-amber-200"
+              >
+                <span>👤 My Dashboard ({currentSession.displayName || currentSession.username})</span>
+                <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-black">OPEN</span>
+              </a>
+
+              <button
+                type="button"
+                id="mobile-logout-btn"
+                class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-extrabold text-red-600 bg-red-50 flex items-center gap-2 border border-red-100"
+              >
+                <span>🚪 Logout</span>
+              </button>
+            </>
+          ) : (
+            <a
+              href="/login"
+              class="px-4 py-2.5 rounded-xl text-xs font-extrabold text-amber-900 bg-amber-50 uppercase tracking-wider transition border border-amber-200"
+            >
+              🔑 Customer Login / Register
+            </a>
+          )}
         </div>
       </div>
     </header>
 
-    <script is:inline>
-      document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
-        const drawer = document.getElementById('mobile-menu-drawer');
-        if (drawer) drawer.classList.toggle('hidden');
-      });
-    </script>
+    <!-- Floating Toast Alert for Fast Add to Cart -->
+    <div
+      id="cart-toast"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transition-all duration-300 text-xs"
+    >
+      <span class="text-base">✨</span>
+      <div>
+        <span id="cart-toast-msg" class="font-bold block">Added item to cart!</span>
+        <span class="text-[10px] text-slate-300">Ready for express checkout.</span>
+      </div>
+      <a
+        href="/checkout"
+        class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-[11px] px-3.5 py-1.5 rounded-xl shadow ml-2 transition shrink-0"
+      >
+        Checkout 🛒
+      </a>
+    </div>
 
     <!-- Main Body Slot -->
     <main class="flex-1">
@@ -302,6 +378,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
         </div>
       </div>
     </footer>
+
     <!-- Floating WhatsApp Sales Widget -->
     {integrationSettings.whatsapp_enabled && integrationSettings.whatsapp_floating_widget && (
       <a
@@ -319,5 +396,71 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
         </span>
       </a>
     )}
+
+    <!-- Global Cart & Logout Script -->
+    <script is:inline>
+      // Drawer Toggle
+      document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
+        const drawer = document.getElementById('mobile-menu-drawer');
+        if (drawer) drawer.classList.toggle('hidden');
+      });
+
+      // Cart Badge Sync
+      function updateCartBadge() {
+        try {
+          const cart = JSON.parse(localStorage.getItem('teepul_cart') || '[]');
+          const count = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+          const badge = document.getElementById('cart-badge-count');
+          if (badge) badge.innerText = String(count);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Fast Add To Cart Global Helper
+      window.quickAddToCart = function (name, slug, price, image) {
+        try {
+          const cart = JSON.parse(localStorage.getItem('teepul_cart') || '[]');
+          const existingIndex = cart.findIndex((i) => i.slug === slug);
+          if (existingIndex > -1) {
+            cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+          } else {
+            cart.push({ name, slug, price, image, quantity: 1 });
+          }
+          localStorage.setItem('teepul_cart', JSON.stringify(cart));
+          updateCartBadge();
+
+          // Show Toast
+          const toast = document.getElementById('cart-toast');
+          const toastMsg = document.getElementById('cart-toast-msg');
+          if (toast && toastMsg) {
+            toastMsg.innerText = `Added "${name}" to cart! 🛒`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+              toast.classList.add('hidden');
+            }, 4000);
+          }
+        } catch (e) {
+          console.error('Cart error:', e);
+        }
+      };
+
+      // Header & Mobile Logout Handlers
+      const triggerLogout = async () => {
+        try {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          window.location.href = '/login';
+        } catch (e) {
+          window.location.href = '/login';
+        }
+      };
+
+      document.getElementById('header-logout-btn')?.addEventListener('click', triggerLogout);
+      document.getElementById('mobile-logout-btn')?.addEventListener('click', triggerLogout);
+
+      // Initialize badge count on load
+      document.addEventListener('DOMContentLoaded', updateCartBadge);
+      updateCartBadge();
+    </script>
   </body>
 </html>
