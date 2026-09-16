@@ -17,6 +17,10 @@ model User {
   displayName  String
   avatar       String?
   bio          String?
+  address      String?
+  city         String?
+  state        String?
+  pincode      String?
   status       String    @default("active") // active, suspended
   roleId       String
   createdAt    DateTime  @default(now())
@@ -365,6 +369,9 @@ model Order {
   paymentMethod   String      @default("RAZORPAY") // RAZORPAY, PAYTM, COD, WHATSAPP
   paymentStatus   String      @default("PENDING") // PENDING, PAID, FAILED, COD_PENDING
   orderStatus     String      @default("PROCESSING") // PROCESSING, SHIPPED, DELIVERED, CANCELLED
+  trackingNumber  String?
+  courierPartner  String?     @default("Delhivery Express")
+  trackingUrl     String?
   razorpayOrderId String?
   razorpayPaymentId String?
   notes           String?

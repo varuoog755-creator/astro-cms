@@ -10,6 +10,17 @@ if (!session) {
   return Astro.redirect('/login');
 }
 
+// Fetch complete user profile from DB
+let dbUser: any = null;
+try {
+  dbUser = await prisma.user.findUnique({
+    where: { id: session.userId },
+  });
+} catch (e) {
+  console.error('Failed to fetch user:', e);
+}
+
+// Fetch customer orders
 let customerOrders: any[] = [];
 try {
   customerOrders = await prisma.order.findMany({
@@ -26,12 +37,23 @@ try {
 } catch (error) {
   console.error('Failed to fetch customer orders:', error);
 }
+
+const userProfile = {
+  displayName: dbUser?.displayName || session.displayName || session.username,
+  email: session.email,
+  phone: dbUser?.phone || '',
+  address: dbUser?.address || '',
+  city: dbUser?.city || '',
+  state: dbUser?.state || '',
+  pincode: dbUser?.pincode || '',
+  role: session.role,
+};
 ---
 
 <PublicLayout
   seo={{
-    title: `My Account - ${session.displayName || session.username}`,
-    description: 'Manage your Teepul customer profile, orders, and account details.',
+    title: `Customer Account - ${userProfile.displayName}`,
+    description: 'Manage your profile details, shipping address, and track your orders.',
   }}
 >
   <div class="bg-[#faf9f6] min-h-screen py-10 sm:py-16">
@@ -44,10 +66,10 @@ try {
             <span>✨ Customer Portal</span>
           </div>
           <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
-            Welcome back, {session.displayName || session.username}! 👋
+            Welcome back, {userProfile.displayName}! 👋
           </h1>
           <p class="text-xs sm:text-sm text-amber-200/90 font-medium">
-            Member Email: <span class="font-mono underline">{session.email}</span>
+            Member Email: <span class="font-mono underline">{userProfile.email}</span>
           </p>
         </div>
 
@@ -71,55 +93,108 @@ try {
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        <!-- Left Column: User Profile Card -->
-        <div class="lg:col-span-4 space-y-6">
-          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
-            <h2 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-              <span>👤</span> Profile Details
-            </h2>
+        <!-- Left Column: Editable Profile & Address Form -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-5">
+            <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+              <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <span>👤</span> My Profile & Address Details
+              </h2>
+              <span class="text-[10px] bg-amber-100 text-amber-900 font-black px-2.5 py-0.5 rounded-full uppercase">
+                EDITABLE
+              </span>
+            </div>
 
-            <div class="space-y-4 text-xs">
-              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                <span class="text-slate-400 block font-semibold text-[10px] uppercase">Display Name</span>
-                <span class="font-bold text-slate-900 text-sm">{session.displayName || session.username}</span>
+            <form id="profile-form" class="space-y-4">
+              <div id="profile-alert" class="hidden p-3 rounded-xl text-xs font-bold text-center"></div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  name="displayName"
+                  value={userProfile.displayName}
+                  required
+                  placeholder="e.g. Rahul Sharma"
+                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+                />
               </div>
 
-              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                <span class="text-slate-400 block font-semibold text-[10px] uppercase">Email Address</span>
-                <span class="font-bold text-slate-900 font-mono">{session.email}</span>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number (For Delivery SMS)</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={userProfile.phone}
+                  placeholder="e.g. 9876543210"
+                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+                />
               </div>
 
-              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 flex items-center justify-between">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Delivery Address</label>
+                <textarea
+                  name="address"
+                  rows="2"
+                  placeholder="House/Flat No., Street, Landmark"
+                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+                >{userProfile.address}</textarea>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2.5">
                 <div>
-                  <span class="text-slate-400 block font-semibold text-[10px] uppercase">Account Role</span>
-                  <span class="font-extrabold text-amber-800">{session.role}</span>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Pincode</label>
+                  <input
+                    type="text"
+                    name="pincode"
+                    value={userProfile.pincode}
+                    placeholder="110001"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 font-mono"
+                  />
                 </div>
-                <span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
-                  ACTIVE
-                </span>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">City</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={userProfile.city}
+                    placeholder="Delhi"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">State</label>
+                  <input
+                    type="text"
+                    name="state"
+                    value={userProfile.state}
+                    placeholder="Delhi"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div class="pt-2">
-              <button
-                type="button"
-                id="account-logout-btn-2"
-                class="w-full bg-slate-100 hover:bg-red-50 hover:text-red-700 text-slate-700 font-bold text-xs py-3 rounded-2xl transition border border-slate-200 flex items-center justify-center gap-2"
-              >
-                <span>Logout from Account</span>
-              </button>
-            </div>
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  id="save-profile-btn"
+                  class="w-full bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-xs py-3 rounded-2xl shadow transition flex items-center justify-center gap-2"
+                >
+                  <span>💾 Save Profile Details</span>
+                </button>
+              </div>
+            </form>
           </div>
 
           <div class="bg-amber-50/70 border border-amber-200 p-5 rounded-3xl text-xs space-y-2">
             <h3 class="font-extrabold text-amber-900 flex items-center gap-1.5">
-              <span>🛡️</span> 100% Buyer Protection
+              <span>🛡️</span> Customer Service & Order Support
             </h3>
             <p class="text-amber-800/90 leading-relaxed text-[11px]">
-              Need help with your curtains order, fitting sizes or invoice? Contact Teepul Customer Care directly on WhatsApp.
+              Need help with curtain measurements, order changes or tracking details? Connect directly with Teepul support team on WhatsApp.
             </p>
             <a
-              href="https://wa.me/919876543210?text=Hi%20Teepul!%20I%20have%20a%20question%20about%20my%20account."
+              href="https://wa.me/919876543210?text=Hi%20Teepul!%20I%20have%20a%20question%20about%20my%20order."
               target="_blank"
               class="inline-flex items-center gap-1.5 font-bold text-emerald-700 hover:underline pt-1"
             >
@@ -128,26 +203,26 @@ try {
           </div>
         </div>
 
-        <!-- Right Column: Order History -->
-        <div class="lg:col-span-8 space-y-6">
+        <!-- Right Column: Order History & Live Order Tracking -->
+        <div class="lg:col-span-7 space-y-6">
           <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                  <span>📦</span> My Orders ({customerOrders.length})
+                  <span>📦</span> Order History & Live Tracking ({customerOrders.length})
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Track your door curtain & decor deliveries</p>
+                <p class="text-xs text-slate-500 mt-0.5">Track your door curtain & decor shipments</p>
               </div>
 
               <a href="/products" class="text-xs font-bold text-amber-800 hover:underline">
-                + New Order
+                + Shop Catalog
               </a>
             </div>
 
             {customerOrders.length === 0 ? (
               <div class="text-center py-12 space-y-4 bg-slate-50 rounded-2xl border border-slate-100">
                 <div class="text-4xl">🛍️</div>
-                <h3 class="text-base font-bold text-slate-800">No Orders Placed Yet</h3>
+                <h3 class="text-base font-bold text-slate-800">No Orders Found</h3>
                 <p class="text-xs text-slate-500 max-w-sm mx-auto">
                   Explore our luxury door curtains, French sheer drapery, and ambient lighting catalog!
                 </p>
@@ -159,9 +234,11 @@ try {
                 </a>
               </div>
             ) : (
-              <div class="space-y-4">
+              <div class="space-y-6">
                 {customerOrders.map((order) => (
-                  <div class="bg-slate-50/80 rounded-2xl p-5 border border-slate-200 space-y-3">
+                  <div class="bg-slate-50/80 rounded-2xl p-5 border border-slate-200 space-y-4">
+                    
+                    <!-- Order Header Info -->
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-3 text-xs">
                       <div>
                         <span class="font-extrabold text-slate-900 text-sm">Order #{order.orderNumber}</span>
@@ -174,9 +251,44 @@ try {
                         <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
                           {order.paymentMethod}
                         </span>
-                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                        <span class={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase ${
+                          order.orderStatus === 'DELIVERED'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : order.orderStatus === 'SHIPPED'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
                           {order.orderStatus}
                         </span>
+                      </div>
+                    </div>
+
+                    <!-- Tracking Box -->
+                    <div class="bg-white p-4 rounded-xl border border-amber-200/80 space-y-2">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="font-extrabold text-amber-900 flex items-center gap-1.5">
+                          <span>🚚</span> Package Tracking Details
+                        </span>
+                        <span class="text-[10px] font-bold text-slate-500">
+                          Partner: {order.courierPartner || 'Delhivery Express'}
+                        </span>
+                      </div>
+
+                      <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
+                        <div>
+                          <span class="text-slate-400 block text-[10px]">AWB / Tracking Number</span>
+                          <span class="font-mono font-bold text-slate-800">
+                            {order.trackingNumber || `DEL-${order.orderNumber.replace('ORD-', '')}-IN`}
+                          </span>
+                        </div>
+
+                        <a
+                          href={order.trackingUrl || `https://www.delhivery.com/track/package/${order.trackingNumber || 'DEL123456789'}`}
+                          target="_blank"
+                          class="bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-[11px] px-4 py-2 rounded-xl shadow transition flex items-center gap-1"
+                        >
+                          <span>🚚 Track Package Live &rarr;</span>
+                        </a>
                       </div>
                     </div>
 
@@ -193,10 +305,12 @@ try {
                       ))}
                     </div>
 
-                    <div class="flex items-center justify-between pt-2 text-xs font-bold">
-                      <span class="text-slate-600">Total Paid:</span>
-                      <span class="text-amber-800 text-sm font-black">₹{order.totalAmount?.toLocaleString('en-IN')}</span>
+                    <!-- Shipping Address Preview -->
+                    <div class="text-[11px] text-slate-500 border-t border-slate-200/60 pt-2 flex items-center justify-between">
+                      <span><strong>Shipping Address:</strong> {order.shippingAddress}, {order.pincode}</span>
+                      <span class="font-extrabold text-slate-900 text-xs">Total: ₹{order.totalAmount?.toLocaleString('en-IN')}</span>
                     </div>
+
                   </div>
                 ))}
               </div>
@@ -210,17 +324,55 @@ try {
   </div>
 
   <script is:inline>
+    // Profile Edit Submit Handler
+    const profileForm = document.getElementById('profile-form');
+    const profileAlert = document.getElementById('profile-alert');
+    const saveBtn = document.getElementById('save-profile-btn');
+
+    profileForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '⌛ Saving Details...';
+      profileAlert.className = 'hidden';
+
+      const formData = new FormData(profileForm);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch('/api/account/update-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          profileAlert.className = 'p-3 rounded-xl text-xs font-bold text-center bg-emerald-100 text-emerald-800 border border-emerald-300';
+          profileAlert.innerText = '✨ Profile & address saved successfully!';
+        } else {
+          profileAlert.className = 'p-3 rounded-xl text-xs font-bold text-center bg-red-100 text-red-800 border border-red-300';
+          profileAlert.innerText = 'Error: ' + (result.error || 'Failed to update profile');
+        }
+      } catch (err) {
+        profileAlert.className = 'p-3 rounded-xl text-xs font-bold text-center bg-red-100 text-red-800 border border-red-300';
+        profileAlert.innerText = 'Unexpected error occurred.';
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '💾 Save Profile Details';
+      }
+    });
+
+    // Logout Handler
     const handleLogout = async () => {
       try {
         await fetch('/api/auth/logout', { method: 'POST' });
         window.location.href = '/login';
       } catch (err) {
-        console.error('Logout failed:', err);
         window.location.href = '/login';
       }
     };
 
     document.getElementById('account-logout-btn')?.addEventListener('click', handleLogout);
-    document.getElementById('account-logout-btn-2')?.addEventListener('click', handleLogout);
   </script>
 </PublicLayout>
