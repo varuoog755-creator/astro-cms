@@ -108,7 +108,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const imagesRaw = formData.get('images')?.toString() || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80';
   const imagesArray = imagesRaw.split('\n').map((i) => i.trim()).filter(Boolean);
 
-  const featuresRaw = formData.get('features')?.toString() || '350 GSM Fabric, 99% Thermal Blackout, Brass Ring Grommets';
+  const featuresRaw = formData.get('features')?.toString() || '100% Heavyweight Polyester, 99% Thermal Blackout, Stainless Steel Eyelets';
   const featuresArray = featuresRaw.split(',').map((f) => f.trim());
 
   if (!name || isNaN(price)) {
