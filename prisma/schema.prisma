@@ -400,6 +400,50 @@ model OrderItem {
   @@map("order_items")
 }
 
+// Permanent payment transaction log — every payment attempt saved, never deleted
+model PaymentTransaction {
+  id                String   @id @default(uuid())
+  orderId           String
+  orderNumber       String
+  paymentMethod     String   // RAZORPAY, PAYTM, COD, WHATSAPP
+  paymentGateway    String?  // razorpay, paytm, manual
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amount            Float
+  currency          String   @default("INR")
+  status            String   // PENDING, PAID, FAILED, REFUNDED
+  webhookEvent      String?  // payment.captured, order.paid, etc.
+  gatewayResponse   String?  // Full JSON response from gateway
+  ipAddress         String?
+  location          String?
+  errorMessage      String?
+  createdAt         DateTime @default(now())
+
+  @@map("payment_transactions")
+}
+
+// Permanent courier shipment log — every booking saved, never deleted
+model CourierShipment {
+  id              String   @id @default(uuid())
+  orderId         String
+  orderNumber     String
+  courierPartner  String   // EKart Logistics, Delhivery, etc.
+  awbNumber       String?  // Tracking AWB code
+  trackingUrl     String?
+  pickupPincode   String?
+  deliveryPincode String?
+  weight          Float?   // in grams
+  chargeAmount    Float?   // courier fee in INR
+  status          String   @default("BOOKED") // BOOKED, PICKED_UP, IN_TRANSIT, DELIVERED, RTO
+  bookedBy        String?  // admin email who booked
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("courier_shipments")
+}
+
 model Product {
   id            String   @id @default(uuid())
   slug          String   @unique

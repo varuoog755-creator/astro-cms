@@ -74,6 +74,32 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
 
+    // ✅ Save permanent PAID PaymentTransaction record to Supabase
+    await prisma.paymentTransaction.create({
+      data: {
+        orderId: updatedOrder.id,
+        orderNumber: updatedOrder.orderNumber,
+        paymentMethod: updatedOrder.paymentMethod,
+        paymentGateway: 'razorpay',
+        razorpayOrderId: razorpayOrderId || undefined,
+        razorpayPaymentId: razorpayPaymentId || undefined,
+        razorpaySignature: razorpaySignature || undefined,
+        amount: updatedOrder.totalAmount,
+        currency: 'INR',
+        status: 'PAID',
+        ipAddress: clientIp,
+        location: geo.locationStr,
+        gatewayResponse: JSON.stringify({
+          razorpayPaymentId,
+          razorpayOrderId,
+          orderNumber: updatedOrder.orderNumber,
+          customerName: updatedOrder.customerName,
+          stage: 'payment_verified',
+          verifiedAt: new Date().toISOString(),
+        }),
+      },
+    });
+
     return new Response(
       JSON.stringify({
         success: true,

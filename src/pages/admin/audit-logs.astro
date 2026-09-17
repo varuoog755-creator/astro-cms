@@ -14,7 +14,7 @@ if (filter === 'cart') {
   whereClause = { action: { startsWith: 'auth.' } };
 }
 
-const [rawLogs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
+const [rawLogs, totalCount, cartCount, orderCount, userCount, paymentTxns, courierShipments] = await Promise.all([
   prisma.auditLog.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
@@ -25,6 +25,8 @@ const [rawLogs, totalCount, cartCount, orderCount, userCount] = await Promise.al
   prisma.auditLog.count({ where: { action: { startsWith: 'cart.' } } }),
   prisma.auditLog.count({ where: { action: { startsWith: 'order.' } } }),
   prisma.user.count(),
+  prisma.paymentTransaction.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
+  prisma.courierShipment.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
 ]);
 
 const logs = await Promise.all(
@@ -480,4 +482,146 @@ const logs = await Promise.all(
       }
     });
   </script>
+
+  <!-- ✅ Payment Transactions Table -->
+  <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-6 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-extrabold">💳 Payment Transactions</h2>
+        <p class="text-xs text-blue-200 mt-1">Every payment attempt permanently saved — Paytm, Razorpay, COD, WhatsApp</p>
+      </div>
+      <span class="bg-blue-500/30 text-blue-100 text-xs font-bold px-3 py-1.5 rounded-full border border-blue-400/30">
+        {paymentTxns.length} Records
+      </span>
+    </div>
+
+    {paymentTxns.length === 0 ? (
+      <div class="p-10 text-center text-slate-400 text-sm">
+        <span class="text-3xl block mb-2">💳</span>
+        No payment transactions yet. First order karao!
+      </div>
+    ) : (
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Order #</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Method</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Gateway</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Amount</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Status</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Razorpay ID</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Location</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {paymentTxns.map((txn) => (
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="px-4 py-3 font-mono font-bold text-slate-900">{txn.orderNumber}</td>
+                <td class="px-4 py-3">
+                  <span class={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase border ${
+                    txn.paymentMethod === 'RAZORPAY' ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                    txn.paymentMethod === 'PAYTM' ? 'bg-indigo-100 text-indigo-800 border-indigo-300' :
+                    txn.paymentMethod === 'COD' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                    'bg-emerald-100 text-emerald-800 border-emerald-300'
+                  }`}>
+                    {txn.paymentMethod}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-500 font-mono">{txn.paymentGateway || '—'}</td>
+                <td class="px-4 py-3 font-black text-slate-900">₹{txn.amount.toLocaleString('en-IN')}</td>
+                <td class="px-4 py-3">
+                  <span class={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase border ${
+                    txn.status === 'PAID' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                    txn.status === 'FAILED' ? 'bg-red-100 text-red-800 border-red-300' :
+                    'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}>
+                    {txn.status}
+                  </span>
+                </td>
+                <td class="px-4 py-3 font-mono text-[10px] text-slate-500">{txn.razorpayPaymentId || '—'}</td>
+                <td class="px-4 py-3 text-slate-500">{txn.location || '—'}</td>
+                <td class="px-4 py-3 text-slate-400 whitespace-nowrap">
+                  {new Date(txn.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+
+  <!-- ✅ Courier Shipments Table -->
+  <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-gradient-to-r from-amber-900 to-amber-800 text-white p-6 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-extrabold">🚚 Courier Shipments</h2>
+        <p class="text-xs text-amber-200 mt-1">Every EKart & courier booking permanently saved — AWB, route, charges</p>
+      </div>
+      <span class="bg-amber-500/30 text-amber-100 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-400/30">
+        {courierShipments.length} Bookings
+      </span>
+    </div>
+
+    {courierShipments.length === 0 ? (
+      <div class="p-10 text-center text-slate-400 text-sm">
+        <span class="text-3xl block mb-2">🚚</span>
+        No courier bookings yet. Order aane ke baad EKart se book karo.
+      </div>
+    ) : (
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Order #</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Courier</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">AWB</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Pickup PIN</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Delivery PIN</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Charge</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Status</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Booked By</th>
+              <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {courierShipments.map((ship) => (
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="px-4 py-3 font-mono font-bold text-slate-900">{ship.orderNumber}</td>
+                <td class="px-4 py-3 font-bold text-amber-900">{ship.courierPartner}</td>
+                <td class="px-4 py-3">
+                  {ship.trackingUrl ? (
+                    <a href={ship.trackingUrl} target="_blank" class="font-mono text-blue-700 font-bold hover:underline text-[10px]">
+                      {ship.awbNumber} ↗
+                    </a>
+                  ) : (
+                    <span class="font-mono text-slate-700">{ship.awbNumber || '—'}</span>
+                  )}
+                </td>
+                <td class="px-4 py-3 font-mono text-slate-700">{ship.pickupPincode || '—'}</td>
+                <td class="px-4 py-3 font-mono text-slate-700">{ship.deliveryPincode || '—'}</td>
+                <td class="px-4 py-3 font-bold text-emerald-700">₹{ship.chargeAmount || '—'}</td>
+                <td class="px-4 py-3">
+                  <span class={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase border ${
+                    ship.status === 'DELIVERED' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                    ship.status === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                    'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}>
+                    {ship.status}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-500 font-mono text-[10px]">{ship.bookedBy || '—'}</td>
+                <td class="px-4 py-3 text-slate-400 whitespace-nowrap">
+                  {new Date(ship.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+
 </AdminLayout>

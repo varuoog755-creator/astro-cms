@@ -49,6 +49,28 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       },
     });
 
+    // ✅ Save permanent CourierShipment record to Supabase
+    const ekartFeeMap: Record<string, number> = {
+      '1': 55, '2': 55, '4': 75, '5': 75,
+    };
+    const ekartFee = ekartFeeMap[order.pincode?.[0] || ''] || 85;
+
+    await prisma.courierShipment.create({
+      data: {
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        courierPartner,
+        awbNumber: awb,
+        trackingUrl,
+        pickupPincode: '132103', // Panipat unit pincode
+        deliveryPincode: order.pincode,
+        chargeAmount: ekartFee,
+        status: 'BOOKED',
+        bookedBy: session?.email || 'admin',
+        notes: `EKart AWB generated. Customer: ${order.customerName}, Phone: ${order.customerPhone}`,
+      },
+    });
+
     return new Response(
       JSON.stringify({
         success: true,

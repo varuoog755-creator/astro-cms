@@ -35,6 +35,15 @@ export const POST: APIRoute = async ({ request }) => {
       const orderId = notes.orderId;
 
       if (orderId || razorpayOrderId) {
+        const updatedOrders = await prisma.order.findMany({
+          where: {
+            OR: [
+              ...(orderId ? [{ id: orderId }] : []),
+              ...(razorpayOrderId ? [{ razorpayOrderId }] : []),
+            ],
+          },
+        });
+
         await prisma.order.updateMany({
           where: {
             OR: [
@@ -47,6 +56,25 @@ export const POST: APIRoute = async ({ request }) => {
             razorpayPaymentId: razorpayPaymentId || undefined,
           },
         });
+
+        // ✅ Save permanent PaymentTransaction for every webhook event to Supabase
+        for (const ord of updatedOrders) {
+          await prisma.paymentTransaction.create({
+            data: {
+              orderId: ord.id,
+              orderNumber: ord.orderNumber,
+              paymentMethod: ord.paymentMethod,
+              paymentGateway: 'razorpay',
+              razorpayOrderId: razorpayOrderId || undefined,
+              razorpayPaymentId: razorpayPaymentId || undefined,
+              amount: ord.totalAmount,
+              currency: 'INR',
+              status: 'PAID',
+              webhookEvent: event,
+              gatewayResponse: JSON.stringify(payload),
+            },
+          });
+        }
       }
     }
 

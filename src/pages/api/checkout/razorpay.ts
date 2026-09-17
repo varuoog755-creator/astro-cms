@@ -101,6 +101,30 @@ export const POST: APIRoute = async ({ request }) => {
         },
       });
 
+      // ✅ Save permanent PaymentTransaction record to Supabase
+      await prisma.paymentTransaction.create({
+        data: {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          paymentMethod,
+          paymentGateway: paymentMethod === 'PAYTM' ? 'paytm_upi' : paymentMethod === 'COD' ? 'cod' : 'whatsapp',
+          amount: totalAmount,
+          currency: 'INR',
+          status: paymentMethod === 'COD' ? 'PENDING' : 'PENDING',
+          ipAddress: clientIp,
+          location: geo.locationStr,
+          gatewayResponse: JSON.stringify({
+            method: paymentMethod,
+            paytmVpa: paymentMethod === 'PAYTM' ? (await getIntegrationSettings()).paytm_vpa : null,
+            orderNumber,
+            customerName,
+            customerPhone,
+            city: geo.city,
+            state: geo.state,
+          }),
+        },
+      });
+
       await logAudit({
         action: 'order.placed',
         entity: 'Order',
@@ -186,6 +210,29 @@ export const POST: APIRoute = async ({ request }) => {
         city: geo.city,
         state: geo.state,
         country: geo.country,
+      },
+    });
+
+    // ✅ Save permanent PaymentTransaction record to Supabase (PENDING until verify)
+    await prisma.paymentTransaction.create({
+      data: {
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        paymentMethod: 'RAZORPAY',
+        paymentGateway: 'razorpay',
+        amount: totalAmount,
+        currency: 'INR',
+        status: 'PENDING',
+        ipAddress: clientIp,
+        location: geo.locationStr,
+        gatewayResponse: JSON.stringify({
+          orderNumber,
+          customerName,
+          customerPhone,
+          city: geo.city,
+          state: geo.state,
+          stage: 'order_initiated',
+        }),
       },
     });
 
