@@ -5,9 +5,10 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://teepul.com',
   output: 'server',
   security: {
-    checkOrigin: true,
+    checkOrigin: false,
   },
   adapter: node({
     mode: 'standalone',
