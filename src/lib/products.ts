@@ -35,18 +35,38 @@ export interface Product {
 export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice: number, baseOriginalPrice?: number): ProductSize[] {
   if (!sizes || !Array.isArray(sizes) || sizes.length === 0) {
     return [
-      { name: "5 Feet", price: Math.round(basePrice * 0.85), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.85) : undefined },
+      { name: "5 Feet (Window)", price: Math.round(basePrice * 0.85), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.85) : undefined },
       { name: "6 Feet", price: Math.round(basePrice * 0.92), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.92) : undefined },
-      { name: "7 Feet", price: basePrice, originalPrice: baseOriginalPrice },
-      { name: "9 Feet", price: Math.round(basePrice * 1.25), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 1.25) : undefined },
+      { name: "7 Feet (Door)", price: basePrice, originalPrice: baseOriginalPrice },
+      { name: "9 Feet (Long Door)", price: Math.round(basePrice * 1.25), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 1.25) : undefined },
     ];
   }
+
+  // If curtain product has standard sizes, ensure 5ft, 6ft, 7ft, 9ft have distinct proportional prices
   return sizes.map((s) => {
     if (typeof s === 'string') {
+      const lower = s.toLowerCase();
+      let price = basePrice;
+      let origPrice = baseOriginalPrice;
+
+      if (lower.includes('5') || (lower.includes('window') && !lower.includes('door'))) {
+        price = Math.round(basePrice * 0.85);
+        origPrice = baseOriginalPrice ? Math.round(baseOriginalPrice * 0.85) : undefined;
+      } else if (lower.includes('6')) {
+        price = Math.round(basePrice * 0.92);
+        origPrice = baseOriginalPrice ? Math.round(baseOriginalPrice * 0.92) : undefined;
+      } else if (lower.includes('7') || (lower.includes('door') && !lower.includes('long') && !lower.includes('9'))) {
+        price = basePrice;
+        origPrice = baseOriginalPrice;
+      } else if (lower.includes('9') || lower.includes('long')) {
+        price = Math.round(basePrice * 1.25);
+        origPrice = baseOriginalPrice ? Math.round(baseOriginalPrice * 1.25) : undefined;
+      }
+
       return {
         name: s,
-        price: basePrice,
-        originalPrice: baseOriginalPrice,
+        price,
+        originalPrice: origPrice,
       };
     }
     return {
