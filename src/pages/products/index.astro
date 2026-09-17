@@ -105,12 +105,12 @@ const products = await getStorefrontProducts();
               <div class="flex items-center gap-1.5">
                 <button
                   type="button"
-                  onclick={`window.quickAddToCart('${product.name.replace(/'/g, "\\'")}', '${product.slug}', ${product.price}, '${product.images[0]}')`}
-                  class="bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-xs px-2.5 py-2 rounded-xl shadow-sm transition flex items-center gap-1"
+                  onclick={`window.animatedAddToCart(this, '${product.name.replace(/'/g, "\\'")}', '${product.slug}', ${product.price}, '${product.images[0]}')`}
+                  class="bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow active:scale-95 transition-all duration-300 flex items-center gap-1.5 group/btn cursor-pointer"
                   title="Add to Cart"
                 >
-                  <span>🛒</span>
-                  <span>+Add</span>
+                  <span class="cart-icon transition-transform duration-300 group-hover/btn:scale-125">🛒</span>
+                  <span class="btn-text">Add to Cart</span>
                 </button>
 
                 <a

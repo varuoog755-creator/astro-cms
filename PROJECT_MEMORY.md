@@ -48,7 +48,7 @@
 - `https://teepul.com/api/auth/logout` - Session Destroy & Cookie Clear Endpoint
 
 ### Secret Admin Portal (Admin Only)
-- `https://teepul.com/admin/login` - Private Secret Admin Login (`govinda755rock755@gmail.com` / `Govinda@755`)
+- `https://teepul.com/admin/login` - Private Secret Admin Login (`govinda755rock755@gmail.com` / `[REDACTED]`)
 - `https://teepul.com/admin` - Live Admin Overview Dashboard
 - `https://teepul.com/admin/orders` - Customer Orders, Curtain Specifications (Color, Size, Address, Phone, Product Link), Day-by-Day Date Filters, EKart Logistics Courier Booking
 - `https://teepul.com/admin/products` - Curtains & Decor Catalog Management

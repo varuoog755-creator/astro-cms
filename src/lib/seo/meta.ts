@@ -10,14 +10,25 @@ export interface SeoOptions {
   modifiedTime?: string;
   authorName?: string;
   breadcrumbs?: Array<{ name: string; url: string }>;
+  productData?: {
+    name: string;
+    price: number;
+    currency: string;
+    sku?: string;
+    inStock?: boolean;
+    rating?: number;
+    reviewCount?: number;
+    image?: string;
+  };
 }
 
 export function generateSeoMetadata(options: SeoOptions) {
-  const siteName = 'Astro CMS';
+  const siteName = 'Teepul Luxury Curtains & Home Decor';
   const fullTitle = `${options.title} | ${siteName}`;
-  const description = options.description || 'A modern Astro & TypeScript Content Management System.';
-  const canonical = options.canonicalUrl || 'http://localhost:4321';
-  const ogImage = options.ogImage || `${canonical}/images/og-default.png`;
+  const description = options.description || 'Teepul Luxury Door Curtains, Sheer Drapery & Ambient Lighting.';
+  const defaultSiteUrl = process.env.PUBLIC_SITE_URL || 'https://teepul.com';
+  const canonical = options.canonicalUrl || defaultSiteUrl;
+  const ogImage = options.ogImage || `${canonical}/teepul-logo.png`;
 
   const jsonLd: Record<string, any>[] = [];
 
@@ -48,6 +59,32 @@ export function generateSeoMetadata(options: SeoOptions) {
         '@type': 'Person',
         name: options.authorName || 'Editor',
       },
+    });
+  }
+
+  // Product schema
+  if (options.productData) {
+    const p = options.productData;
+    jsonLd.push({
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: p.name,
+      image: [p.image || ogImage],
+      description,
+      sku: p.sku,
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: p.currency || 'INR',
+        price: p.price,
+        availability: p.inStock !== false ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      },
+      ...(p.rating ? {
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: p.rating,
+          reviewCount: p.reviewCount || 1,
+        },
+      } : {}),
     });
   }
 

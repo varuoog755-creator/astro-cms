@@ -1,20 +1,66 @@
 import type { APIRoute } from 'astro';
 import prisma from '../../../lib/db';
 import { getIntegrationSettings } from '../../../lib/settings';
+import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 
 export const POST: APIRoute = async ({ request }) => {
+  const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
+  const { allowed } = checkRateLimit(clientIp, 'checkout_razorpay', { maxRequests: 10, windowMs: 60000 });
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: 'Too many checkout requests. Please wait a minute before trying again.' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     const body = await request.json();
-    const { customerName, customerEmail, customerPhone, shippingAddress, pincode, city, state, productId, productTitle, color, size, quantity, unitPrice, paymentMethod } = body;
+    const { customerName, customerEmail, customerPhone, shippingAddress, pincode, city, state, productId, productTitle, color, size, quantity, paymentMethod } = body;
 
-    if (!customerName || !customerPhone || !shippingAddress || !unitPrice) {
-      return new Response(JSON.stringify({ error: 'Missing required shipping or item details' }), {
+    if (!customerName || !customerPhone || !shippingAddress) {
+      return new Response(JSON.stringify({ error: 'Missing required shipping or contact details' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const totalAmount = Number(unitPrice) * (Number(quantity) || 1);
+    // Server-side authoritative product lookup
+    let realUnitPrice = 1499; // Default price fallback
+    let itemTitle = productTitle || 'Storefront Item';
+
+    if (productId) {
+      const dbProduct = await prisma.product.findFirst({
+        where: { OR: [{ id: productId }, { slug: productId }] },
+      });
+      if (dbProduct) {
+        realUnitPrice = dbProduct.price;
+        itemTitle = dbProduct.name;
+
+        if (size && dbProduct.sizesJson) {
+          try {
+            const parsedSizes = JSON.parse(dbProduct.sizesJson);
+            if (Array.isArray(parsedSizes)) {
+              const matched = parsedSizes.find((s: any) => (typeof s === 'object' ? s.name : s)?.toString().toLowerCase() === size.toLowerCase());
+              if (matched && typeof matched === 'object' && !isNaN(Number(matched.price))) {
+                realUnitPrice = Number(matched.price);
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing sizesJson in checkout API:', e);
+          }
+        }
+      }
+    }
+
+    if (body.unitPrice && !isNaN(Number(body.unitPrice)) && Number(body.unitPrice) > 0) {
+      // If client calculated valid size price matching catalog
+      if (realUnitPrice === 1499 || Math.abs(realUnitPrice - Number(body.unitPrice)) < 500) {
+        realUnitPrice = Number(body.unitPrice);
+      }
+    }
+
+    const qty = Math.max(1, Number(quantity) || 1);
+    const totalAmount = realUnitPrice * qty;
     const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const settings = await getIntegrationSettings();
@@ -40,11 +86,11 @@ export const POST: APIRoute = async ({ request }) => {
             create: [
               {
                 productId: productId || 'prod-1',
-                productTitle: productTitle || 'Storefront Item',
+                productTitle: itemTitle,
                 color: color || 'Default',
                 size: size || 'Standard',
-                unitPrice: Number(unitPrice),
-                quantity: Number(quantity) || 1,
+                unitPrice: realUnitPrice,
+                quantity: qty,
                 totalPrice: totalAmount,
               },
             ],
@@ -82,11 +128,11 @@ export const POST: APIRoute = async ({ request }) => {
           create: [
             {
               productId: productId || 'prod-1',
-              productTitle: productTitle || 'Storefront Item',
+              productTitle: itemTitle,
               color: color || 'Default',
               size: size || 'Standard',
-              unitPrice: Number(unitPrice),
-              quantity: Number(quantity) || 1,
+              unitPrice: realUnitPrice,
+              quantity: qty,
               totalPrice: totalAmount,
             },
           ],

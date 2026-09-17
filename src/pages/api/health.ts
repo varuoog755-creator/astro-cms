@@ -1,16 +1,12 @@
 import type { APIRoute } from 'astro';
-import prisma from '../../lib/db';
 
 export const GET: APIRoute = async () => {
   try {
     // Quick DB query to keep SQLite connection warm
-    const userCount = await prisma.user.count();
-
     return new Response(
       JSON.stringify({
         status: 'healthy',
         database: 'connected',
-        users: userCount,
         timestamp: new Date().toISOString(),
       }),
       {

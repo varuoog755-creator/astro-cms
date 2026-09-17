@@ -22,3 +22,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# database & backups
+*.db
+*.db-journal
+prisma/backups/
+data/
+deploy.zip
+

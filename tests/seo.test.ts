@@ -11,7 +11,7 @@ describe('SEO Metadata Generator Tests', () => {
       authorName: 'John Doe',
     });
 
-    expect(seo.title).toBe('Test Post Title | Astro CMS');
+    expect(seo.title).toBe('Test Post Title | Teepul Luxury Curtains & Home Decor');
     expect(seo.description).toBe('Test summary description');
     expect(seo.jsonLd).toContain('schema.org');
     expect(seo.jsonLd).toContain('Article');

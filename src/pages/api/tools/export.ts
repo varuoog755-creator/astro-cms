@@ -15,6 +15,12 @@ export const GET: APIRoute = async ({ locals }) => {
     prisma.setting.findMany(),
   ]);
 
+  const secretKeys = ['razorpay_key_secret', 'paytm_mkey', 'ekart_api_key', 'firebase_api_key'];
+  const sanitizedSettings = settings.map((s) => ({
+    ...s,
+    value: secretKeys.includes(s.key) && s.value ? '[REDACTED]' : s.value,
+  }));
+
   const backupData = {
     version: '1.0.0',
     exportedAt: new Date().toISOString(),
@@ -22,7 +28,7 @@ export const GET: APIRoute = async ({ locals }) => {
     pages,
     categories,
     tags,
-    settings,
+    settings: sanitizedSettings,
   };
 
   return new Response(JSON.stringify(backupData, null, 2), {

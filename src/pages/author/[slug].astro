@@ -36,7 +36,7 @@ if (!user) return Astro.redirect('/404');
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {user.posts.map((post) => (
+      {user.posts.map((post: any) => (
         <article class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition">
           <div class="space-y-3">
             <h2 class="font-bold text-lg text-gray-900 leading-snug">

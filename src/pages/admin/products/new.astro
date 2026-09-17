@@ -6,17 +6,40 @@ const id = Astro.url.searchParams.get('id');
 const error = Astro.url.searchParams.get('error');
 
 let product = null;
+let productSizes: { name: string; price: number; originalPrice?: number }[] = [];
+
 if (id) {
   const existing = await prisma.product.findUnique({ where: { id } });
   if (existing) {
+    try {
+      const raw = JSON.parse(existing.sizesJson || '[]');
+      productSizes = raw.map((s: any) => {
+        if (typeof s === 'string') {
+          return { name: s, price: existing.price, originalPrice: existing.originalPrice || undefined };
+        }
+        return { name: s.name, price: s.price || existing.price, originalPrice: s.originalPrice };
+      });
+    } catch (e) {
+      productSizes = [];
+    }
+
     product = {
       ...existing,
       colors: JSON.parse(existing.colorsJson || '[]').map((c: any) => c.name).join(', '),
-      sizes: JSON.parse(existing.sizesJson || '[]').join(', '),
+      sizes: productSizes.map(s => `${s.name}:${s.price}`).join(', '),
       images: JSON.parse(existing.imagesJson || '[]').join('\n'),
       features: JSON.parse(existing.featuresJson || '[]').join(', '),
     };
   }
+}
+
+if (!productSizes.length) {
+  productSizes = [
+    { name: '5 Feet (Window)', price: 499, originalPrice: 799 },
+    { name: '6 Feet', price: 549, originalPrice: 849 },
+    { name: '7 Feet (Door)', price: 599, originalPrice: 999 },
+    { name: '9 Feet (Long Door)', price: 799, originalPrice: 1299 },
+  ];
 }
 ---
 
@@ -127,7 +150,7 @@ if (id) {
         >{product?.description || ''}</textarea>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-6">
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Colors (comma separated)</label>
           <input
@@ -138,14 +161,98 @@ if (id) {
           />
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sizes (comma separated)</label>
-          <input
-            type="text"
-            name="sizes"
-            value={product?.sizes || '7 Foot (Door), 9 Foot (Long Door)'}
-            class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3"
-          />
+        <!-- Curtain Size & Price Manager -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <span>📏</span> Curtain Sizes & Length-wise Pricing (₹)
+              </h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">
+                Window (5ft, 6ft) aur Door (7ft, 9ft) curtains ke alag-alag selling price set karein. Customer jis size par click karega website wahi price dynamic dikhayegi.
+              </p>
+            </div>
+            <button
+              type="button"
+              id="add-size-row-btn"
+              class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+            >
+              <span>+ Add Size Option</span>
+            </button>
+          </div>
+
+          <input type="hidden" name="sizes_json" id="sizes_json_input" value="" />
+          <input type="hidden" name="sizes" id="sizes_fallback_input" value="" />
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+                  <th class="py-2 px-3">Size / Length (e.g. 5 Feet)</th>
+                  <th class="py-2 px-3">Selling Price (₹)</th>
+                  <th class="py-2 px-3">MRP / Cut Price (₹)</th>
+                  <th class="py-2 px-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="sizes-table-body" class="divide-y divide-slate-100">
+                {productSizes.map((sz) => (
+                  <tr class="size-row">
+                    <td class="py-2 px-2">
+                      <input
+                        type="text"
+                        name="size_name"
+                        value={sz.name}
+                        placeholder="e.g. 7 Feet (Door)"
+                        required
+                        class="size-name-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-semibold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td class="py-2 px-2">
+                      <input
+                        type="number"
+                        name="size_price"
+                        value={sz.price}
+                        step="0.01"
+                        placeholder="599"
+                        required
+                        class="size-price-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td class="py-2 px-2">
+                      <input
+                        type="number"
+                        name="size_original_price"
+                        value={sz.originalPrice || ''}
+                        step="0.01"
+                        placeholder="999"
+                        class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td class="py-2 px-2 text-right">
+                      <button
+                        type="button"
+                        class="remove-size-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-1.5 rounded-md transition font-bold cursor-pointer"
+                        title="Delete Size"
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex items-center gap-2 pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
+            <span class="font-bold">Quick Presets:</span>
+            <button
+              type="button"
+              id="preset-curtains-btn"
+              class="text-blue-600 hover:underline font-semibold bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-xs cursor-pointer"
+            >
+              Curtain Standard (5ft, 6ft, 7ft, 9ft)
+            </button>
+          </div>
         </div>
       </div>
 
@@ -174,4 +281,143 @@ if (id) {
       </div>
     </form>
   </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tableBody = document.getElementById('sizes-table-body');
+      const addBtn = document.getElementById('add-size-row-btn');
+      const presetBtn = document.getElementById('preset-curtains-btn');
+      const jsonInput = document.getElementById('sizes_json_input');
+      const fallbackInput = document.getElementById('sizes_fallback_input');
+      const form = document.querySelector('form');
+
+      function syncSizes() {
+        const rows = document.querySelectorAll('.size-row');
+        const list = [];
+        const fallback = [];
+
+        rows.forEach((row) => {
+          const nameInput = row.querySelector('.size-name-input');
+          const priceInput = row.querySelector('.size-price-input');
+          const origPriceInput = row.querySelector('.size-origprice-input');
+
+          const name = nameInput ? nameInput.value.trim() : '';
+          const price = priceInput ? parseFloat(priceInput.value) : 0;
+          const origPrice = origPriceInput && origPriceInput.value ? parseFloat(origPriceInput.value) : undefined;
+
+          if (name) {
+            list.push({ name, price, originalPrice: origPrice });
+            fallback.push(`${name}:${price}`);
+          }
+        });
+
+        if (jsonInput) jsonInput.value = JSON.stringify(list);
+        if (fallbackInput) fallbackInput.value = fallback.join(', ');
+      }
+
+      function attachRowListeners(row) {
+        const removeBtn = row.querySelector('.remove-size-btn');
+        if (removeBtn) {
+          removeBtn.addEventListener('click', () => {
+            if (document.querySelectorAll('.size-row').length > 1) {
+              row.remove();
+              syncSizes();
+            } else {
+              alert('Product must have at least 1 size option.');
+            }
+          });
+        }
+        row.querySelectorAll('input').forEach((inp) => {
+          inp.addEventListener('input', syncSizes);
+        });
+      }
+
+      document.querySelectorAll('.size-row').forEach(attachRowListeners);
+
+      addBtn?.addEventListener('click', () => {
+        const tr = document.createElement('tr');
+        tr.className = 'size-row';
+        tr.innerHTML = `
+          <td class="py-2 px-2">
+            <input
+              type="text"
+              name="size_name"
+              placeholder="e.g. 5 Feet (Window)"
+              required
+              class="size-name-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-semibold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+            />
+          </td>
+          <td class="py-2 px-2">
+            <input
+              type="number"
+              name="size_price"
+              step="0.01"
+              placeholder="499"
+              required
+              class="size-price-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+            />
+          </td>
+          <td class="py-2 px-2">
+            <input
+              type="number"
+              name="size_original_price"
+              step="0.01"
+              placeholder="799"
+              class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500"
+            />
+          </td>
+          <td class="py-2 px-2 text-right">
+            <button
+              type="button"
+              class="remove-size-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-1.5 rounded-md transition font-bold cursor-pointer"
+              title="Delete Size"
+            >
+              ✕
+            </button>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+        attachRowListeners(tr);
+        syncSizes();
+      });
+
+      presetBtn?.addEventListener('click', () => {
+        const basePrice = parseFloat(document.querySelector('input[name="price"]')?.value || '599') || 599;
+        const presets = [
+          { name: '5 Feet (Window)', price: Math.round(basePrice * 0.85), orig: Math.round(basePrice * 1.4) },
+          { name: '6 Feet', price: Math.round(basePrice * 0.92), orig: Math.round(basePrice * 1.5) },
+          { name: '7 Feet (Door)', price: basePrice, orig: Math.round(basePrice * 1.6) },
+          { name: '9 Feet (Long Door)', price: Math.round(basePrice * 1.25), orig: Math.round(basePrice * 1.9) },
+        ];
+        tableBody.innerHTML = '';
+        presets.forEach((p) => {
+          const tr = document.createElement('tr');
+          tr.className = 'size-row';
+          tr.innerHTML = `
+            <td class="py-2 px-2">
+              <input type="text" name="size_name" value="${p.name}" required class="size-name-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-semibold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500" />
+            </td>
+            <td class="py-2 px-2">
+              <input type="number" name="size_price" value="${p.price}" step="0.01" required class="size-price-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500" />
+            </td>
+            <td class="py-2 px-2">
+              <input type="number" name="size_original_price" value="${p.orig}" step="0.01" class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500" />
+            </td>
+            <td class="py-2 px-2 text-right">
+              <button type="button" class="remove-size-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-1.5 rounded-md transition font-bold cursor-pointer" title="Delete Size">✕</button>
+            </td>
+          `;
+          tableBody.appendChild(tr);
+          attachRowListeners(tr);
+        });
+        syncSizes();
+      });
+
+      form?.addEventListener('submit', () => {
+        syncSizes();
+      });
+
+      syncSizes();
+    });
+  </script>
 </AdminLayout>

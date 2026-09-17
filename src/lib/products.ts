@@ -1,5 +1,11 @@
 import prisma from './db';
 
+export interface ProductSize {
+  name: string;
+  price: number;
+  originalPrice?: number;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -15,7 +21,7 @@ export interface Product {
   reviewCount: number;
   inStock: boolean;
   colors: { name: string; hex: string }[];
-  sizes: string[];
+  sizes: (string | ProductSize)[];
   fabricSpecs: {
     gsm: number;
     material: string;
@@ -24,6 +30,31 @@ export interface Product {
   };
   images: string[];
   features: string[];
+}
+
+export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice: number, baseOriginalPrice?: number): ProductSize[] {
+  if (!sizes || !Array.isArray(sizes) || sizes.length === 0) {
+    return [
+      { name: "5 Feet", price: Math.round(basePrice * 0.85), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.85) : undefined },
+      { name: "6 Feet", price: Math.round(basePrice * 0.92), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.92) : undefined },
+      { name: "7 Feet", price: basePrice, originalPrice: baseOriginalPrice },
+      { name: "9 Feet", price: Math.round(basePrice * 1.25), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 1.25) : undefined },
+    ];
+  }
+  return sizes.map((s) => {
+    if (typeof s === 'string') {
+      return {
+        name: s,
+        price: basePrice,
+        originalPrice: baseOriginalPrice,
+      };
+    }
+    return {
+      name: s.name,
+      price: typeof s.price === 'number' && !isNaN(s.price) ? s.price : basePrice,
+      originalPrice: typeof s.originalPrice === 'number' && !isNaN(s.originalPrice) ? s.originalPrice : baseOriginalPrice,
+    };
+  });
 }
 
 export const PRODUCTS_CATALOG: Product[] = [

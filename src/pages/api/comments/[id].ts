@@ -3,7 +3,8 @@ import prisma from '../../../lib/db';
 import { hasPermission, PERMISSIONS } from '../../../lib/permissions/rbac';
 
 export const POST: APIRoute = async ({ params, request, redirect, locals }) => {
-  if (!locals.user || !hasPermission(locals.user, PERMISSIONS.COMMENTS_MODERATE)) {
+  const isAdmin = locals.user && (locals.user.role === 'Super Admin' || locals.user.role === 'Administrator' || hasPermission(locals.user, PERMISSIONS.COMMENTS_MODERATE));
+  if (!isAdmin) {
     return new Response('Unauthorized', { status: 403 });
   }
 

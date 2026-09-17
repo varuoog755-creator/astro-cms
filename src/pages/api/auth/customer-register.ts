@@ -2,8 +2,18 @@ import type { APIRoute } from 'astro';
 import prisma from '../../../lib/db';
 import { createSession, hashPassword, SESSION_COOKIE_NAME } from '../../../lib/auth/session';
 import { logAudit } from '../../../lib/utilities/audit';
+import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 
 export const POST: APIRoute = async ({ request, cookies }) => {
+  const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
+  const { allowed } = checkRateLimit(clientIp, 'customer_register', { maxRequests: 5, windowMs: 60000 });
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: 'Too many registration attempts. Please wait 1 minute before trying again.' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     let displayName = '';
     let email = '';

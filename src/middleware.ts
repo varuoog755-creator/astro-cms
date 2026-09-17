@@ -18,23 +18,32 @@ export const onRequest = defineMiddleware(async (context, next) => {
       return next();
     }
 
-    // Protect admin routes
+    // Protect admin routes: strictly enforce Super Admin or Administrator role
     if (pathname.startsWith('/admin')) {
       if (!sessionUser) {
         return context.redirect('/admin/login');
       }
 
-      if (sessionUser.status === 'suspended') {
-        return new Response('Account suspended.', { status: 403 });
+      const isAdmin = sessionUser.role === 'Super Admin' || sessionUser.role === 'Administrator';
+      if (!isAdmin) {
+        return new Response('Unauthorized: Administrator access required.', { status: 403 });
       }
     }
 
     // Redirect logged-in users away from login/register
     if ((pathname === '/login' || pathname === '/register') && sessionUser) {
-      return context.redirect('/admin');
+      const isAdmin = sessionUser.role === 'Super Admin' || sessionUser.role === 'Administrator';
+      return context.redirect(isAdmin ? '/admin' : '/account');
     }
 
-    return next();
+    const response = await next();
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (process.env.NODE_ENV === 'production') {
+      response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+    return response;
   } catch (error) {
     console.error('Middleware execution error:', error);
     return next();

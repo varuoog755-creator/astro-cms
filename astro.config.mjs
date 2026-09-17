@@ -7,7 +7,7 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   output: 'server',
   security: {
-    checkOrigin: false,
+    checkOrigin: true,
   },
   adapter: node({
     mode: 'standalone',

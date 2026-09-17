@@ -6,10 +6,11 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const token = cookies.get(SESSION_COOKIE_NAME)?.value;
   const session = token ? await getSession(token) : null;
 
-  if (!session) {
+  const isAdmin = session && (session.role === 'Super Admin' || session.role === 'Administrator');
+  if (!isAdmin) {
     return new Response(
-      JSON.stringify({ success: false, error: 'Unauthorized. Admin login required.' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ success: false, error: 'Unauthorized. Administrator permission required.' }),
+      { status: 403, headers: { 'Content-Type': 'application/json' } }
     );
   }
 

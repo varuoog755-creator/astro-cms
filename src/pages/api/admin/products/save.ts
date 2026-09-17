@@ -4,7 +4,12 @@ import { hasPermission, PERMISSIONS } from '../../../../lib/permissions/rbac';
 import { logAudit } from '../../../../lib/utilities/audit';
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
-  if (!locals.user || !hasPermission(locals.user, PERMISSIONS.POSTS_EDIT)) {
+  if (!locals.user) {
+    return new Response('Unauthorized', { status: 403 });
+  }
+
+  const isAdmin = locals.user.role === 'Super Admin' || locals.user.role === 'Administrator' || hasPermission(locals.user, PERMISSIONS.POSTS_UPDATE);
+  if (!isAdmin) {
     return new Response('Unauthorized', { status: 403 });
   }
 
@@ -42,8 +47,63 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const colorsRaw = formData.get('colors')?.toString() || 'Royal Cream Ivory, Warm Beige';
   const colorsArray = colorsRaw.split(',').map((c) => ({ name: c.trim(), hex: '#d4af37' }));
 
-  const sizesRaw = formData.get('sizes')?.toString() || '7 Foot (Door), 9 Foot (Long Door)';
-  const sizesArray = sizesRaw.split(',').map((s) => s.trim());
+  let sizesArray: { name: string; price: number; originalPrice?: number }[] = [];
+
+  // 1. Check if structured JSON was submitted
+  const sizesJsonRaw = formData.get('sizes_json')?.toString();
+  if (sizesJsonRaw) {
+    try {
+      const parsed = JSON.parse(sizesJsonRaw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        sizesArray = parsed
+          .filter((item: any) => item && typeof item === 'object' && item.name?.toString().trim())
+          .map((item: any) => ({
+            name: item.name.toString().trim(),
+            price: !isNaN(parseFloat(item.price)) ? parseFloat(item.price) : price,
+            originalPrice: !isNaN(parseFloat(item.originalPrice)) ? parseFloat(item.originalPrice) : (originalPrice || undefined),
+          }));
+      }
+    } catch (e) {
+      console.error('Failed to parse sizes_json:', e);
+    }
+  }
+
+  // 2. Check if multi-field inputs were submitted
+  if (sizesArray.length === 0) {
+    const sizeNames = formData.getAll('size_name').map((s) => s.toString().trim()).filter(Boolean);
+    const sizePrices = formData.getAll('size_price').map((p) => parseFloat(p.toString()));
+    const sizeOrigPrices = formData.getAll('size_original_price').map((p) => parseFloat(p.toString()));
+
+    if (sizeNames.length > 0) {
+      sizesArray = sizeNames.map((sName, i) => ({
+        name: sName,
+        price: !isNaN(sizePrices[i]) ? sizePrices[i] : price,
+        originalPrice: !isNaN(sizeOrigPrices[i]) ? sizeOrigPrices[i] : (originalPrice || undefined),
+      }));
+    }
+  }
+
+  // 3. Fallback to comma/colon string format e.g. "5 Feet: 499, 7 Feet: 699" or "5 Feet, 7 Feet"
+  if (sizesArray.length === 0) {
+    const sizesRaw = formData.get('sizes')?.toString() || '5 Feet, 6 Feet, 7 Feet, 9 Feet';
+    sizesArray = sizesRaw.split(',').map((s) => {
+      const trimmed = s.trim();
+      if (trimmed.includes(':')) {
+        const [sName, sPrice] = trimmed.split(':');
+        const pVal = parseFloat(sPrice?.trim() || '');
+        return {
+          name: sName.trim(),
+          price: !isNaN(pVal) ? pVal : price,
+          originalPrice: originalPrice || undefined,
+        };
+      }
+      return {
+        name: trimmed,
+        price,
+        originalPrice: originalPrice || undefined,
+      };
+    }).filter((s) => Boolean(s.name));
+  }
 
   const imagesRaw = formData.get('images')?.toString() || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80';
   const imagesArray = imagesRaw.split('\n').map((i) => i.trim()).filter(Boolean);

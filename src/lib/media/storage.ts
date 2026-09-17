@@ -42,7 +42,15 @@ export async function validateAndSaveFile(file: File): Promise<SaveFileResult> {
   await fs.mkdir(uploadsDir, { recursive: true });
 
   const targetPath = path.join(uploadsDir, filename);
-  const buffer = Buffer.from(await file.arrayBuffer());
+  let buffer = Buffer.from(await file.arrayBuffer());
+
+  // SVG Sanitization Check against Stored XSS
+  if (mimeType === 'image/svg+xml') {
+    const svgContent = buffer.toString('utf-8');
+    if (/<script|javascript:|on\w+=/i.test(svgContent)) {
+      throw new Error('Security Error: Uploaded SVG contains executable script elements.');
+    }
+  }
 
   await fs.writeFile(targetPath, buffer);
 
