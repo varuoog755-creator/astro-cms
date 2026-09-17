@@ -3,9 +3,10 @@ import prisma from '../../../lib/db';
 import { getIntegrationSettings } from '../../../lib/settings';
 import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 import { logAudit } from '../../../lib/utilities/audit';
+import { resolveGeoLocation } from '../../../lib/utilities/geo';
 
 export const POST: APIRoute = async ({ request }) => {
-  const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
+  const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
   const { allowed } = checkRateLimit(clientIp, 'checkout_razorpay', { maxRequests: 10, windowMs: 60000 });
   if (!allowed) {
     return new Response(JSON.stringify({ error: 'Too many checkout requests. Please wait a minute before trying again.' }), {
@@ -65,6 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
     const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const settings = await getIntegrationSettings();
+    const geo = await resolveGeoLocation(clientIp, request.headers);
 
     // Handle Cash on Delivery or Paytm/WhatsApp Direct Order
     if (paymentMethod === 'COD' || paymentMethod === 'PAYTM' || paymentMethod === 'WHATSAPP') {
@@ -76,8 +78,8 @@ export const POST: APIRoute = async ({ request }) => {
           customerPhone,
           shippingAddress,
           pincode,
-          city: city || 'Local',
-          state: state || 'State',
+          city: city || geo.city || 'Local',
+          state: state || geo.state || 'State',
           totalAmount,
           currency: 'INR',
           paymentMethod,
@@ -115,6 +117,10 @@ export const POST: APIRoute = async ({ request }) => {
           color,
           quantity: qty,
           paymentMethod,
+          location: geo.locationStr,
+          city: geo.city,
+          state: geo.state,
+          country: geo.country,
         },
       });
 
@@ -176,6 +182,10 @@ export const POST: APIRoute = async ({ request }) => {
         color,
         quantity: qty,
         paymentMethod: 'RAZORPAY',
+        location: geo.locationStr,
+        city: geo.city,
+        state: geo.state,
+        country: geo.country,
       },
     });
 

@@ -71,4 +71,32 @@ const order = await prisma.order.findUnique({
       </div>
     </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      try {
+        localStorage.removeItem('teepul_cart');
+        if (typeof window.updateCartBadge === 'function') {
+          window.updateCartBadge();
+        }
+        if (typeof window.renderCartDrawer === 'function') {
+          window.renderCartDrawer();
+        }
+        window.dispatchEvent(new Event('cart-updated'));
+
+        // Log checkout success cart clearance in database audit history
+        fetch('/api/analytics/cart-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'cart.cleared_checkout',
+            productName: 'Cart Reset to 0 (Order Completed)',
+            itemCount: 0,
+            cartTotal: 0,
+            details: 'Customer finalized purchase. Cart emptied.'
+          })
+        }).catch(function () {});
+      } catch (e) {}
+    })();
+  </script>
 </PublicLayout>

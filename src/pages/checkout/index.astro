@@ -301,8 +301,19 @@ const itemTotal = unitPrice * quantity;
           return;
         }
 
+        function clearCartAfterCheckout() {
+          try {
+            localStorage.removeItem('teepul_cart');
+            if (typeof window.updateCartBadge === 'function') {
+              window.updateCartBadge();
+            }
+            window.dispatchEvent(new Event('cart-updated'));
+          } catch (e) {}
+        }
+
         // WhatsApp Order Route
         if (data.paymentMethod === 'WHATSAPP') {
+          clearCartAfterCheckout();
           const msg = `Hi Teepul Store! I placed an order:\n\n*Product:* ${data.productTitle}\n*Color:* ${data.color}\n*Size:* ${data.size}\n*Quantity:* ${data.quantity}\n*Total:* ₹${data.unitPrice * data.quantity}\n*Name:* ${data.customerName}\n*Phone:* ${data.customerPhone}\n*Address:* ${data.shippingAddress}, ${data.pincode}`;
           window.location.href = `https://wa.me/919876543210?text=${encodeURIComponent(msg)}`;
           return;
@@ -310,6 +321,7 @@ const itemTotal = unitPrice * quantity;
 
         // Cash on Delivery or Direct Paytm Route
         if (data.paymentMethod === 'COD' || data.paymentMethod === 'PAYTM') {
+          clearCartAfterCheckout();
           window.location.href = `/checkout/success?orderNumber=${result.orderNumber}`;
           return;
         }
@@ -320,7 +332,7 @@ const itemTotal = unitPrice * quantity;
             key: result.keyId,
             amount: result.amount,
             currency: result.currency,
-            name: "Teepul Streetwear",
+            name: "Teepul Curtains",
             description: `Order ${result.orderNumber}`,
             order_id: result.razorpayOrderId.startsWith('rzp_order_') ? null : result.razorpayOrderId,
             prefill: {
@@ -330,6 +342,7 @@ const itemTotal = unitPrice * quantity;
             },
             theme: { color: "#2563eb" },
             handler: async function (response) {
+              clearCartAfterCheckout();
               // Verify payment signature
               await fetch('/api/checkout/verify', {
                 method: 'POST',
@@ -349,6 +362,7 @@ const itemTotal = unitPrice * quantity;
           rzp.open();
         } else {
           // Fallback if Razorpay SDK isn't loaded
+          clearCartAfterCheckout();
           window.location.href = `/checkout/success?orderNumber=${result.orderNumber}`;
         }
       } catch (err) {

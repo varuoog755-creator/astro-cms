@@ -51,35 +51,102 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     <!-- Main Product Card -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 mb-16">
       
-      <!-- Gallery Column -->
-      <div class="p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200">
-        <div class="relative aspect-square rounded-2xl overflow-hidden shadow-inner bg-slate-200 group">
-          <img
-            id="main-product-img"
-            src={product.images[0]}
-            alt={product.name}
-            class="w-full h-full object-cover transition-all duration-300"
-          />
+      <!-- Gallery Column with Touch-Swipe Slider -->
+      <div class="p-6 sm:p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 select-none">
+        <div
+          id="product-gallery-viewport"
+          class="relative aspect-square rounded-2xl overflow-hidden shadow-inner bg-slate-200 group touch-pan-y cursor-grab active:cursor-grabbing"
+        >
+          <!-- Sliding Image Track -->
+          <div
+            id="product-slider-track"
+            class="flex h-full w-full transition-transform duration-300 ease-out will-change-transform"
+            style="transform: translateX(0%);"
+          >
+            {product.images.map((img, idx) => (
+              <div class="w-full h-full flex-shrink-0 relative">
+                <img
+                  src={img}
+                  alt={`${product.name} - View ${idx + 1}`}
+                  class="w-full h-full object-cover select-none pointer-events-none"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  draggable="false"
+                />
+              </div>
+            ))}
+          </div>
+
+          <!-- Product Badges -->
           {product.badge && (
-            <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
+            <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm z-10 pointer-events-none">
               {product.badge}
             </span>
           )}
-          <span class="absolute bottom-4 left-4 bg-slate-900/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+          <span class="absolute bottom-4 left-4 bg-slate-900/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm z-10 pointer-events-none hidden sm:inline-block">
             Heavyweight Thermal Fabric
           </span>
+
+          <!-- Slide Counter Badge (Top Right) -->
+          {product.images.length > 1 && (
+            <span
+              id="slider-counter"
+              class="absolute top-4 right-4 bg-slate-900/80 text-white text-[11px] font-black px-2.5 py-1 rounded-full backdrop-blur-sm z-10 pointer-events-none shadow"
+            >
+              1 / {product.images.length}
+            </span>
+          )}
+
+          <!-- Previous / Next Navigation Chevron Buttons -->
+          {product.images.length > 1 && (
+            <>
+              <button
+                type="button"
+                id="slider-prev-btn"
+                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white active:scale-90 text-slate-800 shadow-lg backdrop-blur-md flex items-center justify-center font-black text-xl transition z-20 border border-slate-200 cursor-pointer select-none"
+                aria-label="Previous image"
+                title="Previous Image"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                id="slider-next-btn"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white active:scale-90 text-slate-800 shadow-lg backdrop-blur-md flex items-center justify-center font-black text-xl transition z-20 border border-slate-200 cursor-pointer select-none"
+                aria-label="Next image"
+                title="Next Image"
+              >
+                ›
+              </button>
+
+              <!-- Dot Indicators (Bottom Center) -->
+              <div
+                id="slider-dots"
+                class="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-slate-900/50 backdrop-blur-sm px-3 py-1.5 rounded-full"
+              >
+                {product.images.map((_, idx) => (
+                  <button
+                    type="button"
+                    data-slide-dot={idx}
+                    class={`slider-dot transition-all duration-300 rounded-full cursor-pointer ${idx === 0 ? 'w-5 h-2 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white/80'}`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  ></button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
-        <!-- Thumbnails -->
+        <!-- Thumbnails Strip -->
         {product.images.length > 1 && (
-          <div class="flex gap-4 mt-6">
+          <div class="flex gap-3 sm:gap-4 mt-6 overflow-x-auto pb-1">
             {product.images.map((img, idx) => (
               <button
                 type="button"
+                data-slide-index={idx}
                 data-img={img}
-                class={`thumb-btn w-20 h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none ${idx === 0 ? 'border-blue-600 ring-2 ring-blue-600/30' : 'border-slate-300 hover:border-blue-400'}`}
+                class={`thumb-btn flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-blue-600 ring-2 ring-blue-600/30' : 'border-slate-300 hover:border-blue-400 opacity-70 hover:opacity-100'}`}
               >
-                <img src={img} alt={`Thumbnail ${idx + 1}`} class="w-full h-full object-cover" />
+                <img src={img} alt={`Thumbnail ${idx + 1}`} class="w-full h-full object-cover pointer-events-none" />
               </button>
             ))}
           </div>
@@ -420,12 +487,14 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     </div>
   </div>
 
-  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, currentProductImage: product.images[0] || '' }}>
+  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, productImages: product.images || [] }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
       let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || '';
       let quantity = 1;
       let unitPrice = parseFloat(document.getElementById('unit-price')?.innerText || '0');
+      let currentSlideIndex = 0;
+      const totalSlides = Array.isArray(productImages) ? productImages.length : 1;
 
       // Update subtotal price
       function updateSubtotal() {
@@ -436,21 +505,129 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
         if (qtyDisplay) qtyDisplay.innerText = quantity;
       }
 
-      // Thumbnail Click Handlers
-      document.querySelectorAll('.thumb-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const imgSrc = btn.getAttribute('data-img');
-          const mainImg = document.getElementById('main-product-img');
-          if (mainImg && imgSrc) mainImg.src = imgSrc;
+      // Smooth Sliding Gallery Logic
+      const track = document.getElementById('product-slider-track');
+      const counter = document.getElementById('slider-counter');
+      const dots = document.querySelectorAll('.slider-dot');
+      const thumbs = document.querySelectorAll('.thumb-btn');
 
-          document.querySelectorAll('.thumb-btn').forEach((b) => {
-            b.classList.remove('border-blue-600', 'ring-2', 'ring-blue-600/30');
-            b.classList.add('border-slate-300');
-          });
-          btn.classList.remove('border-slate-300');
-          btn.classList.add('border-blue-600', 'ring-2', 'ring-blue-600/30');
+      function goToSlide(index) {
+        if (totalSlides <= 0) return;
+        currentSlideIndex = (index + totalSlides) % totalSlides;
+        if (track) {
+          track.style.transform = 'translateX(-' + (currentSlideIndex * 100) + '%)';
+        }
+        if (counter) {
+          counter.innerText = (currentSlideIndex + 1) + ' / ' + totalSlides;
+        }
+        // Sync Dots
+        dots.forEach((dot, idx) => {
+          if (idx === currentSlideIndex) {
+            dot.className = 'slider-dot transition-all duration-300 rounded-full cursor-pointer w-5 h-2 bg-white';
+          } else {
+            dot.className = 'slider-dot transition-all duration-300 rounded-full cursor-pointer w-2 h-2 bg-white/50 hover:bg-white/80';
+          }
+        });
+        // Sync Thumbnails
+        thumbs.forEach((thumb, idx) => {
+          if (idx === currentSlideIndex) {
+            thumb.classList.remove('border-slate-300', 'opacity-70');
+            thumb.classList.add('border-blue-600', 'ring-2', 'ring-blue-600/30', 'opacity-100');
+            if (typeof thumb.scrollIntoView === 'function') {
+              thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          } else {
+            thumb.classList.remove('border-blue-600', 'ring-2', 'ring-blue-600/30', 'opacity-100');
+            thumb.classList.add('border-slate-300', 'opacity-70');
+          }
+        });
+      }
+
+      // Next / Prev Button Listeners
+      document.getElementById('slider-prev-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        goToSlide(currentSlideIndex - 1);
+      });
+
+      document.getElementById('slider-next-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        goToSlide(currentSlideIndex + 1);
+      });
+
+      // Thumbnail Click Handlers
+      thumbs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const slideIdx = parseInt(btn.getAttribute('data-slide-index') || '0', 10);
+          goToSlide(slideIdx);
         });
       });
+
+      // Dot Click Handlers
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const slideIdx = parseInt(dot.getAttribute('data-slide-dot') || '0', 10);
+          goToSlide(slideIdx);
+        });
+      });
+
+      // Touch Swipe Gesture Support (Mobile)
+      const viewport = document.getElementById('product-gallery-viewport');
+      if (viewport && totalSlides > 1) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isSwiping = false;
+
+        viewport.addEventListener('touchstart', (e) => {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isSwiping = true;
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+          if (!isSwiping) return;
+          const diffX = e.touches[0].clientX - touchStartX;
+          const diffY = e.touches[0].clientY - touchStartY;
+          if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+            if (e.cancelable) e.preventDefault();
+          }
+        }, { passive: false });
+
+        viewport.addEventListener('touchend', (e) => {
+          if (!isSwiping) return;
+          isSwiping = false;
+          const touchEndX = e.changedTouches[0].clientX;
+          const diffX = touchEndX - touchStartX;
+          const threshold = 35;
+          if (diffX < -threshold) {
+            goToSlide(currentSlideIndex + 1);
+          } else if (diffX > threshold) {
+            goToSlide(currentSlideIndex - 1);
+          }
+        }, { passive: true });
+
+        // Desktop Mouse Drag Support
+        let isMouseDown = false;
+        let mouseStartX = 0;
+
+        viewport.addEventListener('mousedown', (e) => {
+          if (e.target && e.target.closest && e.target.closest('button')) return;
+          isMouseDown = true;
+          mouseStartX = e.clientX;
+        });
+
+        window.addEventListener('mouseup', (e) => {
+          if (!isMouseDown) return;
+          isMouseDown = false;
+          const diffX = e.clientX - mouseStartX;
+          if (diffX < -40) {
+            goToSlide(currentSlideIndex + 1);
+          } else if (diffX > 40) {
+            goToSlide(currentSlideIndex - 1);
+          }
+        });
+      }
 
       // Color Chip Click Handlers
       document.querySelectorAll('.color-chip-btn').forEach((btn) => {
@@ -541,11 +718,12 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
       // Add to Cart Click Handler - Opens Right Slide-over Cart Drawer
       document.getElementById('add-cart-btn')?.addEventListener('click', () => {
         if (typeof window.quickAddToCart === 'function') {
+          const currentImg = (productImages && productImages[currentSlideIndex]) || productImages[0] || '';
           window.quickAddToCart(
             currentProductName,
             currentProductSlug,
             unitPrice,
-            currentProductImage,
+            currentImg,
             selectedSize,
             selectedColor,
             quantity

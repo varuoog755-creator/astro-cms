@@ -409,16 +409,18 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
       });
 
       // Cart Badge Sync
-      function updateCartBadge() {
+      window.updateCartBadge = function updateCartBadge() {
         try {
           const cart = JSON.parse(localStorage.getItem('teepul_cart') || '[]');
-          const count = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+          const count = cart.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
           const badge = document.getElementById('cart-badge-count');
           if (badge) badge.innerText = String(count);
         } catch (e) {
           console.error(e);
         }
-      }
+      };
+
+      window.addEventListener('cart-updated', window.updateCartBadge);
 
       // Fast Add To Cart Global Helper
       window.quickAddToCart = function (name, slug, price, image) {

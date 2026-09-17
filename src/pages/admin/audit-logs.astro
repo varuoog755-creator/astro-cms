@@ -121,8 +121,9 @@ const logs = await Promise.all(
       </div>
     </div>
 
-    <!-- Filter Buttons Bar -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+    <!-- Filter & Action Controls Bar -->
+    <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <!-- Filter Tabs -->
       <div class="flex flex-wrap items-center gap-2">
         <a
           href="/admin/audit-logs"
@@ -150,25 +151,54 @@ const logs = await Promise.all(
         </a>
       </div>
 
-      <div class="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
-        <span>⏱️ Auto-syncing with live database</span>
+      <!-- Quick Actions & Instant Filter -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Instant Search Box -->
+        <div class="relative flex-1 sm:flex-none">
+          <input
+            type="text"
+            id="audit-search-input"
+            placeholder="🔍 Search customer, phone, product, city..."
+            class="w-full sm:w-64 text-xs bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+          />
+        </div>
+
+        <!-- 1-Click Live Test Activity Button -->
+        <button
+          type="button"
+          id="run-test-activity-btn"
+          class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+          title="Fires a real test cart event to verify live capture"
+        >
+          <span>🧪 Test Cart Event</span>
+        </button>
+
+        <!-- Refresh Button -->
+        <button
+          type="button"
+          onclick="window.location.reload()"
+          class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+          title="Reload latest records"
+        >
+          <span>🔄 Refresh</span>
+        </button>
       </div>
     </div>
 
     <!-- Logs Table Container -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs text-slate-700">
+        <table class="w-full text-left text-xs text-slate-700" id="audit-table">
           <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 text-[11px]">
             <tr>
               <th class="px-6 py-4">Event / Action</th>
               <th class="px-6 py-4">User / Customer</th>
-              <th class="px-6 py-4">Activity Details</th>
+              <th class="px-6 py-4">Activity Details (Real Numbers)</th>
               <th class="px-6 py-4">City, State & IP 📍</th>
               <th class="px-6 py-4">Date & Time</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100">
+          <tbody class="divide-y divide-slate-100" id="audit-table-body">
             {logs.length === 0 ? (
               <tr>
                 <td colspan="5" class="px-6 py-12 text-center text-slate-400">
@@ -184,8 +214,12 @@ const logs = await Promise.all(
                 const isOrder = log.action.startsWith('order.');
                 const isAuth = log.action.startsWith('auth.');
 
+                const phone = metaObj.customerPhone || metaObj.phone;
+                const email = log.user?.email || metaObj.userEmail || metaObj.customerEmail;
+                const name = log.user?.displayName || metaObj.userName || metaObj.customerName;
+
                 return (
-                  <tr class="hover:bg-slate-50/70 transition">
+                  <tr class="audit-row hover:bg-slate-50/70 transition">
                     <!-- Action Badge -->
                     <td class="px-6 py-4 font-mono font-bold whitespace-nowrap">
                       {log.action === 'cart.add' ? (
@@ -196,13 +230,13 @@ const logs = await Promise.all(
                         <span class="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
                           🗑️ Item Removed
                         </span>
-                      ) : log.action === 'cart.abandoned' ? (
-                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-950 border border-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
-                          ⚠️ Cart Left / Abandoned
+                      ) : log.action === 'cart.qty_increase' ? (
+                        <span class="inline-flex items-center gap-1 bg-sky-100 text-sky-900 border border-sky-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          ➕ Qty Increased
                         </span>
-                      ) : log.action === 'cart.drawer_closed' ? (
-                        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-800 border border-slate-300 px-2.5 py-1 rounded-lg text-[11px] font-bold">
-                          🚪 Drawer Closed
+                      ) : log.action === 'cart.qty_decrease' ? (
+                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          ➖ Qty Decreased
                         </span>
                       ) : log.action === 'cart.checkout_click' ? (
                         <span class="inline-flex items-center gap-1 bg-purple-100 text-purple-900 border border-purple-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
@@ -211,6 +245,26 @@ const logs = await Promise.all(
                       ) : log.action === 'cart.whatsapp_click' ? (
                         <span class="inline-flex items-center gap-1 bg-teal-100 text-teal-900 border border-teal-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
                           💬 WhatsApp Order
+                        </span>
+                      ) : log.action === 'cart.cleared_checkout' ? (
+                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-950 border border-emerald-400 px-2.5 py-1 rounded-lg text-[11px] font-black shadow-sm">
+                          ✅ Cart Cleared / Purchased
+                        </span>
+                      ) : log.action === 'cart.abandoned' ? (
+                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-950 border border-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          ⚠️ Cart Left / Inactive
+                        </span>
+                      ) : log.action === 'cart.drawer_closed' ? (
+                        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-800 border border-slate-300 px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                          🚪 Drawer Closed
+                        </span>
+                      ) : log.action === 'order.placed' ? (
+                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-lg text-[11px] font-black shadow-sm">
+                          📦 Order Placed
+                        </span>
+                      ) : log.action === 'order.paid' ? (
+                        <span class="inline-flex items-center gap-1 bg-emerald-600 text-white border border-emerald-700 px-2.5 py-1 rounded-lg text-[11px] font-black shadow-sm">
+                          💳 Payment Verified
                         </span>
                       ) : isCart ? (
                         <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">
@@ -231,26 +285,63 @@ const logs = await Promise.all(
                       )}
                     </td>
 
-                    <!-- User Name / Email -->
+                    <!-- User Name / Email / Real Phone -->
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="font-bold text-slate-900">
-                        {log.user?.displayName || metaObj.userName || metaObj.customerName || 'Guest Customer'}
+                      <div class="font-black text-slate-900">
+                        {name || 'Guest Customer'}
                       </div>
                       <div class="text-[11px] text-slate-400">
-                        {log.user?.email || metaObj.userEmail || metaObj.customerEmail || 'Anonymous Visitor'}
+                        {email || 'Anonymous Visitor'}
                       </div>
+                      {phone && (
+                        <div class="text-[11px] font-mono text-emerald-700 font-extrabold flex items-center gap-1 mt-0.5">
+                          <span>📞</span>
+                          <span>{phone}</span>
+                        </div>
+                      )}
                     </td>
 
-                    <!-- Activity Details -->
+                    <!-- Activity Details (Real Numbers) -->
                     <td class="px-6 py-4">
-                      {metaObj.cartTotal !== undefined ? (
+                      {metaObj.orderNumber ? (
+                        <div class="space-y-1">
+                          <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="font-extrabold text-slate-900 text-xs">
+                              Order #{metaObj.orderNumber}
+                            </span>
+                            {metaObj.paymentMethod && (
+                              <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                                {metaObj.paymentMethod}
+                              </span>
+                            )}
+                            <span class="bg-emerald-100 text-emerald-900 text-[11px] font-black px-2 py-0.5 rounded-md border border-emerald-200">
+                              ₹{Number(metaObj.totalAmount || 0).toLocaleString('en-IN')}
+                            </span>
+                          </div>
+                          <div class="text-[11px] text-slate-600 flex flex-wrap items-center gap-1.5 pt-0.5">
+                            <span class="font-bold text-slate-800">{metaObj.itemTitle || 'Curtain Product'}</span>
+                            {metaObj.size && <span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-bold">📏 {metaObj.size}</span>}
+                            {metaObj.color && <span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">🎨 {metaObj.color}</span>}
+                            {metaObj.quantity && <span class="bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded font-black">Qty: {metaObj.quantity}</span>}
+                          </div>
+                        </div>
+                      ) : log.action === 'cart.cleared_checkout' ? (
                         <div class="space-y-0.5">
-                          <div class="font-bold text-slate-900 line-clamp-1">
+                          <div class="font-extrabold text-emerald-700 text-xs flex items-center gap-1">
+                            <span>✅</span> Cart Emptied on Successful Checkout
+                          </div>
+                          <div class="text-[11px] text-slate-500">
+                            Local cart reset to 0 items after customer placed order.
+                          </div>
+                        </div>
+                      ) : metaObj.cartTotal !== undefined ? (
+                        <div class="space-y-1">
+                          <div class="font-bold text-slate-900 text-xs line-clamp-1">
                             {metaObj.productName || 'Cart Session'}
                           </div>
                           <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-1.5 font-medium">
-                            <span class="bg-amber-100 text-amber-900 font-extrabold px-2 py-0.5 rounded-md">
-                              Total: ₹{Number(metaObj.cartTotal).toLocaleString('en-IN')}
+                            <span class="bg-amber-100 text-amber-900 font-black px-2 py-0.5 rounded-md border border-amber-200">
+                              Cart Total: ₹{Number(metaObj.cartTotal).toLocaleString('en-IN')}
                             </span>
                             {metaObj.itemCount !== undefined && (
                               <span class="bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded">
@@ -259,29 +350,29 @@ const logs = await Promise.all(
                             )}
                           </div>
                           {metaObj.details && (
-                            <div class="text-[10px] text-slate-500 line-clamp-1 italic">
+                            <div class="text-[10px] text-slate-500 italic line-clamp-1">
                               {metaObj.details}
                             </div>
                           )}
                         </div>
                       ) : metaObj.productName ? (
-                        <div class="space-y-0.5">
-                          <div class="font-bold text-slate-900 line-clamp-1">
+                        <div class="space-y-1">
+                          <div class="font-bold text-slate-900 text-xs line-clamp-1">
                             {metaObj.productName}
                           </div>
-                          <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-1.5 font-medium">
+                          <div class="text-[11px] text-slate-600 flex flex-wrap items-center gap-1.5">
                             {metaObj.size && <span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-bold">📏 {metaObj.size}</span>}
                             {metaObj.color && <span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">🎨 {metaObj.color}</span>}
-                            {metaObj.price && <span class="font-bold text-slate-800">₹{metaObj.price} × {metaObj.quantity || 1}</span>}
-                          </div>
-                        </div>
-                      ) : metaObj.orderNumber ? (
-                        <div class="space-y-0.5">
-                          <div class="font-bold text-slate-900">
-                            Order #{metaObj.orderNumber} ({metaObj.paymentMethod})
-                          </div>
-                          <div class="text-[11px] text-slate-500">
-                            {metaObj.itemTitle} · {metaObj.size} · ₹{metaObj.totalAmount}
+                            {metaObj.price !== undefined && (
+                              <span class="font-bold text-slate-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                                ₹{Number(metaObj.price).toLocaleString('en-IN')} × {metaObj.quantity || 1}
+                              </span>
+                            )}
+                            {metaObj.total !== undefined && (
+                              <span class="font-black text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                                Total ₹{Number(metaObj.total).toLocaleString('en-IN')}
+                              </span>
+                            )}
                           </div>
                         </div>
                       ) : (
@@ -306,15 +397,17 @@ const logs = await Promise.all(
 
                     <!-- Timestamp -->
                     <td class="px-6 py-4 whitespace-nowrap text-slate-500 text-[11px]">
-                      {new Date(log.createdAt).toLocaleString('en-IN', {
-                        timeZone: 'Asia/Kolkata',
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      })}
+                      <div class="font-medium">
+                        {new Date(log.createdAt).toLocaleString('en-IN', {
+                          timeZone: 'Asia/Kolkata',
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                        })}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -326,4 +419,65 @@ const logs = await Promise.all(
     </div>
 
   </div>
+
+  <script is:inline>
+    // Real-Time Table Search Filter
+    const searchInput = document.getElementById('audit-search-input');
+    const tableBody = document.getElementById('audit-table-body');
+
+    searchInput?.addEventListener('input', (e) => {
+      const query = (e.target.value || '').toLowerCase().trim();
+      const rows = tableBody?.querySelectorAll('tr.audit-row');
+      rows?.forEach((row) => {
+        const text = row.innerText.toLowerCase();
+        if (!query || text.includes(query)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // 1-Click Live Test Activity Generator
+    const testBtn = document.getElementById('run-test-activity-btn');
+    testBtn?.addEventListener('click', async () => {
+      testBtn.disabled = true;
+      testBtn.innerHTML = '⌛ Sending Test...';
+
+      try {
+        const res = await fetch('/api/analytics/cart-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'cart.add',
+            productName: 'Stylish Curtains for Door & Windos (Pack of 2) [TEST CHECK]',
+            slug: 'stylish-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-eupceo',
+            size: '7 Feet (Door)',
+            color: 'Coffee Brown & Cream',
+            price: 450,
+            quantity: 2,
+            itemCount: 2,
+            cartTotal: 900,
+            details: 'Live Verification Check Test: Real numbers ₹450 x 2 = ₹900'
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          testBtn.innerHTML = '✓ Logged! Reloading...';
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
+        } else {
+          alert('Failed to send test event');
+          testBtn.disabled = false;
+          testBtn.innerHTML = '🧪 Test Cart Event';
+        }
+      } catch (err) {
+        console.error('Test event error:', err);
+        testBtn.disabled = false;
+        testBtn.innerHTML = '🧪 Test Cart Event';
+      }
+    });
+  </script>
 </AdminLayout>

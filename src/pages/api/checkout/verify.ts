@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import crypto from 'node:crypto';
 import prisma from '../../../lib/db';
 import { getIntegrationSettings } from '../../../lib/settings';
+import { logAudit } from '../../../lib/utilities/audit';
+import { resolveGeoLocation } from '../../../lib/utilities/geo';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -45,6 +47,30 @@ export const POST: APIRoute = async ({ request }) => {
         paymentStatus: 'PAID',
         razorpayPaymentId: razorpayPaymentId || `pay_${Math.random().toString(36).substring(7)}`,
         razorpayOrderId: razorpayOrderId || undefined,
+      },
+    });
+
+    const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
+    const geo = await resolveGeoLocation(clientIp, request.headers);
+
+    await logAudit({
+      action: 'order.paid',
+      entity: 'Order',
+      entityId: updatedOrder.orderNumber,
+      ipAddress: clientIp,
+      metadata: {
+        orderNumber: updatedOrder.orderNumber,
+        customerName: updatedOrder.customerName,
+        customerPhone: updatedOrder.customerPhone,
+        customerEmail: updatedOrder.customerEmail,
+        totalAmount: updatedOrder.totalAmount,
+        paymentStatus: 'PAID',
+        paymentMethod: updatedOrder.paymentMethod,
+        paymentId: updatedOrder.razorpayPaymentId,
+        location: geo.locationStr,
+        city: geo.city,
+        state: geo.state,
+        country: geo.country,
       },
     });
 
