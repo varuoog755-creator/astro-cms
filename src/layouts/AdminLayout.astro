@@ -11,6 +11,16 @@ interface Props {
 const { title = 'Admin Dashboard', activeNav = 'dashboard' } = Astro.props;
 const user: UserSession | null = Astro.locals.user;
 
+const isMasterAdmin =
+  user &&
+  (user.email?.toLowerCase() === 'govinda755rock755@gmail.com' ||
+    user.username?.toLowerCase() === 'govinda755') &&
+  user.role === 'Super Admin';
+
+if (!isMasterAdmin) {
+  return Astro.redirect('/admin/login');
+}
+
 const navItems = [
   { id: 'dashboard', label: '📊 Dashboard Overview', icon: '📊', href: '/admin' },
   { id: 'orders', label: '🛍️ Orders & EKart Courier', icon: '🛍️', href: '/admin/orders' },
@@ -69,7 +79,20 @@ const navItems = [
           })}
         </nav>
 
-        <div class="p-4 border-t border-slate-800 bg-slate-950">
+        <div class="p-4 border-t border-slate-800 bg-slate-950 space-y-3">
+          <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-white font-black text-xs shadow">
+              G
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-white truncate">Govinda Admin</div>
+              <div class="text-[10px] text-slate-400 truncate">@govinda755</div>
+              <div class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Super Admin · active</span>
+              </div>
+            </div>
+          </div>
           <a href="/" target="_blank" class="flex items-center justify-between text-xs text-slate-400 hover:text-white px-2 py-1 transition font-bold">
             <span>🌐 View Live Store</span>
             <span>↗</span>
@@ -87,8 +110,11 @@ const navItems = [
 
           <div class="flex items-center gap-4">
             <div class="text-right hidden sm:block">
-              <div class="text-xs font-bold text-gray-900">{user?.displayName || 'Teepul Admin'}</div>
-              <div class="text-[10px] text-amber-700 font-extrabold uppercase">{user?.role || 'Store Manager'}</div>
+              <div class="text-xs font-bold text-gray-900">Govinda Admin</div>
+              <div class="text-[10px] text-emerald-600 font-extrabold uppercase flex items-center justify-end gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Super Admin · active</span>
+              </div>
             </div>
 
             <form action="/api/auth/logout" method="POST">

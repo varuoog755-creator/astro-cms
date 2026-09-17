@@ -37,15 +37,20 @@ const error = Astro.url.searchParams.get('error');
     <button
       type="submit"
       id="submit-btn"
-      class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition duration-200 text-sm mt-2 flex items-center justify-center gap-2"
+      class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg shadow-amber-600/30 hover:shadow-amber-500/50 transition duration-200 text-sm mt-2 flex items-center justify-center gap-2"
     >
-      <span>Sign In to Dashboard</span>
+      <span>Sign In to Super Admin Dashboard</span>
       <span>&rarr;</span>
     </button>
   </form>
 
-  <div class="mt-6 p-3 bg-slate-950/80 border border-slate-800 rounded-xl text-center text-xs text-slate-400 font-mono">
-    Admin: <span class="text-blue-400 font-bold">govinda755rock755@gmail.com</span> / <span class="text-blue-400 font-bold">Govinda@755</span>
+  <div class="mt-6 p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl text-center space-y-1">
+    <div class="text-[11px] font-bold text-amber-400 flex items-center justify-center gap-1.5 uppercase tracking-wider">
+      <span>🔒 Restricted Administrative Access</span>
+    </div>
+    <div class="text-[10px] text-slate-400 font-medium">
+      This portal is strictly authorized for Super Admin Govinda. Customer logins and unauthorized access attempts are blocked and logged.
+    </div>
   </div>
 
 </AuthLayout>

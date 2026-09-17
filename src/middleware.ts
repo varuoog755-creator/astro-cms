@@ -10,30 +10,51 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     const { pathname } = context.url;
 
+    // Determine if the current session belongs to Super Admin Govinda
+    const isMasterAdmin =
+      !!sessionUser &&
+      (sessionUser.email?.toLowerCase() === 'govinda755rock755@gmail.com' ||
+        sessionUser.username?.toLowerCase() === 'govinda755') &&
+      sessionUser.role === 'Super Admin';
+
     // Admin login page bypass
     if (pathname === '/admin/login') {
-      if (sessionUser) {
+      if (isMasterAdmin) {
         return context.redirect('/admin');
+      } else if (sessionUser) {
+        // Logged-in customers or non-admins are sent to customer account, never admin
+        return context.redirect('/account');
       }
       return next();
     }
 
-    // Protect admin routes: strictly enforce Super Admin or Administrator role
-    if (pathname.startsWith('/admin')) {
+    // Protect all admin routes and admin APIs: strictly allow ONLY govinda755rock755@gmail.com
+    if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
       if (!sessionUser) {
+        if (pathname.startsWith('/api/admin')) {
+          return new Response(JSON.stringify({ error: 'Unauthorized: Admin authentication required.' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
         return context.redirect('/admin/login');
       }
 
-      const isAdmin = sessionUser.role === 'Super Admin' || sessionUser.role === 'Administrator';
-      if (!isAdmin) {
-        return new Response('Unauthorized: Administrator access required.', { status: 403 });
+      if (!isMasterAdmin) {
+        if (pathname.startsWith('/api/admin')) {
+          return new Response(
+            JSON.stringify({ error: 'Forbidden: Access restricted strictly to Super Admin Govinda (govinda755rock755@gmail.com).' }),
+            { status: 403, headers: { 'Content-Type': 'application/json' } }
+          );
+        }
+        // Customers attempting to open /admin are safely redirected to /account
+        return context.redirect('/account?error=Admin%20access%20is%20restricted%20solely%20to%20Super%20Admin%20Govinda.');
       }
     }
 
     // Redirect logged-in users away from login/register
     if ((pathname === '/login' || pathname === '/register') && sessionUser) {
-      const isAdmin = sessionUser.role === 'Super Admin' || sessionUser.role === 'Administrator';
-      return context.redirect(isAdmin ? '/admin' : '/account');
+      return context.redirect(isMasterAdmin ? '/admin' : '/account');
     }
 
     const response = await next();

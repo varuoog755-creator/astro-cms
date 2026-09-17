@@ -25,6 +25,12 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     }
 
     const cleanLogin = login.toLowerCase();
+    const isMasterAdminLogin = cleanLogin === 'govinda755rock755@gmail.com' || cleanLogin === 'govinda755';
+
+    // If logging in from the Admin login portal, strictly allow only Super Admin Govinda
+    if (isAdminLogin && !isMasterAdminLogin) {
+      return errorRedirect('Access Denied: Admin panel is exclusively restricted to Super Admin Govinda (govinda755rock755@gmail.com).');
+    }
 
     let user = await prisma.user.findFirst({
       where: {
@@ -35,10 +41,17 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
           { username: login },
         ],
       },
+      include: {
+        role: true,
+      },
     });
 
     if (!user) {
       return errorRedirect('Invalid email/username or password.');
+    }
+
+    if (isAdminLogin && user.role?.name !== 'Super Admin') {
+      return errorRedirect('Access Denied: Super Admin privileges required.');
     }
 
     if (user.status === 'suspended') {
@@ -70,7 +83,20 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     });
 
     const url = new URL(request.url);
-    const targetRedirect = url.searchParams.get('redirect') || (user.roleId ? '/admin' : '/products');
+    const isMasterAdmin =
+      (user.email?.toLowerCase() === 'govinda755rock755@gmail.com' ||
+        user.username?.toLowerCase() === 'govinda755') &&
+      user.role?.name === 'Super Admin';
+
+    let targetRedirect = url.searchParams.get('redirect');
+    if (isMasterAdmin) {
+      targetRedirect = targetRedirect || '/admin';
+    } else {
+      // Non-admins and customers always redirect to /account or /products, never /admin
+      if (!targetRedirect || targetRedirect.startsWith('/admin')) {
+        targetRedirect = '/account';
+      }
+    }
 
     return redirect(targetRedirect);
   } catch (err: any) {
