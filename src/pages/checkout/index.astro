@@ -353,8 +353,61 @@ const itemTotal = unitPrice * quantity;
           return;
         }
 
-        // Cash on Delivery or Direct Paytm Route
-        if (data.paymentMethod === 'COD' || data.paymentMethod === 'PAYTM') {
+        // Paytm Gateway & UPI Route
+        if (result.isPaytm) {
+          clearCartAfterCheckout();
+
+          if (result.isPaytmPg && result.txnToken) {
+            const scriptUrl = `https://${result.paytmHost || 'securegw-stage.paytm.in'}/merchantpgpui/checkoutjs/merchants/${result.mid}.js`;
+
+            const loadScript = () => {
+              return new Promise((resolve, reject) => {
+                if (window.Paytm && window.Paytm.CheckoutJS) return resolve();
+                const script = document.createElement('script');
+                script.src = scriptUrl;
+                script.crossOrigin = 'anonymous';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+              });
+            };
+
+            try {
+              payBtn.innerHTML = '📱 Opening Paytm Gateway...';
+              await loadScript();
+
+              const config = {
+                root: '',
+                flow: 'DEFAULT',
+                data: {
+                  orderId: result.orderNumber,
+                  token: result.txnToken,
+                  tokenType: 'TXN_TOKEN',
+                  amount: String(result.amount),
+                },
+                handler: {
+                  notifyMerchant: function (eventName, data) {
+                    console.log('Paytm notification:', eventName, data);
+                  },
+                },
+              };
+
+              if (window.Paytm && window.Paytm.CheckoutJS) {
+                await window.Paytm.CheckoutJS.init(config);
+                window.Paytm.CheckoutJS.invoke();
+                return;
+              }
+            } catch (paytmErr) {
+              console.warn('Paytm CheckoutJS failed, falling back:', paytmErr);
+            }
+          }
+
+          window.location.href = `/checkout/success?orderNumber=${result.orderNumber}&method=paytm`;
+          return;
+        }
+
+        // Cash on Delivery Route
+        if (data.paymentMethod === 'COD') {
           clearCartAfterCheckout();
           window.location.href = `/checkout/success?orderNumber=${result.orderNumber}`;
           return;

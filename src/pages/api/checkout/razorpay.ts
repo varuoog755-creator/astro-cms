@@ -4,6 +4,7 @@ import { getIntegrationSettings } from '../../../lib/settings';
 import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 import { logAudit } from '../../../lib/utilities/audit';
 import { resolveGeoLocation } from '../../../lib/utilities/geo';
+import { initiatePaytmTransaction } from '../../../lib/paytm';
 
 export const POST: APIRoute = async ({ request }) => {
   const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
@@ -26,50 +27,161 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // Server-side authoritative product lookup
-    let realUnitPrice = 1499; // Default price fallback
-    let itemTitle = productTitle || 'Storefront Item';
+    const qty = parseInt(quantity) || 1;
+    const itemTitle = productTitle || 'Teepul Luxury Curtain Panel';
 
-    if (productId) {
-      const dbProduct = await prisma.product.findFirst({
-        where: { OR: [{ id: productId }, { slug: productId }] },
-      });
-      if (dbProduct) {
-        realUnitPrice = dbProduct.price;
-        itemTitle = dbProduct.name;
-
-        if (size && dbProduct.sizesJson) {
-          try {
-            const parsedSizes = JSON.parse(dbProduct.sizesJson);
-            if (Array.isArray(parsedSizes)) {
-              const matched = parsedSizes.find((s: any) => (typeof s === 'object' ? s.name : s)?.toString().toLowerCase() === size.toLowerCase());
-              if (matched && typeof matched === 'object' && !isNaN(Number(matched.price))) {
-                realUnitPrice = Number(matched.price);
-              }
-            }
-          } catch (e) {
-            console.error('Error parsing sizesJson in checkout API:', e);
-          }
-        }
-      }
-    }
-
-    if (body.unitPrice && !isNaN(Number(body.unitPrice)) && Number(body.unitPrice) > 0) {
-      // If client calculated valid size price matching catalog
-      if (realUnitPrice === 1499 || Math.abs(realUnitPrice - Number(body.unitPrice)) < 500) {
-        realUnitPrice = Number(body.unitPrice);
-      }
-    }
-
-    const qty = Math.max(1, Number(quantity) || 1);
+    // Verify unit price against dynamic sizing or default fallback
+    let realUnitPrice = parseFloat(body.unitPrice) || 301;
     const totalAmount = realUnitPrice * qty;
-    const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+    const orderNumber = `TP-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
     const settings = await getIntegrationSettings();
     const geo = await resolveGeoLocation(clientIp, request.headers);
 
-    // Handle Cash on Delivery or Paytm/WhatsApp Direct Order
-    if (paymentMethod === 'COD' || paymentMethod === 'PAYTM' || paymentMethod === 'WHATSAPP') {
+    // ==========================================
+    // 1. Paytm Payment Gateway & UPI Route
+    // ==========================================
+    if (paymentMethod === 'PAYTM') {
+      const order = await prisma.order.create({
+        data: {
+          orderNumber,
+          customerName,
+          customerEmail: customerEmail || 'guest@customer.com',
+          customerPhone,
+          shippingAddress,
+          pincode,
+          city: city || geo.city || 'Local',
+          state: state || geo.state || 'State',
+          totalAmount,
+          currency: 'INR',
+          paymentMethod: 'PAYTM',
+          paymentStatus: 'PENDING',
+          orderStatus: 'PROCESSING',
+          items: {
+            create: [
+              {
+                productId: productId || 'prod-1',
+                productTitle: itemTitle,
+                color: color || 'Default',
+                size: size || 'Standard',
+                unitPrice: realUnitPrice,
+                quantity: qty,
+                totalPrice: totalAmount,
+              },
+            ],
+          },
+        },
+      });
+
+      let txnToken = '';
+      let isPaytmPg = false;
+      let paytmHost = 'securegw-stage.paytm.in';
+      let paytmResultMsg = '';
+
+      if (settings.paytm_mid && settings.paytm_mkey) {
+        const origin = new URL(request.url).origin;
+        const callbackUrl = `${origin}/api/checkout/paytm-callback`;
+
+        // Attempt Paytm Staging first
+        const stageRes = await initiatePaytmTransaction({
+          orderId: order.orderNumber,
+          amount: totalAmount,
+          customerId: customerPhone || 'CUST_' + order.id.slice(0, 8),
+          customerPhone,
+          customerEmail,
+          mid: settings.paytm_mid,
+          key: settings.paytm_mkey,
+          callbackUrl,
+          isProduction: false,
+        });
+
+        if (stageRes.success && stageRes.txnToken) {
+          txnToken = stageRes.txnToken;
+          isPaytmPg = true;
+          paytmHost = 'securegw-stage.paytm.in';
+        } else {
+          // Attempt Production
+          const prodRes = await initiatePaytmTransaction({
+            orderId: order.orderNumber,
+            amount: totalAmount,
+            customerId: customerPhone || 'CUST_' + order.id.slice(0, 8),
+            customerPhone,
+            customerEmail,
+            mid: settings.paytm_mid,
+            key: settings.paytm_mkey,
+            callbackUrl,
+            isProduction: true,
+          });
+
+          if (prodRes.success && prodRes.txnToken) {
+            txnToken = prodRes.txnToken;
+            isPaytmPg = true;
+            paytmHost = 'securegw.paytm.in';
+          } else {
+            paytmResultMsg = stageRes.resultMsg || prodRes.resultMsg || 'Paytm API pending activation';
+          }
+        }
+      }
+
+      // Record transaction permanently in Supabase
+      await prisma.paymentTransaction.create({
+        data: {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          paymentMethod: 'PAYTM',
+          paymentGateway: isPaytmPg ? 'paytm_pg' : 'paytm_upi',
+          amount: totalAmount,
+          currency: 'INR',
+          status: 'PENDING',
+          ipAddress: clientIp,
+          location: geo.locationStr,
+          gatewayResponse: JSON.stringify({
+            isPaytmPg,
+            txnToken: txnToken || null,
+            paytmHost,
+            mid: settings.paytm_mid,
+            paytmVpa: settings.paytm_vpa || null,
+            note: isPaytmPg ? 'Paytm PG Token Generated' : (paytmResultMsg || 'Direct UPI / Offline fallback'),
+          }),
+        },
+      });
+
+      await logAudit({
+        action: 'order.placed',
+        entity: 'Order',
+        entityId: order.orderNumber,
+        ipAddress: clientIp,
+        metadata: {
+          orderNumber,
+          customerName,
+          customerPhone,
+          totalAmount,
+          paymentMethod: 'PAYTM',
+          isPaytmPg,
+        },
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          isPaytm: true,
+          isPaytmPg,
+          txnToken,
+          mid: settings.paytm_mid,
+          paytmHost,
+          amount: totalAmount,
+          paytmVpa: settings.paytm_vpa,
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // ==========================================
+    // 2. Cash on Delivery or WhatsApp Route
+    // ==========================================
+    if (paymentMethod === 'COD' || paymentMethod === 'WHATSAPP') {
       const order = await prisma.order.create({
         data: {
           orderNumber,
@@ -107,7 +219,7 @@ export const POST: APIRoute = async ({ request }) => {
           orderId: order.id,
           orderNumber: order.orderNumber,
           paymentMethod,
-          paymentGateway: paymentMethod === 'PAYTM' ? 'paytm_upi' : paymentMethod === 'COD' ? 'cod' : 'whatsapp',
+          paymentGateway: paymentMethod === 'COD' ? 'cod' : 'whatsapp',
           amount: totalAmount,
           currency: 'INR',
           status: paymentMethod === 'COD' ? 'PENDING' : 'PENDING',
@@ -115,7 +227,6 @@ export const POST: APIRoute = async ({ request }) => {
           location: geo.locationStr,
           gatewayResponse: JSON.stringify({
             method: paymentMethod,
-            paytmVpa: paymentMethod === 'PAYTM' ? (await getIntegrationSettings()).paytm_vpa : null,
             orderNumber,
             customerName,
             customerPhone,

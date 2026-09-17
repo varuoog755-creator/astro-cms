@@ -144,6 +144,18 @@ const origin = Astro.url.origin;
                   class="w-full text-xs bg-white border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 font-mono"
                 />
               </div>
+
+              <!-- Test Paytm Connection Diagnostic Button -->
+              <div class="pt-2 border-t border-slate-200">
+                <button
+                  type="button"
+                  id="test-paytm-btn"
+                  class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <span>🧪 Test Paytm PG Connection (Test & Live)</span>
+                </button>
+                <div id="paytm-test-result" class="hidden mt-2 p-3 rounded-xl text-xs space-y-1.5 border"></div>
+              </div>
             </div>
           </div>
 
@@ -456,4 +468,79 @@ const origin = Astro.url.origin;
 
     </form>
   </div>
+
+  <script is:inline>
+    const testBtn = document.getElementById('test-paytm-btn');
+    const resultBox = document.getElementById('paytm-test-result');
+
+    testBtn?.addEventListener('click', async () => {
+      const midInput = document.querySelector('input[name="paytm_mid"]');
+      const mkeyInput = document.querySelector('input[name="paytm_mkey"]');
+
+      const mid = midInput ? midInput.value.trim() : '';
+      const key = mkeyInput ? mkeyInput.value.trim() : '';
+
+      if (!mid || !key) {
+        alert('Please enter both Paytm MID and Paytm Key before testing.');
+        return;
+      }
+
+      testBtn.disabled = true;
+      testBtn.innerHTML = '<span>⏳ Testing Paytm API Connection...</span>';
+      if (resultBox) {
+        resultBox.classList.remove('hidden');
+        resultBox.className = 'mt-2 p-3 rounded-xl text-xs space-y-1.5 border bg-blue-50 border-blue-200 text-blue-900';
+        resultBox.innerHTML = '<p class="font-bold">Contacting Paytm Staging & Production Gateways...</p>';
+      }
+
+      try {
+        const res = await fetch('/api/admin/integrations/test-paytm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mid, key }),
+        });
+
+        const data = await res.json();
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<span>🧪 Test Paytm PG Connection (Test & Live)</span>';
+
+        if (!resultBox) return;
+
+        if (data.success) {
+          resultBox.className = 'mt-2 p-3 rounded-xl text-xs space-y-1.5 border bg-emerald-50 border-emerald-300 text-emerald-900';
+          resultBox.innerHTML = `
+            <div class="font-black flex items-center gap-1.5 text-sm">
+              <span>✅</span> Paytm PG Connection Successful!
+            </div>
+            <p class="text-[11px] font-medium leading-relaxed">${data.diagnosis}</p>
+            <div class="text-[10px] font-mono pt-1 text-emerald-700">
+              Active Mode: <strong>${data.activeEnv.toUpperCase()}</strong> | MID: ${data.mid}
+            </div>
+          `;
+        } else {
+          resultBox.className = 'mt-2 p-3 rounded-xl text-xs space-y-1.5 border bg-amber-50 border-amber-300 text-amber-950';
+          resultBox.innerHTML = `
+            <div class="font-black flex items-center gap-1.5 text-sm text-amber-900">
+              <span>⚠️</span> Paytm Response Details
+            </div>
+            <p class="text-[11px] font-medium leading-relaxed">${data.diagnosis || data.error}</p>
+            <div class="bg-white/80 p-2 rounded-lg border border-amber-200 text-[10px] space-y-0.5 font-mono">
+              <div>• Staging Result: <strong>${data.stage?.code || 'N/A'}</strong> (${data.stage?.msg || 'N/A'})</div>
+              <div>• Production Result: <strong>${data.prod?.code || 'N/A'}</strong> (${data.prod?.msg || 'N/A'})</div>
+            </div>
+            <div class="text-[10px] text-slate-600 pt-0.5">
+              💡 <em>Note: Even while Paytm test credentials are being activated by your Paytm manager, your checkout automatically falls back to Direct UPI & QR so customers never encounter checkout failures!</em>
+            </div>
+          `;
+        }
+      } catch (err) {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<span>🧪 Test Paytm PG Connection (Test & Live)</span>';
+        if (resultBox) {
+          resultBox.className = 'mt-2 p-3 rounded-xl text-xs space-y-1.5 border bg-red-50 border-red-300 text-red-900';
+          resultBox.innerHTML = `<p class="font-bold">Error: ${err.message}</p>`;
+        }
+      }
+    });
+  </script>
 </AdminLayout>
