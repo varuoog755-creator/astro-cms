@@ -88,7 +88,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     originalPrice: 699,
     currency: "\u20b9",
     category: "Door Curtains",
-    badge: "Meesho Choice",
+    badge: "Top Seller",
     rating: 4.8,
     reviewCount: 94,
     inStock: true,
@@ -108,7 +108,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     originalPrice: 810,
     currency: "\u20b9",
     category: "Door Curtains",
-    badge: "Meesho Seller Choice",
+    badge: "Top Seller",
     rating: 4.2,
     reviewCount: 35,
     inStock: true,
@@ -128,7 +128,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     originalPrice: 624,
     currency: "\u20b9",
     category: "Window Curtains",
-    badge: "Meesho Seller Choice",
+    badge: "Top Seller",
     rating: 4.3,
     reviewCount: 53,
     inStock: true,
@@ -148,7 +148,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     originalPrice: 606,
     currency: "\u20b9",
     category: "Window Curtains",
-    badge: "Meesho Seller Choice",
+    badge: "Top Seller",
     rating: 4.4,
     reviewCount: 71,
     inStock: true,
@@ -303,7 +303,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     slug: "ashank-premium-single-panel-curtain-pack-of-1-solid-eyelet-door-curtain-4x7-ft",
     name: "ASHANK Premium Single Panel Curtain \u2013 Pack of 1 Solid Eyelet Door Curtain 4x7 ft ",
     tagline: "Pack of 1/2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: ASHANK Premium Single Panel Curtain \u2013 Pack of 1 Solid Eyelet Door Curtain 4x7 ft \nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 1\nPackage Contains: 1 Single Panel (Pack of 1) Curtain with pre-installed rust-resistant eyelets/grommets for smooth sliding.\n\nPremium Fabric & Finish: Crafted from high-quality, durable polyester fabric featuring a sophisticated, wrinkle-resistant texture that drapes beautifully.\n\nLight Control & Privacy: Offers optimal room darkening/light filtering capabilities, softening harsh sun light while ensuring 100% complete indoor privacy.\n\nVersatile Sizing: Available in standard sizes (5 Feet for Windows, 7 Feet for Doors, and 9 Feet for Long Doors) to fit seamlessly across your living room, bedroom, or balcony.\n\nEasy Maintenance: Machine washable in cold water, fade-resistant color, and shrink-proof material designed for long-lasting home styling.\nsingle panel curtain, pack of 1 curtain, single piece curtain, meesho curtain single panel, 1 pc curtain door, window curtain 1 piece\nsolid color curtain, modern minima list drape, premium polyester curtain, textured room darkening curtain, crush fabric curtain 1pc\n5 feet window curtain single, 7 feet door curtain single, 9 feet long door drape, living room single curtain, bedroom single panel curtain",
+    description: "Name: ASHANK Premium Single Panel Curtain \u2013 Pack of 1 Solid Eyelet Door Curtain 4x7 ft \nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 1\nPackage Contains: 1 Single Panel (Pack of 1) Curtain with pre-installed rust-resistant eyelets/grommets for smooth sliding.\n\nPremium Fabric & Finish: Crafted from high-quality, durable polyester fabric featuring a sophisticated, wrinkle-resistant texture that drapes beautifully.\n\nLight Control & Privacy: Offers optimal room darkening/light filtering capabilities, softening harsh sun light while ensuring 100% complete indoor privacy.\n\nVersatile Sizing: Available in standard sizes (5 Feet for Windows, 7 Feet for Doors, and 9 Feet for Long Doors) to fit seamlessly across your living room, bedroom, or balcony.\n\nEasy Maintenance: Machine washable in cold water, fade-resistant color, and shrink-proof material designed for long-lasting home styling.\nsingle panel curtain, pack of 1 curtain, single piece curtain, 1 pc curtain door, window curtain 1 piece\nsolid color curtain, modern minima list drape, premium polyester curtain, textured room darkening curtain, crush fabric curtain 1pc\n5 feet window curtain single, 7 feet door curtain single, 9 feet long door drape, living room single curtain, bedroom single panel curtain",
     price: 256,
     originalPrice: 460,
     currency: "\u20b9",
@@ -517,7 +517,7 @@ export async function getStorefrontProducts(): Promise<Product[]> {
     const catalog = PRODUCTS_CATALOG.filter(Boolean);
     const combinedMap = new Map<string, Product>();
 
-    // Add catalog items first so the 10 new Meesho seller products are always present
+    // Add catalog items first so the 10 new seller products are always present
     for (const p of catalog) {
       combinedMap.set(p.slug, p);
     }
