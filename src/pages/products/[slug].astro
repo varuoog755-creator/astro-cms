@@ -204,20 +204,28 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
-              id="order-btn"
-              class="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              id="add-cart-btn"
+              class="bg-amber-800 hover:bg-amber-900 active:scale-95 text-white font-black text-xs sm:text-sm py-4 rounded-2xl shadow-lg shadow-amber-900/30 hover:shadow-amber-900/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>🛍️ Buy Now & Pay</span>
+              <span>🛒 Add to Cart</span>
             </button>
 
             <button
               type="button"
-              id="whatsapp-direct-btn"
-              class="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm py-4 rounded-2xl shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              id="order-btn"
+              class="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-black text-xs sm:text-sm py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>💬 Order via WhatsApp</span>
+              <span>⚡ Buy Now & Checkout</span>
             </button>
           </div>
+
+          <button
+            type="button"
+            id="whatsapp-direct-btn"
+            class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs sm:text-sm py-3.5 rounded-2xl shadow-md shadow-emerald-600/20 hover:shadow-emerald-600/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>💬 Order via WhatsApp</span>
+          </button>
           
           <div class="flex items-center justify-center gap-6 text-[11px] text-slate-500 font-semibold pt-1">
             <span>🔒 SSL Encrypted</span>
@@ -412,7 +420,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     </div>
   </div>
 
-  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name }}>
+  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, currentProductImage: product.images[0] || '' }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
       let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || '';
@@ -528,6 +536,21 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
       document.getElementById('qty-plus-btn')?.addEventListener('click', () => {
         quantity++;
         updateSubtotal();
+      });
+
+      // Add to Cart Click Handler - Opens Right Slide-over Cart Drawer
+      document.getElementById('add-cart-btn')?.addEventListener('click', () => {
+        if (typeof window.quickAddToCart === 'function') {
+          window.quickAddToCart(
+            currentProductName,
+            currentProductSlug,
+            unitPrice,
+            currentProductImage,
+            selectedSize,
+            selectedColor,
+            quantity
+          );
+        }
       });
 
       // Order / Buy Now Click Handler

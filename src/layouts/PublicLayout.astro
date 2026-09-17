@@ -4,6 +4,7 @@ import type { SeoOptions } from '../lib/seo/meta';
 import prisma from '../lib/db';
 import { getIntegrationSettings } from '../lib/settings';
 import { getSession } from '../lib/auth/session';
+import CartDrawer from '../components/CartDrawer.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -173,16 +174,18 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
             </svg>
           </form>
 
-          <!-- Cart Icon & Counter -->
-          <a
-            href="/checkout"
-            class="relative bg-amber-100/80 hover:bg-amber-200 text-amber-950 font-bold px-3 py-2 rounded-full flex items-center gap-1.5 text-xs transition border border-amber-300/60 shadow-sm"
-            title="View Cart & Checkout"
+          <!-- Cart Icon & Counter (Opens Dynamic Right Slide-over Cart) -->
+          <button
+            type="button"
+            id="header-cart-btn"
+            class="cart-trigger relative bg-amber-100/80 hover:bg-amber-200 active:scale-95 text-amber-950 font-bold px-3 py-2 rounded-full flex items-center gap-1.5 text-xs transition border border-amber-300/60 shadow-sm cursor-pointer"
+            title="Open Shopping Cart"
+            aria-label="Shopping Cart"
           >
             <span class="text-sm">🛒</span>
             <span class="hidden sm:inline font-extrabold text-[11px] uppercase tracking-wider">Cart</span>
             <span id="cart-badge-count" class="bg-amber-800 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
-          </a>
+          </button>
 
           <!-- Customer Profile / Login Button -->
           {currentSession ? (
@@ -500,5 +503,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
       document.addEventListener('DOMContentLoaded', updateCartBadge);
       updateCartBadge();
     </script>
+
+    <CartDrawer />
   </body>
 </html>
