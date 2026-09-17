@@ -32,16 +32,28 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   // Save / Update product
   const name = formData.get('name')?.toString().trim();
   const tagline = formData.get('tagline')?.toString().trim() || '';
+  const packSize = formData.get('pack_size')?.toString().trim() || '';
+  let finalTagline = tagline;
+  if (packSize) {
+    if (finalTagline.includes('Pack of')) {
+      finalTagline = finalTagline.replace(/Pack of [0-9\/]+/i, packSize);
+    } else if (finalTagline) {
+      finalTagline = `${packSize} | ${finalTagline}`;
+    } else {
+      finalTagline = `${packSize} | Silver Eyelets Light Filtering & Thermal Insulation`;
+    }
+  }
+
   const description = formData.get('description')?.toString().trim() || '';
   const price = parseFloat(formData.get('price')?.toString() || '0');
   const originalPriceStr = formData.get('originalPrice')?.toString();
   const originalPrice = originalPriceStr ? parseFloat(originalPriceStr) : null;
   const category = formData.get('category')?.toString() || 'Door Curtains';
   const badge = formData.get('badge')?.toString() || '';
-  const gsm = parseInt(formData.get('gsm')?.toString() || '350', 10);
-  const material = formData.get('material')?.toString() || 'Micro-Velvet';
-  const fit = formData.get('fit')?.toString() || 'Grommet Top';
-  const care = formData.get('care')?.toString() || 'Dry Clean';
+  const gsm = 280;
+  const material = formData.get('material')?.toString() || '100% Premium Polyester';
+  const fit = formData.get('fit')?.toString() || 'Stainless Steel Silver Eyelets';
+  const care = formData.get('care')?.toString() || 'Hand & Machine Wash Cold';
   const inStock = formData.has('inStock');
 
   const colorsRaw = formData.get('colors')?.toString() || 'Royal Cream Ivory, Warm Beige';
@@ -124,7 +136,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
       data: {
         name,
         slug,
-        tagline,
+        tagline: finalTagline,
         description,
         price,
         originalPrice,
@@ -154,7 +166,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
       data: {
         name,
         slug: `${slug}-${Math.floor(100 + Math.random() * 900)}`,
-        tagline,
+        tagline: finalTagline,
         description,
         price,
         originalPrice,

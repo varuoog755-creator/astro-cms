@@ -81,7 +81,7 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     id: "prod-5",
     slug: "premium-brown-thermal-blackout-door-curtain",
-    name: "Premium Brown Thermal Blackout Door Curtain",
+    name: "Premium Brown Thermal Blackout Door Curtain (Pack of 1)",
     tagline: "Pack of 1 | Silver Eyelets 100% Light Blocking Thermal Insulated Curtain",
     description: "Transform your bedroom or living room with Teepul Premium Brown Thermal Blackout Curtains. Features heavy-duty silver ring eyelets, 100% noise and light blocking thermal insulation, and rich solid texture.",
     price: 301,

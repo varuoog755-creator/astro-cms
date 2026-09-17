@@ -45,6 +45,7 @@ const deleted = Astro.url.searchParams.get('deleted') === 'true';
           <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
             <tr>
               <th class="p-4">Product</th>
+              <th class="p-4">Pack Size</th>
               <th class="p-4">Category</th>
               <th class="p-4">Price</th>
               <th class="p-4">Specifications</th>
@@ -53,61 +54,146 @@ const deleted = Astro.url.searchParams.get('deleted') === 'true';
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            {products.map((p) => (
-              <tr class="hover:bg-slate-50/80 transition">
-                <td class="p-4">
-                  <div class="flex items-center gap-3">
-                    <img src={p.images[0]} alt={p.name} class="w-12 h-12 rounded-xl object-cover border border-slate-200" />
-                    <div>
-                      <div class="font-extrabold text-slate-900 text-xs">{p.name}</div>
-                      <div class="text-[10px] text-slate-500 truncate max-w-xs">{p.tagline}</div>
+            {products.map((p) => {
+              const isPack2 = p.name.toLowerCase().includes('pack of 2') || p.name.toLowerCase().includes('set of 2') || p.tagline.toLowerCase().includes('pack of 2');
+              return (
+                <tr class="hover:bg-slate-50/80 transition">
+                  <td class="p-4">
+                    <div class="flex items-center gap-3">
+                      <img src={p.images[0]} alt={p.name} class="w-12 h-12 rounded-xl object-cover border border-slate-200" />
+                      <div>
+                        <div class="font-extrabold text-slate-900 text-xs product-title">{p.name}</div>
+                        <div class="text-[10px] text-slate-500 truncate max-w-xs product-tagline">{p.tagline}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td class="p-4">
-                  <span class="bg-amber-50 text-amber-900 font-bold px-2.5 py-1 rounded-full text-[10px] border border-amber-200">
-                    {p.category}
-                  </span>
-                </td>
-                <td class="p-4 font-black text-slate-900 text-sm">
-                  {p.currency}{p.price.toLocaleString('en-IN')}
-                  {p.originalPrice && <span class="text-xs text-slate-400 line-through font-normal block">{p.currency}{p.originalPrice.toLocaleString('en-IN')}</span>}
-                </td>
-                <td class="p-4 text-[11px] text-slate-500">
-                  <div>{p.fabricSpecs.material}</div>
-                  <div>{p.fabricSpecs.fit}</div>
-                </td>
-                <td class="p-4">
-                  {p.inStock ? (
-                    <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-emerald-300">
-                      ✓ In Stock
+                  </td>
+                  <td class="p-4">
+                    <div class="space-y-1.5" id={`pack-container-${p.id}`}>
+                      <div class="flex items-center gap-1.5">
+                        {isPack2 ? (
+                          <span class="pack-badge bg-purple-100 text-purple-800 font-extrabold px-2.5 py-0.5 rounded-md text-[10px] border border-purple-300 inline-flex items-center gap-1">
+                            📦 Pack of 2
+                          </span>
+                        ) : (
+                          <span class="pack-badge bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-md text-[10px] border border-blue-300 inline-flex items-center gap-1">
+                            📦 Pack of 1
+                          </span>
+                        )}
+                        <span class="pack-status text-[10px] text-emerald-600 font-bold hidden">✓</span>
+                      </div>
+                      <select
+                        class="pack-select bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-700 hover:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                        data-id={p.id}
+                        onchange="changeProductPack(this)"
+                      >
+                        <option value="Pack of 2" selected={isPack2}>Pack of 2 (Set of 2)</option>
+                        <option value="Pack of 1" selected={!isPack2}>Pack of 1 (Single)</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td class="p-4">
+                    <span class="bg-amber-50 text-amber-900 font-bold px-2.5 py-1 rounded-full text-[10px] border border-amber-200">
+                      {p.category}
                     </span>
-                  ) : (
-                    <span class="bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-rose-300">
-                      Out of Stock
-                    </span>
-                  )}
-                </td>
-                <td class="p-4 text-right space-x-2">
-                  <a
-                    href={`/products/${p.slug}`}
-                    target="_blank"
-                    class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] px-3 py-1.5 rounded-lg transition"
-                  >
-                    View ↗
-                  </a>
-                  <a
-                    href={`/admin/products/new?id=${p.id}`}
-                    class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition shadow-sm"
-                  >
-                    Edit
-                  </a>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td class="p-4 font-black text-slate-900 text-sm">
+                    {p.currency}{p.price.toLocaleString('en-IN')}
+                    {p.originalPrice && <span class="text-xs text-slate-400 line-through font-normal block">{p.currency}{p.originalPrice.toLocaleString('en-IN')}</span>}
+                  </td>
+                  <td class="p-4 text-[11px] text-slate-500">
+                    <div>{p.fabricSpecs.material}</div>
+                    <div>{p.fabricSpecs.fit}</div>
+                  </td>
+                  <td class="p-4">
+                    {p.inStock ? (
+                      <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-emerald-300">
+                        ✓ In Stock
+                      </span>
+                    ) : (
+                      <span class="bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-full text-[10px] border border-rose-300">
+                        Out of Stock
+                      </span>
+                    )}
+                  </td>
+                  <td class="p-4 text-right space-x-2">
+                    <a
+                      href={`/products/${p.slug}`}
+                      target="_blank"
+                      class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] px-3 py-1.5 rounded-lg transition"
+                    >
+                      View ↗
+                    </a>
+                    <a
+                      href={`/admin/products/new?id=${p.id}`}
+                      class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition shadow-sm"
+                    >
+                      Edit
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
     </div>
   </div>
+
+  <script is:inline>
+    async function changeProductPack(selectEl) {
+      const productId = selectEl.getAttribute('data-id');
+      const newPack = selectEl.value;
+      const container = document.getElementById(`pack-container-${productId}`);
+      const badge = container ? container.querySelector('.pack-badge') : null;
+      const status = container ? container.querySelector('.pack-status') : null;
+      const row = selectEl.closest('tr');
+      const titleEl = row ? row.querySelector('.product-title') : null;
+      const taglineEl = row ? row.querySelector('.product-tagline') : null;
+
+      selectEl.disabled = true;
+      if (status) {
+        status.textContent = '⏳';
+        status.classList.remove('hidden');
+      }
+
+      try {
+        const res = await fetch('/api/admin/products/update-pack', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: productId, pack: newPack })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          if (badge) {
+            if (newPack === 'Pack of 2') {
+              badge.className = 'pack-badge bg-purple-100 text-purple-800 font-extrabold px-2.5 py-0.5 rounded-md text-[10px] border border-purple-300 inline-flex items-center gap-1';
+              badge.textContent = '📦 Pack of 2';
+            } else {
+              badge.className = 'pack-badge bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-md text-[10px] border border-blue-300 inline-flex items-center gap-1';
+              badge.textContent = '📦 Pack of 1';
+            }
+          }
+          if (titleEl && data.newName) {
+            titleEl.textContent = data.newName;
+          }
+          if (taglineEl && data.newTagline) {
+            taglineEl.textContent = data.newTagline;
+          }
+          if (status) {
+            status.textContent = '✓ Saved!';
+            status.className = 'pack-status text-[10px] text-emerald-600 font-bold';
+            setTimeout(() => status.classList.add('hidden'), 3000);
+          }
+        } else {
+          alert('Error: ' + (data.error || 'Failed to update pack'));
+          if (status) status.classList.add('hidden');
+        }
+      } catch (e) {
+        alert('Network error updating pack.');
+        if (status) status.classList.add('hidden');
+      } finally {
+        selectEl.disabled = false;
+      }
+    }
+  </script>
 </AdminLayout>
