@@ -261,7 +261,7 @@
                   <button
                     type="button"
                     onclick="window.removeCartItem(${index})"
-                    class="text-slate-400 hover:text-red-500 text-xs p-1 transition cursor-pointer"
+                    class="text-slate-400 hover:text-red-500 text-sm p-2 -mr-1 transition cursor-pointer active:scale-90"
                     title="Remove item"
                   >
                     🗑️
@@ -280,20 +280,22 @@
                 </div>
 
                 <div class="flex items-center justify-between pt-1">
-                  <!-- Quantity Stepper -->
-                  <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                  <!-- Quantity Stepper (Thumb-friendly 36px+ Touch Target) -->
+                  <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-sm">
                     <button
                       type="button"
                       onclick="window.updateCartItemQty(${index}, -1)"
-                      class="w-7 h-7 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+                      class="w-9 h-9 flex items-center justify-center font-bold text-base text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer select-none"
+                      aria-label="Decrease quantity"
                     >
                       -
                     </button>
-                    <span class="w-8 text-center text-xs font-black text-slate-900">${itemQty}</span>
+                    <span class="w-9 text-center text-xs font-black text-slate-900 select-none">${itemQty}</span>
                     <button
                       type="button"
                       onclick="window.updateCartItemQty(${index}, 1)"
-                      class="w-7 h-7 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+                      class="w-9 h-9 flex items-center justify-center font-bold text-base text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer select-none"
+                      aria-label="Increase quantity"
                     >
                       +
                     </button>

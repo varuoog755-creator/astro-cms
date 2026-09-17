@@ -743,11 +743,65 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
         window.open(`https://wa.me/919876543210?text=${encodeURIComponent(msg)}`, '_blank');
       });
 
-      // Close Toast Handler
-      document.getElementById('close-toast-btn')?.addEventListener('click', () => {
-        const toast = document.getElementById('order-toast');
-        if (toast) toast.classList.add('hidden');
+      // Sticky Mobile Bar Handlers
+      document.getElementById('mobile-sticky-add-btn')?.addEventListener('click', () => {
+        document.getElementById('add-cart-btn')?.click();
+      });
+
+      document.getElementById('mobile-sticky-buy-btn')?.addEventListener('click', () => {
+        document.getElementById('order-btn')?.click();
+      });
+
+      // Update mobile sticky bar on size change
+      const updateMobileStickyInfo = () => {
+        const stickyPrice = document.getElementById('mobile-sticky-price');
+        if (stickyPrice) stickyPrice.innerText = unitPrice.toLocaleString('en-IN');
+        const stickySize = document.getElementById('mobile-sticky-size');
+        if (stickySize) stickySize.innerText = selectedSize;
+      };
+
+      document.querySelectorAll('.size-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          setTimeout(updateMobileStickyInfo, 50);
+        });
       });
     });
   </script>
+
+  <!-- Sticky Mobile Action Bar (80% Mobile E-commerce Users) -->
+  <div class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 p-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.12)] flex items-center justify-between gap-2.5" style="padding-bottom: max(0.625rem, env(safe-area-inset-bottom));">
+    <!-- Left: Dynamic Price & Size Preview -->
+    <div class="pl-1.5 leading-tight shrink-0">
+      <div class="flex items-baseline gap-1">
+        <span class="text-xs font-bold text-slate-500">{product.currency}</span>
+        <span id="mobile-sticky-price" class="text-lg font-black text-slate-950">{initialSize.price.toLocaleString('en-IN')}</span>
+      </div>
+      <div class="flex items-center gap-1 text-[10px] font-bold text-slate-500">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+        <span id="mobile-sticky-size" class="truncate max-w-[90px]">{initialSize.name}</span>
+      </div>
+    </div>
+
+    <!-- Right: Action Buttons -->
+    <div class="flex items-center gap-2 flex-1 justify-end">
+      <button
+        type="button"
+        id="mobile-sticky-add-btn"
+        class="bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-black text-xs py-3 px-3.5 rounded-xl transition border border-amber-300/80 shadow-sm flex items-center gap-1.5 cursor-pointer shrink-0"
+        title="Add to Cart"
+      >
+        <span>🛒</span>
+        <span>Cart</span>
+      </button>
+
+      <button
+        type="button"
+        id="mobile-sticky-buy-btn"
+        class="bg-amber-800 hover:bg-amber-900 active:scale-95 text-white font-black text-xs py-3 px-4 rounded-xl shadow-lg shadow-amber-900/30 transition flex items-center justify-center gap-1 cursor-pointer flex-1"
+        title="Buy Now Directly"
+      >
+        <span>⚡ Buy Now</span>
+      </button>
+    </div>
+  </div>
 </PublicLayout>

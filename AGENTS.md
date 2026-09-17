@@ -27,7 +27,7 @@ Consult these guides before working on related tasks:
 
 ### 1. Zero Data Deletion & Permanent Preservation
 - **NEVER** delete, truncate, drop, remove, or overwrite customer accounts (`User`), orders (`Order`, `OrderItem`), delivery addresses, or live activity/cart history (`AuditLog`).
-- All database records must remain permanently locked, immutable, and preserved in the SQLite database.
+- All database records must remain permanently locked, immutable, and preserved in the Supabase PostgreSQL cloud database.
 - Any attempt or automated script to clear, delete, or reset orders, customer data, or audit logs is strictly forbidden.
 
 ### 2. Surgical, Minimal Code Changes Only

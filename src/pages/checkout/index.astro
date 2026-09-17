@@ -73,8 +73,9 @@ const itemTotal = unitPrice * quantity;
                 type="text"
                 name="customerName"
                 required
+                autocomplete="name"
                 placeholder="e.g. Rahul Sharma"
-                class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
               />
             </div>
 
@@ -85,8 +86,10 @@ const itemTotal = unitPrice * quantity;
                   type="tel"
                   name="customerPhone"
                   required
+                  inputmode="numeric"
+                  autocomplete="tel"
                   placeholder="9876543210"
-                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                  class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium font-mono"
                 />
               </div>
 
@@ -95,8 +98,9 @@ const itemTotal = unitPrice * quantity;
                 <input
                   type="email"
                   name="customerEmail"
+                  autocomplete="email"
                   placeholder="rahul@example.com"
-                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                  class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                 />
               </div>
             </div>
@@ -107,8 +111,9 @@ const itemTotal = unitPrice * quantity;
                 name="shippingAddress"
                 required
                 rows="2"
+                autocomplete="street-address"
                 placeholder="House/Flat No., Street, Landmark"
-                class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
               ></textarea>
             </div>
 
@@ -117,28 +122,36 @@ const itemTotal = unitPrice * quantity;
                 <label class="block text-xs font-bold text-slate-700 mb-1">Pincode *</label>
                 <input
                   type="text"
+                  id="pincode-input"
                   name="pincode"
                   required
+                  inputmode="numeric"
+                  autocomplete="postal-code"
+                  maxlength="6"
                   placeholder="110001"
-                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 font-mono"
+                  class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 font-mono"
                 />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">City</label>
                 <input
                   type="text"
+                  id="city-input"
                   name="city"
+                  autocomplete="address-level2"
                   placeholder="New Delhi"
-                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5"
+                  class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 font-medium"
                 />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">State</label>
                 <input
                   type="text"
+                  id="state-input"
                   name="state"
+                  autocomplete="address-level1"
                   placeholder="Delhi"
-                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5"
+                  class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 font-medium"
                 />
               </div>
             </div>
@@ -276,6 +289,27 @@ const itemTotal = unitPrice * quantity;
   <script is:inline>
     const form = document.getElementById('checkout-form');
     const payBtn = document.getElementById('pay-button');
+
+    // Auto-fill City & State on 6-digit Pincode entry (Smooth Mobile UX)
+    const pinInput = document.getElementById('pincode-input');
+    const cityInput = document.getElementById('city-input');
+    const stateInput = document.getElementById('state-input');
+
+    pinInput?.addEventListener('input', async (e) => {
+      const pin = e.target.value.replace(/\D/g, '').slice(0, 6);
+      e.target.value = pin;
+      if (pin.length === 6) {
+        try {
+          const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+          const data = await res.json();
+          if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice?.[0]) {
+            const po = data[0].PostOffice[0];
+            if (cityInput) cityInput.value = po.District || po.Block || cityInput.value;
+            if (stateInput) stateInput.value = po.State || stateInput.value;
+          }
+        } catch (err) {}
+      }
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();

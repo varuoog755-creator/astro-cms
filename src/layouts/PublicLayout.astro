@@ -304,7 +304,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     </div>
 
     <!-- Main Body Slot -->
-    <main class="flex-1">
+    <main class="flex-1 pb-16 md:pb-0">
       <slot />
     </main>
 
@@ -382,13 +382,13 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
       </div>
     </footer>
 
-    <!-- Floating WhatsApp Sales Widget -->
+    <!-- Floating WhatsApp Sales Widget (Desktop & Tablet) -->
     {integrationSettings.whatsapp_enabled && integrationSettings.whatsapp_floating_widget && (
       <a
         href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi! I am browsing the store and have a question about products.')}`}
         target="_blank"
         rel="noopener noreferrer"
-        class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-2 font-bold text-xs group"
+        class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all hidden sm:flex items-center gap-2 font-bold text-xs group"
         title="Chat on WhatsApp"
       >
         <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -399,6 +399,42 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
         </span>
       </a>
     )}
+
+    <!-- Mobile App-Style Bottom Navigation Bar (80% Mobile Users) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 py-1.5 px-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-around" style="padding-bottom: max(0.375rem, env(safe-area-inset-bottom));">
+      <a href="/" class="flex flex-col items-center justify-center py-1 px-3 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[56px]">
+        <span class="text-xl">🏠</span>
+        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">Home</span>
+      </a>
+
+      <a href="/products" class="flex flex-col items-center justify-center py-1 px-3 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[56px]">
+        <span class="text-xl">🛍️</span>
+        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">Curtains</span>
+      </a>
+
+      <button
+        type="button"
+        onclick="window.openCartDrawer?.()"
+        class="flex flex-col items-center justify-center py-1 px-3 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[56px] relative cursor-pointer"
+        aria-label="Open Shopping Cart"
+      >
+        <div class="relative">
+          <span class="text-xl">🛒</span>
+          <span id="mobile-bottom-cart-badge" class="absolute -top-1.5 -right-2.5 bg-amber-800 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+        </div>
+        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">Cart</span>
+      </button>
+
+      <a
+        href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi Teepul! I am browsing on mobile and need assistance.')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex flex-col items-center justify-center py-1 px-3 text-emerald-600 hover:text-emerald-700 transition active:scale-95 min-w-[56px]"
+      >
+        <span class="text-xl">💬</span>
+        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">WhatsApp</span>
+      </a>
+    </nav>
 
     <!-- Global Cart & Logout Script -->
     <script is:inline>
@@ -415,6 +451,8 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
           const count = cart.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
           const badge = document.getElementById('cart-badge-count');
           if (badge) badge.innerText = String(count);
+          const mobileBadge = document.getElementById('mobile-bottom-cart-badge');
+          if (mobileBadge) mobileBadge.innerText = String(count);
         } catch (e) {
           console.error(e);
         }
