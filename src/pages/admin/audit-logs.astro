@@ -1,6 +1,7 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import prisma from '../../lib/db';
+import { resolveGeoLocation } from '../../lib/utilities/geo';
 
 const filter = Astro.url.searchParams.get('filter') || 'all';
 
@@ -13,7 +14,7 @@ if (filter === 'cart') {
   whereClause = { action: { startsWith: 'auth.' } };
 }
 
-const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
+const [rawLogs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
   prisma.auditLog.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
@@ -25,6 +26,22 @@ const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
   prisma.auditLog.count({ where: { action: { startsWith: 'order.' } } }),
   prisma.user.count(),
 ]);
+
+const logs = await Promise.all(
+  rawLogs.map(async (log) => {
+    let metaObj: any = {};
+    try {
+      if (log.metadata) metaObj = JSON.parse(log.metadata);
+    } catch (e) {}
+
+    let locationStr = metaObj.location;
+    if (!locationStr) {
+      const g = await resolveGeoLocation(log.ipAddress);
+      locationStr = g.locationStr;
+    }
+    return { ...log, metaObj, resolvedLocation: locationStr };
+  })
+);
 ---
 
 <AdminLayout title="System Audit & Cart Activity Logs" activeNav="audit">
@@ -147,7 +164,7 @@ const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
               <th class="px-6 py-4">Event / Action</th>
               <th class="px-6 py-4">User / Customer</th>
               <th class="px-6 py-4">Activity Details</th>
-              <th class="px-6 py-4">Client IP</th>
+              <th class="px-6 py-4">City, State & IP 📍</th>
               <th class="px-6 py-4">Date & Time</th>
             </tr>
           </thead>
@@ -161,10 +178,7 @@ const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
               </tr>
             ) : (
               logs.map((log) => {
-                let metaObj: any = {};
-                try {
-                  if (log.metadata) metaObj = JSON.parse(log.metadata);
-                } catch (e) {}
+                const metaObj = log.metaObj || {};
 
                 const isCart = log.action.startsWith('cart.');
                 const isOrder = log.action.startsWith('order.');
@@ -174,16 +188,40 @@ const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
                   <tr class="hover:bg-slate-50/70 transition">
                     <!-- Action Badge -->
                     <td class="px-6 py-4 font-mono font-bold whitespace-nowrap">
-                      {isCart ? (
-                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-1 rounded-lg text-[11px]">
+                      {log.action === 'cart.add' ? (
+                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          🛒 Cart Added
+                        </span>
+                      ) : log.action === 'cart.remove' ? (
+                        <span class="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          🗑️ Item Removed
+                        </span>
+                      ) : log.action === 'cart.abandoned' ? (
+                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-950 border border-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          ⚠️ Cart Left / Abandoned
+                        </span>
+                      ) : log.action === 'cart.drawer_closed' ? (
+                        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-800 border border-slate-300 px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                          🚪 Drawer Closed
+                        </span>
+                      ) : log.action === 'cart.checkout_click' ? (
+                        <span class="inline-flex items-center gap-1 bg-purple-100 text-purple-900 border border-purple-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          ⚡ Checkout Clicked
+                        </span>
+                      ) : log.action === 'cart.whatsapp_click' ? (
+                        <span class="inline-flex items-center gap-1 bg-teal-100 text-teal-900 border border-teal-300 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow-sm">
+                          💬 WhatsApp Order
+                        </span>
+                      ) : isCart ? (
+                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">
                           🛒 {log.action}
                         </span>
                       ) : isOrder ? (
-                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-lg text-[11px]">
+                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-lg text-[11px] font-black shadow-sm">
                           🛍️ {log.action}
                         </span>
                       ) : isAuth ? (
-                        <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg text-[11px]">
+                        <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">
                           🔑 {log.action}
                         </span>
                       ) : (
@@ -196,16 +234,37 @@ const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
                     <!-- User Name / Email -->
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="font-bold text-slate-900">
-                        {log.user?.displayName || metaObj.userName || metaObj.customerName || 'Guest Visitor'}
+                        {log.user?.displayName || metaObj.userName || metaObj.customerName || 'Guest Customer'}
                       </div>
                       <div class="text-[11px] text-slate-400">
-                        {log.user?.email || metaObj.userEmail || metaObj.customerEmail || 'Anonymous'}
+                        {log.user?.email || metaObj.userEmail || metaObj.customerEmail || 'Anonymous Visitor'}
                       </div>
                     </td>
 
                     <!-- Activity Details -->
                     <td class="px-6 py-4">
-                      {metaObj.productName ? (
+                      {metaObj.cartTotal !== undefined ? (
+                        <div class="space-y-0.5">
+                          <div class="font-bold text-slate-900 line-clamp-1">
+                            {metaObj.productName || 'Cart Session'}
+                          </div>
+                          <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-1.5 font-medium">
+                            <span class="bg-amber-100 text-amber-900 font-extrabold px-2 py-0.5 rounded-md">
+                              Total: ₹{Number(metaObj.cartTotal).toLocaleString('en-IN')}
+                            </span>
+                            {metaObj.itemCount !== undefined && (
+                              <span class="bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded">
+                                {metaObj.itemCount} Item(s)
+                              </span>
+                            )}
+                          </div>
+                          {metaObj.details && (
+                            <div class="text-[10px] text-slate-500 line-clamp-1 italic">
+                              {metaObj.details}
+                            </div>
+                          )}
+                        </div>
+                      ) : metaObj.productName ? (
                         <div class="space-y-0.5">
                           <div class="font-bold text-slate-900 line-clamp-1">
                             {metaObj.productName}
@@ -232,9 +291,17 @@ const [logs, totalCount, cartCount, orderCount, userCount] = await Promise.all([
                       )}
                     </td>
 
-                    <!-- Client IP -->
-                    <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-500 text-[11px]">
-                      {log.ipAddress || '127.0.0.1'}
+                    <!-- Location (City, State) & Client IP -->
+                    <td class="px-6 py-4 whitespace-nowrap text-[11px]">
+                      <div class="font-extrabold text-slate-900 flex items-center gap-1.5">
+                        <span class="text-rose-500 text-xs">📍</span>
+                        <span class="bg-rose-50 text-rose-900 border border-rose-200/80 px-2 py-0.5 rounded-md font-bold">
+                          {log.resolvedLocation || 'Panipat, Haryana (HQ)'}
+                        </span>
+                      </div>
+                      <div class="font-mono text-slate-400 text-[10px] pl-5 mt-0.5">
+                        {log.ipAddress || '127.0.0.1'}
+                      </div>
                     </td>
 
                     <!-- Timestamp -->

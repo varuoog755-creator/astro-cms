@@ -178,6 +178,25 @@
         drawer.classList.add('translate-x-full', 'pointer-events-none');
 
         document.body.classList.remove('overflow-hidden');
+
+        // Log drawer closed event if items present in cart
+        try {
+          const cart = getCart();
+          if (cart.length > 0) {
+            const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+            fetch('/api/analytics/cart-event', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'cart.drawer_closed',
+                productName: `${cart.length} Curtain Item(s) in Cart`,
+                itemCount: cart.length,
+                cartTotal: subtotal,
+                details: cart.map(i => `${i.name} (${i.size || '7ft'} x${i.quantity || 1})`).join(', ')
+              })
+            }).catch(() => {});
+          }
+        } catch (e) {}
       }
     };
 
@@ -412,6 +431,8 @@
       closeBtn?.addEventListener('click', window.closeCartDrawer);
       backdrop?.addEventListener('click', window.closeCartDrawer);
 
+      let hasCheckedOut = false;
+
       // Checkout Navigation Handler
       checkoutBtn?.addEventListener('click', () => {
         const cart = getCart();
@@ -419,6 +440,24 @@
           alert('Your cart is empty! Please add a curtain first.');
           return;
         }
+
+        hasCheckedOut = true;
+        const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+        
+        // Log Checkout Click Event
+        try {
+          fetch('/api/analytics/cart-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'cart.checkout_click',
+              productName: `Checkout (${cart.length} items)`,
+              itemCount: cart.length,
+              cartTotal: subtotal,
+              details: cart.map(i => `${i.name} (${i.size || '7ft'} x${i.quantity || 1})`).join(', ')
+            })
+          }).catch(() => {});
+        } catch (e) {}
 
         const primary = cart[0];
         const checkoutUrl = `/checkout?product=${encodeURIComponent(primary.slug)}&size=${encodeURIComponent(primary.size || '7 Feet')}&color=${encodeURIComponent(primary.color || 'Standard')}&price=${primary.price}&qty=${primary.quantity || 1}`;
@@ -430,13 +469,54 @@
         const cart = getCart();
         if (cart.length === 0) return;
 
+        hasCheckedOut = true;
         const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+
+        // Log WhatsApp Order Click Event
+        try {
+          fetch('/api/analytics/cart-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'cart.whatsapp_click',
+              productName: `WhatsApp Order (${cart.length} items)`,
+              itemCount: cart.length,
+              cartTotal: subtotal,
+              details: cart.map(i => `${i.name} (${i.size || '7ft'} x${i.quantity || 1})`).join(', ')
+            })
+          }).catch(() => {});
+        } catch (e) {}
+
         let itemsSummary = cart
           .map((i, idx) => `${idx + 1}. *${i.name}*\n   Size: ${i.size || '7 Feet'} | Qty: ${i.quantity} | Price: ₹${i.price * i.quantity}`)
           .join('\n\n');
 
         const msg = `Hi Teepul Store! I want to order my shopping cart:\n\n${itemsSummary}\n\n*Total Amount:* ₹${subtotal.toLocaleString('en-IN')}\n*Delivery:* FREE All-India Shipping\n\nPlease confirm availability and payment details!`;
         window.open(`https://wa.me/919876543210?text=${encodeURIComponent(msg)}`, '_blank');
+      });
+
+      // Track Cart Abandonment (when user leaves / switches away with items in cart)
+      window.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden' && !hasCheckedOut) {
+          try {
+            const cart = getCart();
+            if (cart.length > 0) {
+              const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+              const payload = JSON.stringify({
+                action: 'cart.abandoned',
+                productName: `Unfinished Cart (${cart.length} items)`,
+                itemCount: cart.length,
+                cartTotal: subtotal,
+                details: cart.map(i => `${i.name} (${i.size || '7ft'} x${i.quantity || 1})`).join(', ')
+              });
+
+              if (navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: 'application/json' });
+                navigator.sendBeacon('/api/analytics/cart-event', blob);
+              }
+            }
+          } catch (e) {}
+        }
       });
 
       document.querySelectorAll('.cart-trigger, #header-cart-btn').forEach((btn) => {
