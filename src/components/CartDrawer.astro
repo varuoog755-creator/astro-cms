@@ -297,26 +297,62 @@
     window.updateCartItemQty = function (index, delta) {
       const cart = getCart();
       if (!cart[index]) return;
-      const newQty = (Number(cart[index].quantity) || 1) + delta;
+      const item = cart[index];
+      const newQty = (Number(item.quantity) || 1) + delta;
       if (newQty <= 0) {
         cart.splice(index, 1);
       } else {
-        cart[index].quantity = newQty;
+        item.quantity = newQty;
       }
       saveCart(cart);
       window.renderCartDrawer();
+
+      // Log quantity change in database audit history
+      try {
+        fetch('/api/analytics/cart-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: delta > 0 ? 'cart.qty_increase' : 'cart.qty_decrease',
+            productName: item.name,
+            slug: item.slug,
+            size: item.size,
+            color: item.color,
+            price: item.price,
+            quantity: newQty > 0 ? newQty : 0,
+          }),
+        }).catch(() => {});
+      } catch (e) {}
     };
 
     // Remove Item Helper
     window.removeCartItem = function (index) {
       const cart = getCart();
       if (!cart[index]) return;
+      const removed = cart[index];
       cart.splice(index, 1);
       saveCart(cart);
       window.renderCartDrawer();
+
+      // Log item removal in database audit history
+      try {
+        fetch('/api/analytics/cart-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'cart.remove',
+            productName: removed.name,
+            slug: removed.slug,
+            size: removed.size,
+            color: removed.color,
+            price: removed.price,
+            quantity: removed.quantity,
+          }),
+        }).catch(() => {});
+      } catch (e) {}
     };
 
-    // Fast Add To Cart Global Helper (Upgraded to automatically open Right Drawer)
+    // Fast Add To Cart Global Helper (Upgraded to automatically open Right Drawer & Log History)
     window.quickAddToCart = function (name, slug, price, image, size, color, quantity) {
       try {
         const cart = getCart();
@@ -345,6 +381,23 @@
 
         saveCart(cart);
         window.openCartDrawer();
+
+        // Send Cart History Event to Database
+        try {
+          fetch('/api/analytics/cart-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'cart.add',
+              productName: name,
+              slug: slug,
+              size: selectedSize,
+              color: selectedColor,
+              price: price,
+              quantity: addQty,
+            }),
+          }).catch(() => {});
+        } catch (err) {}
       } catch (e) {
         console.error('Cart error:', e);
       }

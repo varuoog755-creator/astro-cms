@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import prisma from '../../../lib/db';
 import { getIntegrationSettings } from '../../../lib/settings';
 import { checkRateLimit } from '../../../lib/utilities/rateLimit';
+import { logAudit } from '../../../lib/utilities/audit';
 
 export const POST: APIRoute = async ({ request }) => {
   const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
@@ -98,6 +99,25 @@ export const POST: APIRoute = async ({ request }) => {
         },
       });
 
+      await logAudit({
+        action: 'order.placed',
+        entity: 'Order',
+        entityId: order.orderNumber,
+        ipAddress: clientIp,
+        metadata: {
+          orderNumber,
+          customerName,
+          customerPhone,
+          customerEmail,
+          totalAmount,
+          itemTitle,
+          size,
+          color,
+          quantity: qty,
+          paymentMethod,
+        },
+      });
+
       return new Response(JSON.stringify({ success: true, orderId: order.id, orderNumber }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -137,6 +157,25 @@ export const POST: APIRoute = async ({ request }) => {
             },
           ],
         },
+      },
+    });
+
+    await logAudit({
+      action: 'order.placed',
+      entity: 'Order',
+      entityId: order.orderNumber,
+      ipAddress: clientIp,
+      metadata: {
+        orderNumber,
+        customerName,
+        customerPhone,
+        customerEmail,
+        totalAmount,
+        itemTitle,
+        size,
+        color,
+        quantity: qty,
+        paymentMethod: 'RAZORPAY',
       },
     });
 
