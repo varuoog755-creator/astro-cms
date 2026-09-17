@@ -58,7 +58,7 @@ const logs = await Promise.all(
           Audit Trail & Live Cart Activity History 🛡️
         </h1>
         <p class="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium leading-relaxed">
-          Zero-Deletion Policy enforced. All customer accounts, order records, delivery details, logins, and live cart additions are permanently stored in SQLite and protected against deletion.
+          Zero-Deletion Policy enforced. All customer accounts, order records, delivery details, logins, and live cart additions are permanently stored in Supabase PostgreSQL and protected against deletion.
         </p>
       </div>
 
@@ -113,7 +113,7 @@ const logs = await Promise.all(
         <div class="space-y-1">
           <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Deletion Lock</div>
           <div class="text-base font-black text-slate-900">HARD-LOCKED</div>
-          <div class="text-[11px] text-blue-600 font-bold">Permanent SQLite Storage</div>
+          <div class="text-[11px] text-blue-600 font-bold">Permanent Supabase PostgreSQL</div>
         </div>
         <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-2xl flex items-center justify-center text-xl font-black shadow-inner">
           🔐
