@@ -73,9 +73,6 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={meta.jsonLd} />
 
-    <!-- Tailwind CSS (Deferred for Non-blocking Fast Rendering) -->
-    <script defer src="https://cdn.tailwindcss.com"></script>
-
     <!-- Google Fonts with display=swap for Zero FOIT -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -186,6 +183,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
               type="text"
               name="q"
               placeholder="Search curtains, lights, decor..."
+              aria-label="Search store curtains, lights, and decor"
               class="w-48 lg:w-56 bg-slate-100/80 text-xs font-medium text-slate-800 rounded-full pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 border border-slate-200 focus:bg-white transition-all shadow-inner"
             />
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,6 +255,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
             type="text"
             name="q"
             placeholder="Search curtains, lights, decor..."
+            aria-label="Search store curtains and decor"
             class="w-full bg-slate-100 text-xs font-medium text-slate-800 rounded-full pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 border border-slate-200"
           />
           <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -8,7 +8,7 @@ const allProducts = await getStorefrontProducts();
 const product = allProducts.find((p) => p.slug === slug);
 
 if (!product) {
-  return Astro.redirect('/products');
+  return Astro.rewrite('/404');
 }
 
 const normalizedSizes = normalizeProductSizes(product.sizes, product.price, product.originalPrice);

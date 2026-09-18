@@ -13,16 +13,23 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       </a>
     </div>
 
-    <!-- JSON Import Box -->
+    <!-- Safe Data Protection & Backup Box -->
     <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-      <h3 class="text-base font-bold text-gray-900">Import CMS Backup</h3>
-      <p class="text-xs text-gray-500">Restore or import posts and pages from a valid JSON export file.</p>
-      <form action="/api/tools/import" method="POST" enctype="multipart/form-data" class="space-y-3">
-        <input type="file" name="backup" accept=".json" required class="text-xs border border-gray-300 rounded-lg p-2 w-full" />
-        <button type="submit" class="bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow transition">
-          Import Content ↑
-        </button>
-      </form>
+      <div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+        <span>🔒 IMMUTABLE DATA PRESERVATION</span>
+      </div>
+      <h3 class="text-base font-bold text-gray-900">Database Lock & Safety Policy</h3>
+      <p class="text-xs text-gray-600 leading-relaxed">
+        Per Teepul production policy, customer accounts, orders, payment transactions, and live audit logs are permanently locked and cannot be wiped, overwritten, or truncated by import files.
+      </p>
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 space-y-2">
+        <div class="font-bold text-slate-900">Active Protections:</div>
+        <ul class="list-disc pl-4 space-y-1 text-[11px] text-slate-600">
+          <li>Customer user records & delivery addresses: <strong>Protected</strong></li>
+          <li>Orders & Razorpay/Paytm transactions: <strong>Immutable</strong></li>
+          <li>Full audit log tracking: <strong>Permanent</strong></li>
+        </ul>
+      </div>
     </div>
   </div>
 </AdminLayout>

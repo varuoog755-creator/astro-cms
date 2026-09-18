@@ -3,7 +3,16 @@ import { getStorefrontProducts } from '../lib/products';
 import prisma from '../lib/db';
 
 export const GET: APIRoute = async ({ request }) => {
-  const origin = new URL(request.url).origin;
+  const defaultSiteUrl = process.env.PUBLIC_SITE_URL || 'https://teepul.com';
+  let origin = defaultSiteUrl;
+  try {
+    const parsedOrigin = new URL(request.url).origin;
+    if (parsedOrigin && !parsedOrigin.includes('localhost') && !parsedOrigin.includes('127.0.0.1')) {
+      origin = parsedOrigin;
+    }
+  } catch (e) {
+    origin = defaultSiteUrl;
+  }
 
   let posts: any[] = [];
   try {

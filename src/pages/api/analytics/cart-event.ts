@@ -2,9 +2,21 @@ import type { APIRoute } from 'astro';
 import { logAudit } from '../../../lib/utilities/audit';
 import { getSession, getSessionTokenFromRequest } from '../../../lib/auth/session';
 import { resolveGeoLocation } from '../../../lib/utilities/geo';
+import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
+    
+    // Prevent database log spamming from runaway loops (max 30 events per minute per IP)
+    const { allowed } = checkRateLimit(clientIp, 'cart_event', { maxRequests: 30, windowMs: 60000 });
+    if (!allowed) {
+      return new Response(JSON.stringify({ success: true, rateLimited: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const data = await request.json();
     const {
       action = 'cart.add',
@@ -21,7 +33,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     const token = getSessionTokenFromRequest(request);
     const sessionUser = token ? await getSession(token) : null;
-    const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
 
     // Resolve City, State & Country
     const geo = await resolveGeoLocation(clientIp, request.headers);
