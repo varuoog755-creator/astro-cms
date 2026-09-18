@@ -11,6 +11,7 @@ export interface SeoOptions {
   authorName?: string;
   breadcrumbs?: Array<{ name: string; url: string }>;
   faqs?: Array<{ question: string; answer: string }>;
+  preloadLcpImage?: string;
   productData?: {
     name: string;
     price: number;
@@ -223,6 +224,7 @@ export function generateSeoMetadata(options: SeoOptions) {
     ogImage,
     type: options.type || 'website',
     siteName,
+    preloadLcpImage: options.preloadLcpImage,
     jsonLd: JSON.stringify(jsonLd),
   };
 }

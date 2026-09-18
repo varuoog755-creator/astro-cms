@@ -71,6 +71,11 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     <meta name="twitter:description" content={meta.description} />
     <meta name="twitter:image" content={meta.ogImage} />
 
+    <!-- LCP Preload Hint (Core Web Vitals Optimization) -->
+    {meta.preloadLcpImage && (
+      <link rel="preload" as="image" href={meta.preloadLcpImage} fetchpriority="high" />
+    )}
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={meta.jsonLd} />
 

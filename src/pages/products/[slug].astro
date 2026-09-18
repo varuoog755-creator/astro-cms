@@ -21,6 +21,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     title: `${product.name} - Official Product Showcase`,
     description: product.description,
     ogImage: product.images?.[0],
+    preloadLcpImage: product.images?.[0],
     productData: {
       name: product.name,
       price: product.price,
