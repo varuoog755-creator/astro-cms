@@ -9,8 +9,8 @@ RUN npm install --legacy-peer-deps
 
 ARG DATABASE_URL
 ARG DIRECT_URL
-ENV DATABASE_URL=$DATABASE_URL
-ENV DIRECT_URL=$DIRECT_URL
+ENV DATABASE_URL=${DATABASE_URL:-"postgresql://postgres.ypivtgzaibdoyinlxnvo:TeepulDb%402026SecurePass%21@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"}
+ENV DIRECT_URL=${DIRECT_URL:-"postgresql://postgres.ypivtgzaibdoyinlxnvo:TeepulDb%402026SecurePass%21@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"}
 
 COPY . .
 RUN npx prisma generate
@@ -24,6 +24,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
+ENV DATABASE_URL="postgresql://postgres.ypivtgzaibdoyinlxnvo:TeepulDb%402026SecurePass%21@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+ENV DIRECT_URL="postgresql://postgres.ypivtgzaibdoyinlxnvo:TeepulDb%402026SecurePass%21@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 
 COPY package*.json ./
 COPY prisma ./prisma/

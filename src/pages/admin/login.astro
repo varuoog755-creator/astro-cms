@@ -12,6 +12,7 @@ const error = Astro.url.searchParams.get('error');
   )}
 
   <form id="admin-login-form" action="/api/auth/login" method="POST" class="space-y-4">
+    <input type="hidden" name="isAdminPortal" value="true" />
     <div>
       <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Admin Email or Username</label>
       <input

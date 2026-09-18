@@ -15,21 +15,29 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     return errorRedirect('Too many login attempts. Please wait 1 minute before trying again.');
   }
 
+  let isAdmin = isAdminLogin;
+  let targetErrorRedirect = errorRedirect;
+
   try {
     const formData = await request.formData();
+    if (formData.get('isAdminPortal') === 'true') {
+      isAdmin = true;
+      targetErrorRedirect = (msg: string) => redirect(`/admin/login?error=${encodeURIComponent(msg)}`);
+    }
+
     const login = formData.get('login')?.toString().trim() || '';
     const password = formData.get('password')?.toString().trim() || '';
 
     if (!login || !password) {
-      return errorRedirect('Please fill in all fields.');
+      return targetErrorRedirect('Please fill in all fields.');
     }
 
     const cleanLogin = login.toLowerCase();
     const isMasterAdminLogin = cleanLogin === 'govinda755rock755@gmail.com' || cleanLogin === 'govinda755';
 
     // If logging in from the Admin login portal, strictly allow only Super Admin Govinda
-    if (isAdminLogin && !isMasterAdminLogin) {
-      return errorRedirect('Access Denied: Admin panel is exclusively restricted to Super Admin Govinda (govinda755rock755@gmail.com).');
+    if (isAdmin && !isMasterAdminLogin) {
+      return targetErrorRedirect('Access Denied: Admin panel is exclusively restricted to Super Admin Govinda (govinda755rock755@gmail.com).');
     }
 
     let user = await prisma.user.findFirst({
@@ -47,21 +55,21 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     });
 
     if (!user) {
-      return errorRedirect('Invalid email/username or password.');
+      return targetErrorRedirect('Invalid email/username or password.');
     }
 
-    if (isAdminLogin && user.role?.name !== 'Super Admin') {
-      return errorRedirect('Access Denied: Super Admin privileges required.');
+    if (isAdmin && user.role?.name !== 'Super Admin') {
+      return targetErrorRedirect('Access Denied: Super Admin privileges required.');
     }
 
     if (user.status === 'suspended') {
-      return errorRedirect('Account is suspended. Please contact admin.');
+      return targetErrorRedirect('Account is suspended. Please contact admin.');
     }
 
     const validPassword = await verifyPassword(password, user.passwordHash);
 
     if (!validPassword) {
-      return errorRedirect('Invalid email/username or password.');
+      return targetErrorRedirect('Invalid email/username or password.');
     }
 
     const token = await createSession(user.id, request.headers.get('x-forwarded-for') || undefined, request.headers.get('user-agent') || undefined);
@@ -101,6 +109,10 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     return redirect(targetRedirect);
   } catch (err: any) {
     console.error('Login error:', err);
-    return errorRedirect('An unexpected error occurred.');
+    const isDbError = err?.message?.includes('database') || err?.message?.includes('reach') || err?.code?.startsWith?.('P');
+    const msg = isDbError
+      ? 'Database connection error. Please try again in a few moments.'
+      : 'An unexpected error occurred. Please try again.';
+    return targetErrorRedirect(msg);
   }
 };
