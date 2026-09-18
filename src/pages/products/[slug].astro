@@ -172,24 +172,15 @@ const customerReviews = [
     ],
   }}
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-28 sm:pb-12">
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-6 sm:mb-8">
-      <a href="/" class="hover:text-amber-800 transition">Home</a>
-      <span>/</span>
-      <a href="/products" class="hover:text-amber-800 transition">Products</a>
-      <span>/</span>
-      <span class="text-slate-800 font-bold">{product.name}</span>
-    </nav>
-
+  <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-10 pb-28 sm:pb-12">
     <!-- Main Product Card -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 mb-16">
+    <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 mb-12 sm:mb-16">
       
-      <!-- Gallery Column with Touch-Swipe Slider -->
-      <div class="p-6 sm:p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 select-none">
+      <!-- Gallery Column with Touch-Swipe Slider (Enlarged Unobstructed Canvas) -->
+      <div class="p-2 sm:p-6 lg:p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 select-none">
         <div
           id="product-gallery-viewport"
-          class="relative aspect-square rounded-2xl overflow-hidden shadow-inner bg-slate-200 group touch-pan-y cursor-grab active:cursor-grabbing"
+          class="relative aspect-[4/5] sm:aspect-square rounded-2xl overflow-hidden shadow-sm bg-slate-200 group touch-pan-y cursor-grab active:cursor-grabbing"
         >
           <!-- Sliding Image Track -->
           <div
@@ -207,40 +198,43 @@ const customerReviews = [
                   fetchpriority={idx === 0 ? "high" : "auto"}
                   decoding={idx === 0 ? "sync" : "async"}
                   width="600"
-                  height="600"
+                  height="750"
                   draggable="false"
                 />
               </div>
             ))}
           </div>
+        </div>
 
-          <!-- Product Badges -->
-          {product.badge && (
-            <span class="absolute top-4 left-4 bg-slate-900/90 text-white text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm z-10 pointer-events-none">
-              {product.badge}
-            </span>
-          )}
-          <span class="absolute bottom-4 left-4 bg-slate-900/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm z-10 pointer-events-none hidden sm:inline-block">
-            Heavyweight Thermal Fabric
-          </span>
-
-          <!-- Slide Counter Badge (Top Right) -->
-          {product.images.length > 1 && (
+        <!-- Slider Controls Strip (Positioned Below Image, Never Obscuring Product) -->
+        {product.images.length > 1 && (
+          <div class="flex items-center justify-between px-1 sm:px-2 pt-3 pb-1 text-xs text-slate-600 select-none">
+            <!-- Left: Slide Counter (e.g. 1 / 4) -->
             <span
               id="slider-counter"
-              class="absolute top-4 right-4 bg-slate-900/80 text-white text-[11px] font-black px-2.5 py-1 rounded-full backdrop-blur-sm z-10 pointer-events-none shadow"
+              class="bg-white border border-slate-200 text-slate-700 font-bold text-[11px] px-2.5 py-1 rounded-full shadow-sm"
             >
               1 / {product.images.length}
             </span>
-          )}
 
-          <!-- Previous / Next Navigation Chevron Buttons -->
-          {product.images.length > 1 && (
-            <>
+            <!-- Center: Dot Indicators -->
+            <div id="slider-dots" class="flex items-center gap-1.5">
+              {product.images.map((_, idx) => (
+                <button
+                  type="button"
+                  data-slide-dot={idx}
+                  class={`slider-dot transition-all duration-300 rounded-full cursor-pointer ${idx === 0 ? 'w-5 h-1.5 bg-amber-800' : 'w-2 h-1.5 bg-slate-300 hover:bg-slate-400'}`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                ></button>
+              ))}
+            </div>
+
+            <!-- Right: Prev / Next Chevron Buttons -->
+            <div class="flex items-center gap-1.5">
               <button
                 type="button"
                 id="slider-prev-btn"
-                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white active:scale-90 text-slate-800 shadow-lg backdrop-blur-md flex items-center justify-center font-black text-xl transition z-20 border border-slate-200 cursor-pointer select-none"
+                class="w-8 h-8 rounded-full bg-white hover:bg-amber-50 active:scale-90 text-slate-700 hover:text-amber-900 border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
                 aria-label="Previous image"
                 title="Previous Image"
               >
@@ -249,40 +243,25 @@ const customerReviews = [
               <button
                 type="button"
                 id="slider-next-btn"
-                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white active:scale-90 text-slate-800 shadow-lg backdrop-blur-md flex items-center justify-center font-black text-xl transition z-20 border border-slate-200 cursor-pointer select-none"
+                class="w-8 h-8 rounded-full bg-white hover:bg-amber-50 active:scale-90 text-slate-700 hover:text-amber-900 border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
                 aria-label="Next image"
                 title="Next Image"
               >
                 ›
               </button>
-
-              <!-- Dot Indicators (Bottom Center) -->
-              <div
-                id="slider-dots"
-                class="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-slate-900/50 backdrop-blur-sm px-3 py-1.5 rounded-full"
-              >
-                {product.images.map((_, idx) => (
-                  <button
-                    type="button"
-                    data-slide-dot={idx}
-                    class={`slider-dot transition-all duration-300 rounded-full cursor-pointer ${idx === 0 ? 'w-5 h-2 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white/80'}`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  ></button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
 
         <!-- Thumbnails Strip -->
         {product.images.length > 1 && (
-          <div class="flex gap-3 sm:gap-4 mt-6 overflow-x-auto pb-1">
+          <div class="flex gap-2.5 sm:gap-4 mt-3 sm:mt-4 overflow-x-auto pb-1">
             {product.images.map((img, idx) => (
               <button
                 type="button"
                 data-slide-index={idx}
                 data-img={img}
-                class={`thumb-btn flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30' : 'border-slate-300 hover:border-amber-600/60 opacity-70 hover:opacity-100'}`}
+                class={`thumb-btn flex-shrink-0 w-14 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30' : 'border-slate-300 hover:border-amber-600/60 opacity-70 hover:opacity-100'}`}
               >
                 <img
                   src={img}
@@ -301,8 +280,13 @@ const customerReviews = [
       <!-- Detail Info Column -->
       <div class="p-4 sm:p-8 lg:p-12 space-y-5 sm:space-y-6 flex flex-col justify-between">
         <div class="space-y-4">
-          <!-- Category & Stock Status Badges (Strictly 1 line on mobile) -->
+          <!-- Category, Best Seller & Stock Status Badges (Strictly 1 line on mobile) -->
           <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5">
+            {product.badge && (
+              <span class="bg-rose-600 text-white font-black text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shadow-sm shrink-0 whitespace-nowrap">
+                🔥 {product.badge}
+              </span>
+            )}
             <span class="bg-amber-100 text-amber-900 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider border border-amber-200 shrink-0 whitespace-nowrap">
               {product.category}
             </span>
