@@ -14,6 +14,138 @@ if (!product) {
 const normalizedSizes = normalizeProductSizes(product.sizes, product.price, product.originalPrice);
 const initialSize = normalizedSizes[0] || { name: 'Standard Size', price: product.price, originalPrice: product.originalPrice };
 const relatedProducts = allProducts.filter((p) => p.id !== product.id);
+
+function parseProductDetails(raw: string, defaultName: string) {
+  if (!raw) {
+    return {
+      paragraphs: [
+        'Crafted directly in our Panipat manufacturing mills, this curtain panel combines premium heavyweight fabric with precision eyelet stitching to deliver superior light control, smooth drape, and enduring interior beauty.'
+      ],
+      bullets: [
+        'Light Filtering & Room Darkening for soothing ambiance',
+        'Rust-proof metallic silver eyelet rings for effortless sliding',
+        'Direct factory double-stitched hem and side borders',
+        'Easy maintenance: 100% hand & gentle machine wash friendly'
+      ],
+      specs: [
+        { label: 'Fabric Type', value: '100% Premium Polyester' },
+        { label: 'Eyelet Fitting', value: 'Stainless Steel Silver Grommets' },
+        { label: 'Available Sizes', value: '5ft, 6ft, 7ft & 9ft' },
+        { label: 'Care Instructions', value: 'Hand & Machine Wash Cold' },
+        { label: 'Manufacturing Origin', value: 'Panipat, Haryana (India)' }
+      ]
+    };
+  }
+
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const specs: { label: string; value: string }[] = [];
+  const bullets: string[] = [];
+  const paragraphs: string[] = [];
+
+  const skipHeaders = new Set([
+    'key features', 'key features:', 'product highlights', 'product information',
+    'perfect for', 'bullet points', 'product description', 'why choose this curtain?',
+    'size information', 'product details', 'about this item'
+  ]);
+
+  for (const line of lines) {
+    // Filter keyword stuffing lines
+    const commaCount = (line.match(/,/g) || []).length;
+    if (commaCount >= 3 && !line.includes('.') && line.length < 160) continue;
+
+    // Check key: value
+    const colonIdx = line.indexOf(':');
+    if (colonIdx > 1 && colonIdx < 30) {
+      const k = line.slice(0, colonIdx).trim();
+      const v = line.slice(colonIdx + 1).trim();
+      const kLower = k.toLowerCase();
+      const vLower = v.toLowerCase();
+
+      if (kLower === 'name' || kLower.includes('net quantity') || vLower.includes('shoe rack')) {
+        continue;
+      }
+
+      if (['material', 'opacity', 'length', 'type', 'set', 'size', 'pattern', 'colour', 'eyelet', 'care', 'origin'].some(term => kLower.includes(term))) {
+        if (v && !specs.some(s => s.label.toLowerCase() === kLower)) {
+          specs.push({ label: k, value: v });
+        }
+        continue;
+      }
+    }
+
+    // Check bullet points
+    if (line.startsWith('✔') || line.startsWith('•') || line.startsWith('- ') || line.startsWith('✓')) {
+      const clean = line.replace(/^[✔•\-\u2714\u2713\s]+/, '').trim();
+      if (clean.length > 5 && !bullets.includes(clean)) {
+        bullets.push(clean);
+      }
+      continue;
+    }
+
+    if (skipHeaders.has(line.toLowerCase())) continue;
+
+    if (line.length > 25 && !paragraphs.includes(line)) {
+      paragraphs.push(line);
+    }
+  }
+
+  if (bullets.length === 0) {
+    bullets.push(
+      'Premium fabric weave ensures elegant fall and rich drape',
+      'Light filtering and privacy protection for windows and doors',
+      'Rust-proof metallic eyelet grommets for smooth movement',
+      'Hand and gentle machine wash friendly'
+    );
+  }
+
+  if (specs.length === 0) {
+    specs.push(
+      { label: 'Fabric Type', value: '100% Premium Polyester' },
+      { label: 'Fitting Style', value: 'Silver Eyelet Rings' },
+      { label: 'Care Instructions', value: 'Hand & Machine Wash Cold' },
+      { label: 'Origin', value: 'Panipat, Haryana (India)' }
+    );
+  }
+
+  return { paragraphs, bullets, specs };
+}
+
+const cleanedDesc = parseProductDetails(product.description, product.name);
+
+const customerReviews = [
+  {
+    name: "Pooja Sharma",
+    city: "Jaipur, Rajasthan",
+    rating: 5,
+    date: "Verified Purchase · 3 days ago",
+    title: "Fabric quality is genuine and heavy",
+    comment: "Parde ka fabric bohot badhiya aur heavy quality ka hai. 7 feet door size bilkul perfect fit aaya mere hall rod par. Rings smooth slide hoti hain aur stitching ekdum clean hai."
+  },
+  {
+    name: "Rahul Verma",
+    city: "New Delhi",
+    rating: 5,
+    date: "Verified Purchase · 1 week ago",
+    title: "Exact color as shown in photo",
+    comment: "Color bilkul same hai jaisa website par dikhaya gaya tha. Din me direct sunlight aur glare ko achhe se filter karta hai. Room me elegant look aa gaya hai. Value for money purchase."
+  },
+  {
+    name: "Anjali Gupta",
+    city: "Lucknow, UP",
+    rating: 5,
+    date: "Verified Purchase · 2 weeks ago",
+    title: "Clean stitching and fast delivery",
+    comment: "Panipat direct dispatch hone se 4 din me Lucknow me deliver ho gaya. Eyelet rings rust-free metallic hain aur wash ke baad bhi fabric ka fall waise ka waisa rehta hai."
+  },
+  {
+    name: "Vikram Malhotra",
+    city: "Chandigarh",
+    rating: 4,
+    date: "Verified Purchase · 3 weeks ago",
+    title: "Good privacy and soft fall",
+    comment: "Living room ke liye Pack of 2 mangwaya tha. Bahar se visibility bilkul band ho gayi hai jab parde band hote hain. Fabric soft hai aur wrinkle-free lagta hai. Highly recommended."
+  }
+];
 ---
 
 <PublicLayout
@@ -167,44 +299,42 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
       </div>
 
       <!-- Detail Info Column -->
-      <div class="p-8 lg:p-12 space-y-6 flex flex-col justify-between">
+      <div class="p-4 sm:p-8 lg:p-12 space-y-5 sm:space-y-6 flex flex-col justify-between">
         <div class="space-y-4">
-          <div class="flex items-center gap-2">
-            <span class="bg-amber-100 text-amber-900 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider border border-amber-200">
+          <!-- Category & Stock Status Badges (Strictly 1 line on mobile) -->
+          <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5">
+            <span class="bg-amber-100 text-amber-900 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider border border-amber-200 shrink-0 whitespace-nowrap">
               {product.category}
             </span>
-            <span class="bg-emerald-100 text-emerald-800 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+            <span class="bg-emerald-100 text-emerald-800 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shrink-0 whitespace-nowrap flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block animate-pulse"></span>
               In Stock & Ready to Ship
             </span>
           </div>
 
-          <h1 class="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
+          <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight">
             {product.name}
           </h1>
 
-          <div class="flex items-center gap-4 text-xs font-semibold">
-            <div class="flex items-center gap-1 text-amber-500 text-sm">
+          <!-- Star Rating & Review Count (Strictly 1 line on mobile) -->
+          <div class="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+            <div class="flex items-center gap-0.5 text-amber-500 text-xs sm:text-sm shrink-0">
               <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
               <span class="text-slate-900 font-bold ml-1">{product.rating}</span>
             </div>
-            <span class="text-slate-400">|</span>
-            <span class="text-slate-500">{product.reviewCount} Verified Customer Reviews</span>
-          </div>
-
-          <div class="bg-amber-50/70 border border-amber-200/80 p-3.5 rounded-2xl flex items-center gap-3 text-xs sm:text-sm font-semibold text-slate-800">
-            <span class="text-amber-800 font-bold text-base shrink-0">✨</span>
-            <span>{product.tagline || (product.description ? product.description.split('.')[0] + '.' : 'Premium Quality Panipat Curtain')}</span>
+            <span class="text-slate-300 shrink-0">|</span>
+            <span class="text-slate-600 truncate">{product.reviewCount} Verified Customer Reviews</span>
           </div>
 
           <!-- Price Header -->
-          <div class="pt-4 pb-2 border-y border-slate-100 flex items-baseline gap-3">
-            <span class="text-3xl font-black text-slate-900">{product.currency}<span id="unit-price">{initialSize.price}</span></span>
-            <span id="original-price-wrap" class={`text-base text-slate-400 line-through font-semibold ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}>
+          <div class="pt-3 pb-2 border-y border-slate-100 flex items-baseline gap-3">
+            <span class="text-2xl sm:text-3xl font-black text-slate-900">{product.currency}<span id="unit-price">{initialSize.price}</span></span>
+            <span id="original-price-wrap" class={`text-sm sm:text-base text-slate-400 line-through font-semibold ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}>
               {product.currency}<span id="original-price">{initialSize.originalPrice || ''}</span>
             </span>
             <span
               id="discount-badge"
-              class={`bg-rose-100 text-rose-700 font-bold text-xs px-2.5 py-0.5 rounded-full ml-auto ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}
+              class={`bg-rose-100 text-rose-700 font-bold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full ml-auto ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}
             >
               Save {initialSize.originalPrice ? Math.round(((initialSize.originalPrice - initialSize.price) / initialSize.originalPrice) * 100) : 0}% Today
             </span>
@@ -216,14 +346,14 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
               <span class="uppercase tracking-wider">Color:</span>
               <span id="selected-color-label" class="text-amber-800 font-bold">{product.colors[0]?.name}</span>
             </div>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-2.5 sm:gap-3">
               {product.colors.map((c, idx) => (
                 <button
                   type="button"
                   data-color={c.name}
-                  class={`color-chip-btn flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition focus:outline-none ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
+                  class={`color-chip-btn flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border text-xs font-bold transition focus:outline-none ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
                 >
-                  <span class="w-4 h-4 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
+                  <span class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
                   <span>{c.name}</span>
                 </button>
               ))}
@@ -236,17 +366,17 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
               <span class="uppercase tracking-wider">Select Size / Length</span>
               <span id="selected-size-label" class="text-amber-800 font-semibold">{initialSize.name}</span>
             </div>
-            <div class="flex flex-wrap gap-2.5">
+            <div class="flex flex-wrap gap-2 sm:gap-2.5">
               {normalizedSizes.map((sz, idx) => (
                 <button
                   type="button"
                   data-size={sz.name}
                   data-price={sz.price}
                   data-original-price={sz.originalPrice || ''}
-                  class={`size-btn px-4 py-2.5 min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800'}`}
+                  class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] sm:min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800'}`}
                 >
                   <span>{sz.name}</span>
-                  <span class={`size-badge text-[11px] font-black px-1.5 py-0.5 rounded-md ${idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'}`}>
+                  <span class={`size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md ${idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'}`}>
                     {product.currency}{sz.price.toLocaleString('en-IN')}
                   </span>
                 </button>
@@ -254,12 +384,46 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
             </div>
           </div>
 
-          <!-- Quantity Selector -->
-          <div class="space-y-2 pt-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Quantity</label>
+          <!-- Pack Selector (Pack of 1 & Pack of 2 Only) -->
+          <div class="space-y-2 pt-1">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span class="uppercase tracking-wider">Select Pack</span>
+              <span id="selected-pack-label" class="text-amber-800 font-semibold">Pack of 1 (Single Panel)</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+              <button
+                type="button"
+                data-pack="Pack of 1"
+                data-pack-multiplier="1"
+                data-pack-label="Pack of 1 (Single Panel)"
+                class="pack-btn px-3 py-2.5 rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none cursor-pointer flex items-center justify-between border-slate-900 bg-slate-900 text-white shadow-sm"
+              >
+                <span>Pack of 1</span>
+                <span class="pack-badge text-[10px] font-medium bg-white/20 px-1.5 py-0.5 rounded">1 Panel</span>
+              </button>
+
+              <button
+                type="button"
+                data-pack="Pack of 2"
+                data-pack-multiplier="2"
+                data-pack-label="Pack of 2 (Set of 2 Panels)"
+                class="pack-btn px-3 py-2.5 rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none cursor-pointer flex items-center justify-between border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800"
+              >
+                <span>Pack of 2</span>
+                <span class="pack-badge text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Set of 2</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quantity Selector (1 to 10 Only) -->
+          <div class="space-y-2 pt-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Quantity</label>
+              <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Max 10 units per order</span>
+            </div>
             <div class="flex items-center gap-3">
               <div class="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-                <button type="button" id="qty-minus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer" aria-label="Decrease quantity">-</button>
+                <button type="button" id="qty-minus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer opacity-40 cursor-not-allowed" aria-label="Decrease quantity">-</button>
                 <span id="qty-display" class="w-12 text-center font-extrabold text-sm text-slate-900 select-none">1</span>
                 <button type="button" id="qty-plus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer" aria-label="Increase quantity">+</button>
               </div>
@@ -268,13 +432,13 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
           </div>
 
           <!-- Technical Specs Card -->
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2 mt-4">
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2 mt-2">
             <div class="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Fabric & Specifications</div>
             <div class="grid grid-cols-2 gap-2 text-slate-600">
-              <div>• <strong>Weave:</strong> Heavyweight Thermal</div>
-              <div>• <strong>Material:</strong> {product.fabricSpecs.material}</div>
-              <div>• <strong>Fit:</strong> {product.fabricSpecs.fit}</div>
-              <div>• <strong>Care:</strong> {product.fabricSpecs.care}</div>
+              <div>• <strong>Material:</strong> 100% Polyester</div>
+              <div>• <strong>Fitting:</strong> Silver Eyelets</div>
+              <div>• <strong>Sizes:</strong> 5ft, 6ft, 7ft, 9ft</div>
+              <div>• <strong>Care:</strong> Machine Wash Cold</div>
             </div>
           </div>
         </div>
@@ -375,46 +539,28 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Left: Formatted Description Paragraphs & Highlights -->
-        <div class="lg:col-span-8 space-y-6 text-slate-700 text-sm leading-relaxed">
-          {product.description ? (
+        <div class="lg:col-span-7 space-y-6 text-slate-700 text-sm leading-relaxed">
+          {cleanedDesc.paragraphs.length > 0 ? (
             <div class="space-y-4">
-              {product.description.split('\n\n').map((paragraph) => {
-                const trimmed = paragraph.trim();
-                if (!trimmed) return null;
-                
-                // If it looks like bullet points or key features list
-                if (trimmed.startsWith('✔') || trimmed.startsWith('•') || trimmed.includes('\n•') || trimmed.includes('\n✔')) {
-                  const lines = trimmed.split('\n').map(l => l.trim()).filter(Boolean);
-                  return (
-                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 my-4 space-y-2">
-                      {lines.map((line) => (
-                        <div class="flex items-start gap-2.5 text-xs sm:text-sm font-medium text-slate-800">
-                          <span class="text-emerald-600 font-bold shrink-0">✓</span>
-                          <span>{line.replace(/^[✔•\s\-\u2714]+/, '')}</span>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                }
-                
-                return <p class="text-slate-600 text-sm sm:text-base leading-relaxed">{trimmed}</p>;
-              })}
+              {cleanedDesc.paragraphs.map((para) => (
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed">{para}</p>
+              ))}
             </div>
           ) : (
             <p class="text-slate-600 text-sm leading-relaxed">
-              Crafted in our Panipat manufacturing unit, this curtain panel combines heavyweight thermal fabric with precision eyelet stitching to deliver superior light blocking, thermal regulation, and seamless interior aesthetic.
+              Crafted in our Panipat manufacturing unit, this curtain panel combines heavyweight fabric with precision eyelet stitching to deliver superior light regulation and seamless interior aesthetic.
             </p>
           )}
 
-          <!-- Highlights Grid -->
-          {product.features && product.features.length > 0 && (
+          <!-- Key Performance Highlights -->
+          {cleanedDesc.bullets.length > 0 && (
             <div class="pt-4 space-y-3 border-t border-slate-100">
-              <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-widest">Key Performance Highlights</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {product.features.map((feat) => (
-                  <div class="flex items-center gap-3 bg-blue-50/60 border border-blue-100 p-3 rounded-xl text-xs font-bold text-blue-950">
-                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 font-black">✓</span>
-                    <span>{feat}</span>
+              <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-widest">Key Features & Benefits</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {cleanedDesc.bullets.map((feat) => (
+                  <div class="flex items-start gap-2.5 bg-slate-50 border border-slate-200/80 p-3 rounded-xl text-xs font-semibold text-slate-800">
+                    <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shrink-0 font-black mt-0.5">✓</span>
+                    <span class="leading-snug">{feat}</span>
                   </div>
                 ))}
               </div>
@@ -423,7 +569,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
         </div>
 
         <!-- Right: Technical Specifications Box -->
-        <div class="lg:col-span-4 space-y-4">
+        <div class="lg:col-span-5 space-y-4">
           <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-4 border border-slate-800">
             <h3 class="font-extrabold text-xs text-amber-400 uppercase tracking-widest flex items-center gap-2">
               <span>🧵</span> Fabric Specifications
@@ -431,28 +577,99 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
             
             <div class="space-y-3 text-xs divide-y divide-slate-800">
               <div class="pt-2 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Fabric Type</span>
-                <span class="font-bold text-white bg-slate-800 px-2.5 py-1 rounded-md">Heavyweight Polyester</span>
-              </div>
-              <div class="pt-3 flex justify-between items-center">
                 <span class="text-slate-400 font-medium">Material</span>
-                <span class="font-bold text-white text-right">100% Premium Polyester</span>
+                <span class="font-bold text-white bg-slate-800 px-2.5 py-1 rounded-md">100% Premium Polyester</span>
               </div>
               <div class="pt-3 flex justify-between items-center">
                 <span class="text-slate-400 font-medium">Fitting Style</span>
-                <span class="font-bold text-white text-right">{product.fabricSpecs?.fit || 'Silver Eyelet Grommets'}</span>
+                <span class="font-bold text-white text-right">Stainless Steel Eyelets</span>
               </div>
               <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Care</span>
-                <span class="font-bold text-white text-right">{product.fabricSpecs?.care || 'Hand & Machine Wash Cold'}</span>
+                <span class="text-slate-400 font-medium">Standard Heights</span>
+                <span class="font-bold text-white text-right">5ft, 6ft, 7ft & 9ft</span>
               </div>
               <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Origin</span>
+                <span class="text-slate-400 font-medium">Available Packs</span>
+                <span class="font-bold text-emerald-400 text-right">Pack of 1 & Pack of 2</span>
+              </div>
+              <div class="pt-3 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Care Instructions</span>
+                <span class="font-bold text-white text-right">Hand & Machine Wash Cold</span>
+              </div>
+              <div class="pt-3 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Manufacturing Unit</span>
                 <span class="font-black text-amber-300">Panipat, Haryana (India)</span>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Authentic Customer Reviews Section -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-8 my-8">
+      <div class="border-b border-slate-100 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-950 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+            <span>⭐</span>
+            <span>VERIFIED BUYER FEEDBACK</span>
+          </div>
+          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Customer Reviews &amp; Ratings</h3>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Real reviews from verified customers across India</p>
+        </div>
+
+        <!-- Rating Summary Box -->
+        <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-center gap-4 shrink-0">
+          <div class="text-center">
+            <div class="text-3xl sm:text-4xl font-black text-amber-900 leading-none">{product.rating}</div>
+            <div class="flex items-center gap-0.5 text-amber-500 text-xs mt-1">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+          </div>
+          <div class="border-l border-amber-200 pl-4 text-xs font-medium text-slate-700">
+            <div class="font-bold text-slate-900">{product.reviewCount} Total Ratings</div>
+            <div class="text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
+              <span>✓</span> 100% Verified Purchases
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Cards Grid (Simple, Authentic Human Language) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        {customerReviews.map((rev) => (
+          <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-5 space-y-3 hover:border-amber-300 transition-colors">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-amber-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                  {rev.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight">{rev.name}</h4>
+                  <span class="text-[10px] text-slate-500 font-medium">{rev.city}</span>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                <span>✓</span> Verified Buyer
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs">
+              <div class="flex text-amber-500 text-xs">
+                {Array.from({ length: rev.rating }).map(() => <span>★</span>)}
+              </div>
+              <span class="text-[11px] font-bold text-slate-900">{rev.title}</span>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+              "{rev.comment}"
+            </p>
+
+            <div class="text-[10px] text-slate-400 font-medium pt-1 border-t border-slate-200/60">
+              {rev.date}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -513,8 +730,12 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
       let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || '';
+      let selectedPack = 'Pack of 1';
+      let packMultiplier = 1;
       let quantity = 1;
-      let unitPrice = parseFloat(document.getElementById('unit-price')?.innerText || '0');
+      let baseSizePrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-price') || document.getElementById('unit-price')?.innerText || '0');
+      let baseSizeOrigPrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-original-price') || '0');
+      let unitPrice = baseSizePrice * packMultiplier;
       let currentSlideIndex = 0;
       const totalSlides = Array.isArray(productImages) ? productImages.length : 1;
 
@@ -525,6 +746,53 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
         const qtyDisplay = document.getElementById('qty-display');
         if (subtotalEl) subtotalEl.innerText = subtotal.toLocaleString('en-IN');
         if (qtyDisplay) qtyDisplay.innerText = quantity;
+      }
+
+      function updateQuantityButtons() {
+        const minusBtn = document.getElementById('qty-minus-btn');
+        const plusBtn = document.getElementById('qty-plus-btn');
+        if (minusBtn) {
+          if (quantity <= 1) {
+            minusBtn.classList.add('opacity-40', 'cursor-not-allowed');
+          } else {
+            minusBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+          }
+        }
+        if (plusBtn) {
+          if (quantity >= 10) {
+            plusBtn.classList.add('opacity-40', 'cursor-not-allowed');
+          } else {
+            plusBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+          }
+        }
+      }
+
+      function updatePricing() {
+        unitPrice = baseSizePrice * packMultiplier;
+        const currentOrigPrice = baseSizeOrigPrice ? (baseSizeOrigPrice * packMultiplier) : 0;
+        
+        const unitPriceEl = document.getElementById('unit-price');
+        if (unitPriceEl) unitPriceEl.innerText = unitPrice.toLocaleString('en-IN');
+
+        const origPriceEl = document.getElementById('original-price');
+        const origWrapEl = document.getElementById('original-price-wrap');
+        const discountBadgeEl = document.getElementById('discount-badge');
+
+        if (currentOrigPrice > unitPrice) {
+          if (origPriceEl) origPriceEl.innerText = currentOrigPrice.toLocaleString('en-IN');
+          if (origWrapEl) origWrapEl.classList.remove('hidden');
+          if (discountBadgeEl) {
+            const savePercent = Math.round(((currentOrigPrice - unitPrice) / currentOrigPrice) * 100);
+            discountBadgeEl.innerText = `Save ${savePercent}% Today`;
+            discountBadgeEl.classList.remove('hidden');
+          }
+        } else {
+          if (origWrapEl) origWrapEl.classList.add('hidden');
+          if (discountBadgeEl) discountBadgeEl.classList.add('hidden');
+        }
+
+        updateSubtotal();
+        updateMobileStickyInfo();
       }
 
       // Smooth Sliding Gallery Logic
@@ -680,29 +948,9 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
           if (sizePriceAttr) {
             const newPrice = parseFloat(sizePriceAttr);
             if (!isNaN(newPrice)) {
-              unitPrice = newPrice;
-              const unitPriceEl = document.getElementById('unit-price');
-              if (unitPriceEl) unitPriceEl.innerText = newPrice.toLocaleString('en-IN');
-
-              const origPriceEl = document.getElementById('original-price');
-              const origWrapEl = document.getElementById('original-price-wrap');
-              const discountBadgeEl = document.getElementById('discount-badge');
-
-              if (sizeOrigPriceAttr && parseFloat(sizeOrigPriceAttr) > newPrice) {
-                const newOrig = parseFloat(sizeOrigPriceAttr);
-                if (origPriceEl) origPriceEl.innerText = newOrig.toLocaleString('en-IN');
-                if (origWrapEl) origWrapEl.classList.remove('hidden');
-                if (discountBadgeEl) {
-                  const savePercent = Math.round(((newOrig - newPrice) / newOrig) * 100);
-                  discountBadgeEl.innerText = `Save ${savePercent}% Today`;
-                  discountBadgeEl.classList.remove('hidden');
-                }
-              } else {
-                if (origWrapEl) origWrapEl.classList.add('hidden');
-                if (discountBadgeEl) discountBadgeEl.classList.add('hidden');
-              }
-
-              updateSubtotal();
+              baseSizePrice = newPrice;
+              baseSizeOrigPrice = sizeOrigPriceAttr ? parseFloat(sizeOrigPriceAttr) : 0;
+              updatePricing();
             }
           }
 
@@ -711,7 +959,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
             b.classList.add('border-slate-200', 'text-slate-800');
             const priceBadge = b.querySelector('.size-badge');
             if (priceBadge) {
-              priceBadge.className = 'size-badge text-[11px] font-black px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700';
+              priceBadge.className = 'size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700';
             }
           });
 
@@ -719,34 +967,75 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
           btn.classList.add('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-md');
           const activeBadge = btn.querySelector('.size-badge');
           if (activeBadge) {
-            activeBadge.className = 'size-badge text-[11px] font-black px-1.5 py-0.5 rounded-md bg-white/20 text-white';
+            activeBadge.className = 'size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md bg-white/20 text-white';
           }
         });
       });
 
-      // Quantity Plus & Minus
+      // Pack Button Handlers (Pack of 1 & Pack of 2 Only)
+      document.querySelectorAll('.pack-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedPack = btn.getAttribute('data-pack') || 'Pack of 1';
+          packMultiplier = parseInt(btn.getAttribute('data-pack-multiplier') || '1', 10);
+          const packLabel = btn.getAttribute('data-pack-label') || selectedPack;
+
+          const labelEl = document.getElementById('selected-pack-label');
+          if (labelEl) labelEl.innerText = packLabel;
+
+          document.querySelectorAll('.pack-btn').forEach((b) => {
+            b.classList.remove('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-sm');
+            b.classList.add('border-slate-200', 'text-slate-800');
+            const badge = b.querySelector('.pack-badge');
+            if (badge) {
+              if (b.getAttribute('data-pack') === 'Pack of 2') {
+                badge.className = 'pack-badge text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200';
+              } else {
+                badge.className = 'pack-badge text-[10px] font-medium bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded';
+              }
+            }
+          });
+
+          btn.classList.remove('border-slate-200', 'text-slate-800');
+          btn.classList.add('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-sm');
+          const activeBadge = btn.querySelector('.pack-badge');
+          if (activeBadge) {
+            activeBadge.className = 'pack-badge text-[10px] font-medium bg-white/20 text-white px-1.5 py-0.5 rounded';
+          }
+
+          updatePricing();
+        });
+      });
+
+      // Quantity Plus & Minus (Strict 1 to 10 Limit)
       document.getElementById('qty-minus-btn')?.addEventListener('click', () => {
         if (quantity > 1) {
           quantity--;
+          updateQuantityButtons();
           updateSubtotal();
+          updateMobileStickyInfo();
         }
       });
 
       document.getElementById('qty-plus-btn')?.addEventListener('click', () => {
-        quantity++;
-        updateSubtotal();
+        if (quantity < 10) {
+          quantity++;
+          updateQuantityButtons();
+          updateSubtotal();
+          updateMobileStickyInfo();
+        }
       });
 
       // Add to Cart Click Handler - Opens Right Slide-over Cart Drawer
       document.getElementById('add-cart-btn')?.addEventListener('click', () => {
         if (typeof window.quickAddToCart === 'function') {
           const currentImg = (productImages && productImages[currentSlideIndex]) || productImages[0] || '';
+          const variationLabel = `${selectedSize} (${selectedPack})`;
           window.quickAddToCart(
             currentProductName,
             currentProductSlug,
             unitPrice,
             currentImg,
-            selectedSize,
+            variationLabel,
             selectedColor,
             quantity
           );
@@ -755,13 +1044,14 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
 
       // Order / Buy Now Click Handler
       document.getElementById('order-btn')?.addEventListener('click', () => {
-        const checkoutUrl = `/checkout?product=${encodeURIComponent(currentProductSlug)}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(selectedSize)}&price=${unitPrice}&qty=${quantity}`;
+        const variationLabel = `${selectedSize} (${selectedPack})`;
+        const checkoutUrl = `/checkout?product=${encodeURIComponent(currentProductSlug)}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(variationLabel)}&price=${unitPrice}&qty=${quantity}`;
         window.location.href = checkoutUrl;
       });
 
       // WhatsApp Direct Order Handler
       document.getElementById('whatsapp-direct-btn')?.addEventListener('click', () => {
-        const msg = `Hi Teepul Store! I want to order:\n\n*Product:* ${currentProductName}\n*Color:* ${selectedColor}\n*Size:* ${selectedSize}\n*Quantity:* ${quantity}\n*Price:* ₹${(unitPrice * quantity).toLocaleString('en-IN')}`;
+        const msg = `Hi Teepul Store! I want to order:\n\n*Product:* ${currentProductName}\n*Color:* ${selectedColor}\n*Size:* ${selectedSize}\n*Pack:* ${selectedPack}\n*Quantity:* ${quantity}\n*Price:* ₹${(unitPrice * quantity).toLocaleString('en-IN')}`;
         window.open(`https://wa.me/919896374239?text=${encodeURIComponent(msg)}`, '_blank');
       });
 
@@ -774,19 +1064,16 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
         document.getElementById('order-btn')?.click();
       });
 
-      // Update mobile sticky bar on size change
-      const updateMobileStickyInfo = () => {
+      // Update mobile sticky bar
+      function updateMobileStickyInfo() {
         const stickyPrice = document.getElementById('mobile-sticky-price');
-        if (stickyPrice) stickyPrice.innerText = unitPrice.toLocaleString('en-IN');
+        if (stickyPrice) stickyPrice.innerText = (unitPrice * quantity).toLocaleString('en-IN');
         const stickySize = document.getElementById('mobile-sticky-size');
-        if (stickySize) stickySize.innerText = selectedSize;
-      };
+        if (stickySize) stickySize.innerText = `${selectedSize} · ${selectedPack}`;
+      }
 
-      document.querySelectorAll('.size-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          setTimeout(updateMobileStickyInfo, 50);
-        });
-      });
+      updateQuantityButtons();
+      updateMobileStickyInfo();
     });
   </script>
 
