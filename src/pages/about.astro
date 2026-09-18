@@ -111,11 +111,14 @@ import PublicLayout from '../layouts/PublicLayout.astro';
 
       <!-- Real Factory Workshop Visual Card -->
       <div class="lg:col-span-6">
-        <div class="rounded-3xl overflow-hidden border-2 border-amber-900/10 shadow-2xl group bg-white">
+        <div class="rounded-3xl overflow-hidden border-2 border-amber-900/10 shadow-2xl group bg-white aspect-[4/3]">
           <img
             src="/panipat-factory-unit.jpg"
             alt="Ashank Ecommerce Private Limited Curtain Manufacturing Unit Panipat"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 aspect-[4/3]"
+            width="600"
+            height="450"
+            loading="lazy"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
         </div>
       </div>

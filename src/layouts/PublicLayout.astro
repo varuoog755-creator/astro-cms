@@ -79,10 +79,10 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={meta.jsonLd} />
 
-    <!-- Google Fonts with display=swap for Zero FOIT -->
+    <!-- Google Fonts with display=swap for Zero FOIT (Streamlined minimal weights) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     
     <!-- Google Search Console Verification Tag -->
     {integrationSettings.gsc_enabled && integrationSettings.gsc_verification_tag && (
@@ -388,9 +388,9 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
                 type="email"
                 placeholder="Enter your email"
                 required
-                class="w-full bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
-              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 rounded-xl transition">
+              <button type="submit" class="w-full bg-amber-800 hover:bg-amber-700 text-white font-bold text-xs py-2.5 rounded-xl transition">
                 Subscribe
               </button>
             </form>
