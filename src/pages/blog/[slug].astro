@@ -52,6 +52,7 @@ if (!post) {
   seo={{
     title: post.title,
     description: post.excerpt || undefined,
+    canonicalUrl: `/blog/${post.slug}`,
     type: 'article',
     publishedTime: typeof post.publishedAt === 'string' ? post.publishedAt : post.publishedAt?.toISOString(),
     authorName: post.author.displayName,

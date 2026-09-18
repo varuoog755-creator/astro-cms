@@ -22,10 +22,16 @@ try {
   console.error('Failed to fetch tag:', error);
 }
 
-if (!tag) return Astro.redirect('/404');
+if (!tag) return Astro.rewrite('/404');
 ---
 
-<PublicLayout seo={{ title: `Tag: #${tag.name}` }}>
+<PublicLayout
+  seo={{
+    title: `Tag: #${tag.name}`,
+    description: `Articles and guides tagged with #${tag.name} on Teepul.`,
+    canonicalUrl: `/tag/${tag.slug}`,
+  }}
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="mb-12 border-b border-gray-200 pb-6">
       <span class="text-xs font-bold uppercase text-blue-600 tracking-wider">Tag Archive</span>

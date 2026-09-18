@@ -22,10 +22,16 @@ try {
   console.error('Failed to fetch category:', error);
 }
 
-if (!category) return Astro.redirect('/404');
+if (!category) return Astro.rewrite('/404');
 ---
 
-<PublicLayout seo={{ title: `Category: ${category.name}` }}>
+<PublicLayout
+  seo={{
+    title: `Category: ${category.name}`,
+    description: category.description || `Browse articles and guides filed under ${category.name}.`,
+    canonicalUrl: `/category/${category.slug}`,
+  }}
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="mb-12 border-b border-gray-200 pb-6">
       <span class="text-xs font-bold uppercase text-blue-600 tracking-wider">Category Archive</span>

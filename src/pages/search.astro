@@ -55,7 +55,13 @@ if (query.trim().length > 0) {
 const totalCount = matchingPosts.length + matchingPages.length + matchingProducts.length;
 ---
 
-<PublicLayout seo={{ title: `Search Results for "${query}" - Teepul Store` }}>
+<PublicLayout
+  seo={{
+    title: `Search Results for "${query}" - Teepul Store`,
+    robots: 'noindex, follow',
+    canonicalUrl: '/search',
+  }}
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="max-w-2xl mx-auto mb-12 text-center space-y-4">
       <div class="inline-flex items-center gap-2 bg-amber-100 text-amber-900 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">

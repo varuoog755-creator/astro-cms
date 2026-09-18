@@ -4,6 +4,7 @@ export interface SeoOptions {
   title: string;
   description?: string;
   canonicalUrl?: string;
+  robots?: string;
   ogImage?: string;
   type?: 'website' | 'article' | 'product';
   publishedTime?: string;
@@ -29,9 +30,25 @@ export function generateSeoMetadata(options: SeoOptions) {
   const siteName = 'Teepul Luxury Curtains & Home Decor';
   const fullTitle = `${options.title} | ${siteName}`;
   const description = options.description || 'Teepul Luxury Door Curtains, French Sheer Drapery & Ambient Home Lighting. Panipat Factory Direct.';
-  const defaultSiteUrl = process.env.PUBLIC_SITE_URL || 'https://teepul.com';
-  const canonical = options.canonicalUrl || defaultSiteUrl;
+  const defaultSiteUrl = (process.env.PUBLIC_SITE_URL || 'https://teepul.com').replace(/\/+$/, '');
+  
+  // Clean canonical URL: ensure https, proper root, and no trailing slash unless homepage
+  let canonical = defaultSiteUrl;
+  if (options.canonicalUrl) {
+    if (options.canonicalUrl.startsWith('http')) {
+      canonical = options.canonicalUrl;
+    } else {
+      const cleanPath = options.canonicalUrl.startsWith('/') ? options.canonicalUrl : `/${options.canonicalUrl}`;
+      canonical = `${defaultSiteUrl}${cleanPath}`;
+    }
+  }
+  // Strip trailing slashes except for root
+  if (canonical.length > defaultSiteUrl.length && canonical.endsWith('/')) {
+    canonical = canonical.slice(0, -1);
+  }
+
   const ogImage = options.ogImage || `${defaultSiteUrl}/teepul-header-logo.png`;
+  const robots = options.robots || 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
   const jsonLd: Record<string, any>[] = [];
 
@@ -221,6 +238,7 @@ export function generateSeoMetadata(options: SeoOptions) {
     title: fullTitle,
     description,
     canonical,
+    robots,
     ogImage,
     type: options.type || 'website',
     siteName,

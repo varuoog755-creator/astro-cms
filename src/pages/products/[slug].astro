@@ -20,6 +20,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
   seo={{
     title: `${product.name} - Official Product Showcase`,
     description: product.description,
+    canonicalUrl: `/products/${product.slug}`,
     ogImage: product.images?.[0],
     preloadLcpImage: product.images?.[0],
     productData: {

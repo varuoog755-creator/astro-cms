@@ -36,7 +36,12 @@ const itemTotal = unitPrice * quantity;
 
 <PublicLayout
   includeRazorpay={true}
-  seo={{ title: `Checkout - ${product.name}`, description: `Complete your order for ${product.name}` }}
+  seo={{
+    title: `Checkout - ${product.name}`,
+    description: `Complete your order for ${product.name}`,
+    robots: 'noindex, nofollow',
+    canonicalUrl: '/checkout',
+  }}
 >
   <div class="bg-slate-50 min-h-screen py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
