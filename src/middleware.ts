@@ -43,12 +43,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
       if (!isMasterAdmin) {
         if (pathname.startsWith('/api/admin')) {
           return new Response(
-            JSON.stringify({ error: 'Forbidden: Access restricted strictly to Super Admin Govinda (govinda755rock755@gmail.com).' }),
+            JSON.stringify({ error: 'Forbidden: Access restricted.' }),
             { status: 403, headers: { 'Content-Type': 'application/json' } }
           );
         }
         // Customers attempting to open /admin are safely redirected to /account
-        return context.redirect('/account?error=Admin%20access%20is%20restricted%20solely%20to%20Super%20Admin%20Govinda.');
+        return context.redirect('/account');
       }
     }
 

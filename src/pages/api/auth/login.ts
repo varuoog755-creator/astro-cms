@@ -35,9 +35,9 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     const cleanLogin = login.toLowerCase();
     const isMasterAdminLogin = cleanLogin === 'govinda755rock755@gmail.com' || cleanLogin === 'govinda755';
 
-    // If logging in from the Admin login portal, strictly allow only Super Admin Govinda
+    // If logging in from the Admin login portal, strictly allow only authorized Super Admin
     if (isAdmin && !isMasterAdminLogin) {
-      return targetErrorRedirect('Access Denied: Admin panel is exclusively restricted to Super Admin Govinda (govinda755rock755@gmail.com).');
+      return targetErrorRedirect('Invalid email/username or password.');
     }
 
     let user = await prisma.user.findFirst({
@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ request, redirect, cookies }) => {
     }
 
     if (isAdmin && user.role?.name !== 'Super Admin') {
-      return targetErrorRedirect('Access Denied: Super Admin privileges required.');
+      return targetErrorRedirect('Invalid email/username or password.');
     }
 
     if (user.status === 'suspended') {

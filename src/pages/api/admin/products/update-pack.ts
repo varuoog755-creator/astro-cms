@@ -4,7 +4,7 @@ import { logAudit } from '../../../../lib/utilities/audit';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!locals.user || locals.user.email !== 'govinda755rock755@gmail.com') {
-    return new Response(JSON.stringify({ error: 'Unauthorized. Super Admin Govinda access only.' }), {
+    return new Response(JSON.stringify({ error: 'Unauthorized.' }), {
       status: 403,
       headers: { 'Content-Type': 'application/json' }
     });
