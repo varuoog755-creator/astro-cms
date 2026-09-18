@@ -9,9 +9,10 @@ import '../styles/global.css';
 
 interface Props {
   seo?: SeoOptions;
+  includeRazorpay?: boolean;
 }
 
-const { seo = { title: 'Home' } } = Astro.props;
+const { seo = { title: 'Home' }, includeRazorpay = false } = Astro.props;
 const meta = generateSeoMetadata(seo);
 const integrationSettings = await getIntegrationSettings();
 
@@ -87,8 +88,10 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
       )
     )}
 
-    <!-- Razorpay Checkout SDK -->
-    <script is:inline src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Razorpay Checkout SDK (Loaded only when checkout flow is required) -->
+    {includeRazorpay && (
+      <script is:inline src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    )}
 
     <!-- Google Analytics 4 (GA4) -->
     {integrationSettings.ga_enabled && integrationSettings.ga_measurement_id && (

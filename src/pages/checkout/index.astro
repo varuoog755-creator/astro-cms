@@ -34,7 +34,10 @@ if (priceParam && !isNaN(parseFloat(priceParam)) && parseFloat(priceParam) > 0) 
 const itemTotal = unitPrice * quantity;
 ---
 
-<PublicLayout seo={{ title: `Checkout - ${product.name}`, description: `Complete your order for ${product.name}` }}>
+<PublicLayout
+  includeRazorpay={true}
+  seo={{ title: `Checkout - ${product.name}`, description: `Complete your order for ${product.name}` }}
+>
   <div class="bg-slate-50 min-h-screen py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       
