@@ -77,7 +77,8 @@ export function generateSeoMetadata(options: SeoOptions) {
     },
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+91-9876543210',
+      telephone: '+91-9896374239',
+      email: 'Teepul755@gmail.com',
       contactType: 'customer service',
       areaServed: 'IN',
       availableLanguage: ['en', 'hi'],

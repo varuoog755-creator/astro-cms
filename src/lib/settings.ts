@@ -60,7 +60,7 @@ export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
   paytm_enabled: true,
 
   cod_enabled: true,
-  whatsapp_number: '919876543210',
+  whatsapp_number: '919896374239',
   whatsapp_enabled: true,
   whatsapp_floating_widget: true,
   whatsapp_buy_button: true,
