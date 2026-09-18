@@ -39,12 +39,12 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
     ],
   }}
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-28 sm:pb-12">
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-8">
-      <a href="/" class="hover:text-blue-600 transition">Home</a>
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-6 sm:mb-8">
+      <a href="/" class="hover:text-amber-800 transition">Home</a>
       <span>/</span>
-      <a href="/products" class="hover:text-blue-600 transition">Products</a>
+      <a href="/products" class="hover:text-amber-800 transition">Products</a>
       <span>/</span>
       <span class="text-slate-800 font-bold">{product.name}</span>
     </nav>
@@ -242,7 +242,7 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
                   data-size={sz.name}
                   data-price={sz.price}
                   data-original-price={sz.originalPrice || ''}
-                  class={`size-btn px-4 py-2.5 rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800'}`}
+                  class={`size-btn px-4 py-2.5 min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800'}`}
                 >
                   <span>{sz.name}</span>
                   <span class={`size-badge text-[11px] font-black px-1.5 py-0.5 rounded-md ${idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'}`}>
@@ -258,9 +258,9 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Quantity</label>
             <div class="flex items-center gap-3">
               <div class="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-                <button type="button" id="qty-minus-btn" class="w-10 h-10 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition">-</button>
-                <span id="qty-display" class="w-12 text-center font-extrabold text-sm text-slate-900">1</span>
-                <button type="button" id="qty-plus-btn" class="w-10 h-10 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition">+</button>
+                <button type="button" id="qty-minus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer" aria-label="Decrease quantity">-</button>
+                <span id="qty-display" class="w-12 text-center font-extrabold text-sm text-slate-900 select-none">1</span>
+                <button type="button" id="qty-plus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer" aria-label="Increase quantity">+</button>
               </div>
               <span class="text-xs text-slate-500 font-medium">Subtotal: {product.currency}<span id="subtotal-price">{product.price}</span></span>
             </div>
