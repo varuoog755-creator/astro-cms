@@ -35,9 +35,39 @@ if (newArrivals.length < 4) {
 }
 
 const featuredProducts = allProducts.slice(0, 8);
+
+// AEO (Answer Engine Optimization) & GEO (Generative Engine Optimization) FAQs
+const homepageFaqs = [
+  {
+    question: "What fabrics and materials are used in Teepul curtains?",
+    answer: "Teepul uses 100% heavyweight virgin polyester, 350+ GSM woven jacquard, slub semi-sheer linen textures, and triple-weave thermal blackout fabrics engineered directly at our Panipat manufacturing mills. They resist fading, block UV rays, and maintain graceful drapes after repeated machine washing."
+  },
+  {
+    question: "What standard sizes do Teepul curtains come in for Indian homes?",
+    answer: "Teepul offers 3 standard Indian architectural sizes: Window (5 Feet / 60 Inches / 152 cm), Door (7 Feet / 84 Inches / 213 cm), and Long Door (9 Feet / 108 Inches / 274 cm). All panels come pre-fitted with premium rust-free stainless eyelet grommets for smooth rod sliding."
+  },
+  {
+    question: "How effective are Teepul blackout curtains at blocking sunlight and room heat?",
+    answer: "Teepul thermal blackout curtains feature high-density triple-weave construction that blocks up to 99% of harsh tropical sunlight, attenuates external ambient noise, and insulates interiors against summer heat, lowering air conditioning power bills."
+  },
+  {
+    question: "Where is Teepul located and where does it ship?",
+    answer: "Teepul is a brand owned by Ashank Ecommerce Pvt Ltd, headquartered in the historic textile hub of Panipat, Haryana, India. We ship directly from our production mills to every pin code across all 28 states and union territories in India with 2-5 day express delivery."
+  },
+  {
+    question: "What is Teepul's return and refund policy?",
+    answer: "We offer a 7-day hassle-free door return and replacement policy. If your curtains do not match your room decor or you need a different size or shade, you can initiate a doorstep exchange or refund directly through your Teepul account dashboard or WhatsApp support."
+  }
+];
 ---
 
-<PublicLayout seo={{ title: 'Teepul - Luxury Door Curtains, Window Drapery & Home Decor Lighting' }}>
+<PublicLayout
+  seo={{
+    title: 'Teepul - Luxury Door Curtains, Window Drapery & Home Decor Lighting',
+    description: 'Shop luxury door curtains, thermal blackout drapes, linen sheer curtains, and ambient home decor direct from Panipat weaving mills. All-India express delivery with 7-day returns.',
+    faqs: homepageFaqs
+  }}
+>
   
   <!-- Hero Section (Teepul Luxury Light Aesthetic) -->
   <section class="relative bg-gradient-to-b from-[#f7f4ef] via-[#faf8f4] to-[#f4efe6] text-slate-900 overflow-hidden py-16 lg:py-24 px-4 sm:px-6 lg:px-8 border-b border-amber-900/10">
@@ -102,7 +132,12 @@ const featuredProducts = allProducts.slice(0, 8);
             <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
               <img
                 src={featuredProducts[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0]}
-                alt="Teepul Door Curtains"
+                alt="Teepul Door Curtains - Premium Thermal Blackout Drapery"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                width="400"
+                height="500"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div class="p-3 bg-white/90 backdrop-blur-md -mt-12 relative text-center">
@@ -112,7 +147,11 @@ const featuredProducts = allProducts.slice(0, 8);
             <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
               <img
                 src={featuredProducts[2]?.images?.[0] || PRODUCTS_CATALOG[2]?.images?.[0]}
-                alt="Teepul Decor Lighting"
+                alt="Teepul Decor Lighting & Ambience Accents"
+                loading="eager"
+                decoding="async"
+                width="400"
+                height="400"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>
@@ -122,14 +161,23 @@ const featuredProducts = allProducts.slice(0, 8);
             <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
               <img
                 src={featuredProducts[3]?.images?.[0] || PRODUCTS_CATALOG[3]?.images?.[0]}
-                alt="Teepul Cushion Covers"
+                alt="Teepul Luxury Linen Cushion Covers"
+                loading="eager"
+                decoding="async"
+                width="400"
+                height="400"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
               <img
                 src={featuredProducts[1]?.images?.[0] || PRODUCTS_CATALOG[1]?.images?.[0]}
-                alt="Teepul Window Curtains"
+                alt="Teepul Window Curtains - Semi-Sheer Light Filtering Polyester"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                width="400"
+                height="500"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div class="p-3 bg-white/90 backdrop-blur-md -mt-12 relative text-center">
@@ -505,6 +553,79 @@ const featuredProducts = allProducts.slice(0, 8);
   </section>
 
 
+
+  <!-- Panipat Heritage & Direct-from-Mill Entity Assurance (GEO / Brand Authority) -->
+  <section class="bg-amber-950 text-amber-100 py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      <div class="space-y-4">
+        <span class="text-amber-400 text-xs font-black uppercase tracking-widest">Direct From Panipat Mills</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          Centuries of Weaving Mastery, Direct to Your Modern Living Room
+        </h2>
+        <p class="text-sm text-amber-200/90 leading-relaxed">
+          Panipat is celebrated across the globe as India's premier historic textile capital. Every Teepul drapery is precision-woven in our family-managed facilities using high-GSM jacquard and heavy polyester yarns. By shipping directly to your doorstep, we eliminate distributors, showroom rents, and retail markups — offering bespoke luxury at honest direct-from-mill value.
+        </p>
+        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-amber-900 text-center">
+          <div class="p-3 bg-amber-900/40 rounded-2xl border border-amber-800/60">
+            <div class="text-xl font-black text-amber-300">100%</div>
+            <div class="text-[10px] uppercase font-bold text-amber-200 mt-1">Pre-Shrunk</div>
+          </div>
+          <div class="p-3 bg-amber-900/40 rounded-2xl border border-amber-800/60">
+            <div class="text-xl font-black text-amber-300">Stainless</div>
+            <div class="text-[10px] uppercase font-bold text-amber-200 mt-1">Metal Eyelets</div>
+          </div>
+          <div class="p-3 bg-amber-900/40 rounded-2xl border border-amber-800/60">
+            <div class="text-xl font-black text-amber-300">7 Days</div>
+            <div class="text-[10px] uppercase font-bold text-amber-200 mt-1">Door Return</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-amber-900/30 border border-amber-800/60 rounded-3xl p-6 sm:p-8 space-y-4 backdrop-blur-sm">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <span>🏛️</span> Ashank Ecommerce Pvt Ltd Entity
+        </h3>
+        <p class="text-xs text-amber-200 leading-relaxed">
+          Teepul is a registered trademark of <strong>Ashank Ecommerce Pvt Ltd</strong>. Operating out of Panipat, Haryana, our production lines blend computerized European rapier looms with artisan hand-finishing for impeccable drapery pleating.
+        </p>
+        <ul class="text-xs text-amber-100 space-y-2 border-t border-amber-800/50 pt-3">
+          <li class="flex items-center gap-2">✓ <strong>Dispatch:</strong> Guaranteed within 24–48 hours across India</li>
+          <li class="flex items-center gap-2">✓ <strong>Payments:</strong> 256-bit encrypted Razorpay & Paytm Gateway</li>
+          <li class="flex items-center gap-2">✓ <strong>Support:</strong> Dedicated WhatsApp & telephonic sizing assistance</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- AEO & Voice Search FAQ Section (Accordion Cards) -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-black uppercase text-amber-800 tracking-widest">Got Questions?</span>
+      <h2 class="text-3xl font-black text-slate-900 mt-2">Frequently Asked Questions</h2>
+      <p class="text-xs sm:text-sm text-slate-600 mt-2">
+        Everything you need to know about Teepul curtains, materials, sizes, and Panipat mill-direct delivery.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      {homepageFaqs.map((faq, index) => (
+        <details class="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm transition hover:border-amber-400">
+          <summary class="flex justify-between items-center cursor-pointer font-bold text-slate-900 text-sm list-none select-none">
+            <span class="flex items-center gap-2.5">
+              <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs flex items-center justify-center shrink-0">
+                {index + 1}
+              </span>
+              {faq.question}
+            </span>
+            <span class="transition-transform group-open:rotate-180 text-slate-400 text-xs shrink-0 ml-2">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-3 pl-8 border-t border-slate-100 pt-3">
+            {faq.answer}
+          </p>
+        </details>
+      ))}
+    </div>
+  </section>
 
   <!-- Latest Editorial Posts -->
   {posts && posts.length > 0 && (

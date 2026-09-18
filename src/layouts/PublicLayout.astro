@@ -51,21 +51,32 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href={meta.canonical} />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt Model Context" />
 
-    <!-- Open Graph -->
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:site_name" content="Teepul Luxury Curtains & Home Decor" />
+    <meta property="og:url" content={meta.canonical} />
     <meta property="og:title" content={meta.title} />
     <meta property="og:description" content={meta.description} />
     <meta property="og:image" content={meta.ogImage} />
     <meta property="og:type" content={meta.type} />
+    <meta property="og:locale" content="en_IN" />
 
-    <!-- JSON-LD -->
+    <!-- Twitter Cards (X / Twitter Preview) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={meta.ogImage} />
+
+    <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={meta.jsonLd} />
 
-    <!-- Tailwind CSS (Dual Build & CDN Protection) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (Deferred for Non-blocking Fast Rendering) -->
+    <script defer src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts with display=swap for Zero FOIT -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -128,6 +139,14 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     </style>
   </head>
   <body class="bg-[#faf9f6] text-slate-900 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-600 selection:text-white">
+    <!-- Accessible Skip to Content Link (WCAG 2.1 AA) -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-amber-800 focus:text-white focus:px-4 focus:py-2.5 focus:rounded-xl focus:shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 font-bold text-xs"
+    >
+      Skip to main content
+    </a>
+
     <!-- Top Announcement Bar -->
     <div class="bg-amber-950 text-amber-100 text-xs py-2.5 px-4 text-center border-b border-amber-900/60 flex items-center justify-center gap-2">
       <span class="bg-amber-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider shadow-sm">TEEPUL LUXURY</span>
@@ -304,7 +323,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     </div>
 
     <!-- Main Body Slot -->
-    <main class="flex-1 pb-16 md:pb-0">
+    <main id="main-content" role="main" class="flex-1 pb-16 md:pb-0">
       <slot />
     </main>
 

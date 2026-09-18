@@ -67,9 +67,13 @@ const relatedProducts = allProducts.filter((p) => p.id !== product.id);
               <div class="w-full h-full flex-shrink-0 relative">
                 <img
                   src={img}
-                  alt={`${product.name} - View ${idx + 1}`}
+                  alt={`${product.name} - Official View ${idx + 1}`}
                   class="w-full h-full object-cover select-none pointer-events-none"
                   loading={idx === 0 ? "eager" : "lazy"}
+                  fetchpriority={idx === 0 ? "high" : "auto"}
+                  decoding={idx === 0 ? "sync" : "async"}
+                  width="600"
+                  height="600"
                   draggable="false"
                 />
               </div>
