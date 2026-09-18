@@ -53,6 +53,11 @@ ${productsList}
 - Home: ${baseUrl}/
 - Curtains & Drapery Store: ${baseUrl}/products
 - About Our Panipat Mills: ${baseUrl}/about
+- Contact Us & Panipat Studio: ${baseUrl}/contact
+- Shipping & Delivery Policy: ${baseUrl}/shipping-policy
+- Refund & Cancellation Policy: ${baseUrl}/refund-policy
+- Terms and Conditions: ${baseUrl}/terms
+- Privacy Policy: ${baseUrl}/privacy-policy
 - Customer Support & Orders: ${baseUrl}/account
 - Sitemap: ${baseUrl}/sitemap.xml
 `;

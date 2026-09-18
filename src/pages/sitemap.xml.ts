@@ -30,7 +30,12 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: '/', priority: '1.0', changefreq: 'daily' },
     { loc: '/products', priority: '0.9', changefreq: 'daily' },
     { loc: '/blog', priority: '0.8', changefreq: 'daily' },
-    { loc: '/about', priority: '0.5', changefreq: 'monthly' },
+    { loc: '/about', priority: '0.6', changefreq: 'monthly' },
+    { loc: '/contact', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/shipping-policy', priority: '0.6', changefreq: 'monthly' },
+    { loc: '/refund-policy', priority: '0.6', changefreq: 'monthly' },
+    { loc: '/terms', priority: '0.5', changefreq: 'monthly' },
+    { loc: '/privacy-policy', priority: '0.5', changefreq: 'monthly' },
   ];
 
   const productUrls = products.map((p) => ({
