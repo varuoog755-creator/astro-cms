@@ -227,7 +227,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     price: 322,
     originalPrice: 579,
     currency: "\u20b9",
-    category: "Ambient Lighting",
+    category: "Door Curtains",
     badge: "Best Seller",
     rating: 4.2,
     reviewCount: 143,
