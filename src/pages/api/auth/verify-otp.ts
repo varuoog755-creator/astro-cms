@@ -78,84 +78,90 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // Find or create customer in Supabase User table
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { phone: formattedPhone },
-          { username: `cust_${last10}` },
-          { email: `${last10}@teepul.com` },
-        ],
-      },
-    });
-
-    if (!user) {
-      let role = await prisma.role.findFirst({
+    let user: any = null;
+    try {
+      user = await prisma.user.findFirst({
         where: {
-          OR: [{ slug: 'subscriber' }, { slug: 'customer' }, { name: 'Subscriber' }],
+          OR: [
+            { phone: formattedPhone },
+            { username: `cust_${last10}` },
+            { email: `${last10}@teepul.com` },
+          ],
         },
       });
 
-      if (!role) {
-        role = await prisma.role.create({
-          data: {
-            name: 'Subscriber',
-            slug: 'subscriber',
-            description: 'Registered Store Customer',
-            isSystem: false,
+      if (!user) {
+        let role = await prisma.role.findFirst({
+          where: {
+            OR: [{ slug: 'subscriber' }, { slug: 'customer' }],
           },
         });
-      }
 
-      user = await prisma.user.create({
-        data: {
-          phone: formattedPhone,
-          email: `${last10}@teepul.com`,
-          username: `cust_${last10}`,
-          passwordHash: '$2a$10$placeholderForPhoneOnlyUserAccountTeepul2026',
-          displayName: name || meta.customerName || `Customer (+91 ${last10})`,
-          roleId: role.id,
-          status: 'active',
-          bio: 'Verified customer via Phone OTP',
-        },
-      });
-    } else {
-      const updateData: any = { status: 'active' };
-      if (name && (user.displayName.startsWith('Customer (+91') || !user.displayName)) {
-        updateData.displayName = name;
+        if (!role) {
+          role = await prisma.role.findFirst();
+        }
+
+        if (role) {
+          user = await prisma.user.create({
+            data: {
+              phone: formattedPhone,
+              email: `${last10}@teepul.com`,
+              username: `cust_${last10}`,
+              passwordHash: '$2a$10$placeholderForPhoneOnlyUserAccountTeepul2026',
+              displayName: name || meta.customerName || `Customer (+91 ${last10})`,
+              roleId: role.id,
+              status: 'active',
+              bio: 'Verified customer via Phone OTP',
+            },
+          });
+        }
+      } else {
+        const updateData: any = { status: 'active' };
+        if (name && (!user.displayName || user.displayName.startsWith('Customer (+91'))) {
+          updateData.displayName = name;
+        }
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: updateData,
+        });
       }
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: updateData,
-      });
+    } catch (userErr) {
+      console.warn('Customer verification user query notice:', userErr);
     }
 
-    // Create session
-    const token = await createSession(
-      user.id,
-      request.headers.get('x-forwarded-for') || undefined,
-      request.headers.get('user-agent') || undefined
-    );
+    // Create session if user record exists
+    if (user?.id) {
+      try {
+        const token = await createSession(
+          user.id,
+          request.headers.get('x-forwarded-for') || undefined,
+          request.headers.get('user-agent') || undefined
+        );
 
-    cookies.set(SESSION_COOKIE_NAME, token, {
-      path: '/',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60, // 30 days
-    });
+        cookies.set(SESSION_COOKIE_NAME, token, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 30 * 24 * 60 * 60, // 30 days
+        });
+      } catch (sessErr) {
+        console.warn('Session creation notice:', sessErr);
+      }
+    }
 
     const geo = await resolveGeoLocation(clientIp, request.headers);
 
     // Log verified audit event in Supabase
     await logAudit({
-      userId: user.id,
+      userId: user?.id || null,
       action: 'auth.phone_verified',
       entity: 'User',
-      entityId: user.id,
+      entityId: user?.id || formattedPhone,
       ipAddress: clientIp,
       metadata: {
         phone: formattedPhone,
-        customerName: user.displayName,
+        customerName: user?.displayName || name || meta.customerName || 'Customer',
         location: geo.locationStr,
         city: geo.city,
         state: geo.state,

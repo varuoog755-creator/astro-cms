@@ -66,51 +66,50 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     // 2. Also ensure customer is created or noted in Supabase User table so lead is never lost
-    let existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { phone: formattedPhone },
-          { username: `cust_${last10}` },
-          { email: `${last10}@teepul.com` },
-        ],
-      },
-    });
-
-    if (!existingUser) {
-      let role = await prisma.role.findFirst({
+    try {
+      let existingUser = await prisma.user.findFirst({
         where: {
-          OR: [{ slug: 'subscriber' }, { slug: 'customer' }, { name: 'Subscriber' }],
+          OR: [
+            { phone: formattedPhone },
+            { username: `cust_${last10}` },
+            { email: `${last10}@teepul.com` },
+          ],
         },
       });
 
-      if (!role) {
-        role = await prisma.role.create({
-          data: {
-            name: 'Subscriber',
-            slug: 'subscriber',
-            description: 'Registered Store Customer',
-            isSystem: false,
+      if (!existingUser) {
+        let role = await prisma.role.findFirst({
+          where: {
+            OR: [{ slug: 'subscriber' }, { slug: 'customer' }],
           },
         });
-      }
 
-      await prisma.user.create({
-        data: {
-          phone: formattedPhone,
-          email: `${last10}@teepul.com`,
-          username: `cust_${last10}`,
-          passwordHash: '$2a$10$placeholderForPhoneOnlyUserAccountTeepul2026',
-          displayName: name || `Customer (+91 ${last10})`,
-          roleId: role.id,
-          status: 'active',
-          bio: 'Customer lead registered via OTP checkout',
-        },
-      });
-    } else if (name && existingUser.displayName.startsWith('Customer (+91')) {
-      await prisma.user.update({
-        where: { id: existingUser.id },
-        data: { displayName: name },
-      });
+        if (!role) {
+          role = await prisma.role.findFirst();
+        }
+
+        if (role) {
+          await prisma.user.create({
+            data: {
+              phone: formattedPhone,
+              email: `${last10}@teepul.com`,
+              username: `cust_${last10}`,
+              passwordHash: '$2a$10$placeholderForPhoneOnlyUserAccountTeepul2026',
+              displayName: name || `Customer (+91 ${last10})`,
+              roleId: role.id,
+              status: 'active',
+              bio: 'Customer lead registered via OTP checkout',
+            },
+          });
+        }
+      } else if (name && (existingUser.displayName?.startsWith('Customer (+91') || !existingUser.displayName)) {
+        await prisma.user.update({
+          where: { id: existingUser.id },
+          data: { displayName: name },
+        });
+      }
+    } catch (userErr) {
+      console.warn('User lead persistence notice:', userErr);
     }
 
     return new Response(
