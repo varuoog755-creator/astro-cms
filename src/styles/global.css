@@ -65,3 +65,61 @@
   }
 }
 
+/* ── Product Gallery: strict 1:1 square on all screens ─────────────── */
+#product-gallery-viewport {
+  aspect-ratio: 1 / 1 !important;
+  width: 100% !important;
+  max-height: 100vw !important;
+  overflow: hidden !important;
+}
+#product-gallery-viewport img {
+  aspect-ratio: 1 / 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* ── Size Selector: high-contrast, no white-on-white ────────────────── */
+.size-btn {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  transition: all 0.2s ease !important;
+}
+.size-btn .size-title {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+.size-btn .size-badge {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+}
+
+/* Active / selected state – rich dark amber, always readable */
+.size-btn.active-size {
+  background-color: #78350f !important;
+  color: #ffffff !important;
+  border-color: #78350f !important;
+  box-shadow: 0 4px 14px -2px rgba(120, 53, 15, 0.4) !important;
+}
+.size-btn.active-size .size-title {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.size-btn.active-size .size-badge {
+  background-color: #92400e !important;
+  color: #ffffff !important;
+}
+
+/* Disabled / out-of-stock size */
+.size-btn.disabled-size {
+  opacity: 0.45 !important;
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through !important;
+}
+.size-btn.disabled-size .size-title,
+.size-btn.disabled-size .size-badge {
+  color: #94a3b8 !important;
+}
