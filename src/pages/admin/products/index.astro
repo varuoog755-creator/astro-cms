@@ -66,19 +66,8 @@ const deleted = Astro.url.searchParams.get('deleted') === 'true';
                         <div class="text-[10px] text-slate-500 truncate max-w-xs product-tagline">{p.tagline}</div>
                         <div class="flex items-center gap-2 mt-1.5 pt-1 border-t border-slate-100">
                           <a href={`/admin/products/new?id=${p.id}`} class="text-blue-600 hover:text-blue-800 font-bold text-[11px] inline-flex items-center gap-0.5">
-                            ✏️ Edit
+                            ✏️ Edit Product
                           </a>
-                          <span class="text-slate-300 text-xs">•</span>
-                          <button
-                            type="button"
-                            data-id={p.id}
-                            data-slug={p.slug}
-                            data-name={p.name}
-                            onclick="handleDeleteProduct(this)"
-                            class="text-rose-600 hover:text-rose-800 font-bold text-[11px] cursor-pointer inline-flex items-center gap-0.5 hover:underline"
-                          >
-                            🗑️ Delete Product
-                          </button>
                         </div>
                       </div>
                     </div>

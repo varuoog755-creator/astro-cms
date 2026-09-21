@@ -38,12 +38,14 @@ try {
 
 const defaultMenuItems = [
   { id: '1', title: 'Home', url: '/' },
-  { id: '2', title: 'Products', url: '/products' },
-  { id: '3', title: 'Blog', url: '/blog' },
+  { id: '2', title: 'Shop', url: '/products' },
   { id: '4', title: 'About', url: '/about' },
 ];
 
-const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuItems;
+const rawMenuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuItems;
+const menuItems = rawMenuItems
+  .filter((item: any) => item.url !== '/blog')
+  .map((item: any) => (item.url === '/products' || item.title === 'Products' ? { ...item, title: 'Shop' } : item));
 ---
 
 <!DOCTYPE html>
@@ -201,11 +203,11 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
             </svg>
           </form>
 
-          <!-- Cart Icon & Counter (Opens Dynamic Right Slide-over Cart) -->
+          <!-- Cart Icon & Counter (Desktop & Tablet only on mobile bottom bar handles cart) -->
           <button
             type="button"
             id="header-cart-btn"
-            class="cart-trigger relative bg-amber-100/80 hover:bg-amber-200 active:scale-95 text-amber-950 font-bold px-3 py-2 rounded-full flex items-center gap-1.5 text-xs transition border border-amber-300/60 shadow-sm cursor-pointer"
+            class="cart-trigger relative bg-amber-100/80 hover:bg-amber-200 active:scale-95 text-amber-950 font-bold px-3 py-2 rounded-full hidden sm:flex items-center gap-1.5 text-xs transition border border-amber-300/60 shadow-sm cursor-pointer"
             title="Open Shopping Cart"
             aria-label="Shopping Cart"
           >
@@ -403,6 +405,7 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
         <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} Teepul - Luxury Home Curtains & Drapery. Ashank Ecommerce Pvt Ltd, Panipat, Haryana. All rights reserved.</p>
           <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <a href="/blog" class="hover:text-slate-300 transition font-medium text-amber-400/90">Blog</a>
             <a href="/terms" class="hover:text-slate-300 transition">Terms</a>
             <a href="/privacy-policy" class="hover:text-slate-300 transition">Privacy</a>
             <a href="/refund-policy" class="hover:text-slate-300 transition">Refunds</a>
@@ -434,39 +437,39 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
       </a>
     )}
 
-    <!-- Mobile App-Style Bottom Navigation Bar (80% Mobile Users) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 py-1.5 px-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-around" style="padding-bottom: max(0.375rem, env(safe-area-inset-bottom));">
-      <a href="/" class="flex flex-col items-center justify-center py-1 px-3 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[56px]">
-        <span class="text-xl">🏠</span>
-        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">Home</span>
+    <!-- Mobile App-Style Bottom Navigation Bar (80% Mobile Users - Sleek & Compact) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 py-1 px-2 shadow-[0_-3px_15px_rgba(0,0,0,0.06)] flex items-center justify-around" style="padding-bottom: max(0.25rem, env(safe-area-inset-bottom));">
+      <a href="/" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
+        <span class="text-lg">🏠</span>
+        <span class="text-[9px] font-extrabold tracking-tight">Home</span>
       </a>
 
-      <a href="/products" class="flex flex-col items-center justify-center py-1 px-3 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[56px]">
-        <span class="text-xl">🛍️</span>
-        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">Curtains</span>
+      <a href="/products" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
+        <span class="text-lg">🛍️</span>
+        <span class="text-[9px] font-extrabold tracking-tight">Shop</span>
       </a>
 
       <button
         type="button"
         onclick="window.openCartDrawer?.()"
-        class="flex flex-col items-center justify-center py-1 px-3 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[56px] relative cursor-pointer"
+        class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px] relative cursor-pointer"
         aria-label="Open Shopping Cart"
       >
         <div class="relative">
-          <span class="text-xl">🛒</span>
-          <span id="mobile-bottom-cart-badge" class="absolute -top-1.5 -right-2.5 bg-amber-800 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+          <span class="text-lg">🛒</span>
+          <span id="mobile-bottom-cart-badge" class="absolute -top-1 -right-2 bg-amber-800 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-xs">0</span>
         </div>
-        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">Cart</span>
+        <span class="text-[9px] font-extrabold tracking-tight">Cart</span>
       </button>
 
       <a
         href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi Teepul! I am browsing on mobile and need assistance.')}`}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex flex-col items-center justify-center py-1 px-3 text-emerald-600 hover:text-emerald-700 transition active:scale-95 min-w-[56px]"
+        class="flex flex-col items-center justify-center py-0.5 px-2 text-emerald-600 hover:text-emerald-700 transition active:scale-95 min-w-[48px]"
       >
-        <span class="text-xl">💬</span>
-        <span class="text-[10px] font-extrabold mt-0.5 tracking-tight">WhatsApp</span>
+        <span class="text-lg">💬</span>
+        <span class="text-[9px] font-extrabold tracking-tight">WhatsApp</span>
       </a>
     </nav>
 
