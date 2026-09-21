@@ -466,7 +466,19 @@
 
         const primary = cart[0];
         const checkoutUrl = `/checkout?product=${encodeURIComponent(primary.slug)}&size=${encodeURIComponent(primary.size || '7 Feet')}&color=${encodeURIComponent(primary.color || 'Standard')}&price=${primary.price}&qty=${primary.quantity || 1}`;
-        window.location.href = checkoutUrl;
+
+        const savedPhone = localStorage.getItem('teepul_customer_phone');
+        const savedName = localStorage.getItem('teepul_customer_name') || '';
+        if (savedPhone) {
+          window.location.href = checkoutUrl + '&phone=' + encodeURIComponent(savedPhone) + (savedName ? '&name=' + encodeURIComponent(savedName) : '');
+        } else if (typeof window.openCustomerAuthModal === 'function') {
+          window.closeCartDrawer?.();
+          window.openCustomerAuthModal(function(customer) {
+            window.location.href = checkoutUrl + '&phone=' + encodeURIComponent(customer.phone) + '&name=' + encodeURIComponent(customer.name || '');
+          });
+        } else {
+          window.location.href = checkoutUrl;
+        }
       });
 
       // WhatsApp Cart Order Handler

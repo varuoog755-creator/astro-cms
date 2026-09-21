@@ -5,6 +5,7 @@ import prisma from '../lib/db';
 import { getIntegrationSettings } from '../lib/settings';
 import { getSession } from '../lib/auth/session';
 import CartDrawer from '../components/CartDrawer.astro';
+import CustomerSignupModal from '../components/CustomerSignupModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -506,6 +507,22 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
           localStorage.setItem('teepul_cart', JSON.stringify(cart));
           updateCartBadge();
 
+          // Dispatch cart event directly to Supabase AuditLog
+          try {
+            fetch('/api/analytics/cart-event', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              keepalive: true,
+              body: JSON.stringify({
+                action: 'cart.add',
+                productName: name,
+                slug: slug,
+                price: price,
+                quantity: 1,
+              }),
+            }).catch(() => {});
+          } catch (err) {}
+
           // Show Toast
           const toast = document.getElementById('cart-toast');
           const toastMsg = document.getElementById('cart-toast-msg');
@@ -578,5 +595,6 @@ const menuItems = primaryMenu?.items?.length ? primaryMenu.items : defaultMenuIt
     </script>
 
     <CartDrawer />
+    <CustomerSignupModal />
   </body>
 </html>

@@ -1,0 +1,386 @@
+---
+// Customer Mobile Signup & OTP Verification Modal
+---
+
+<div
+  id="customer-auth-modal"
+  class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300"
+  aria-labelledby="customer-auth-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="customer-auth-dialog">
+    
+    <!-- Close Button -->
+    <button
+      type="button"
+      id="customer-auth-close"
+      class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-lg font-bold transition z-10 cursor-pointer"
+      aria-label="Close"
+    >
+      ✕
+    </button>
+
+    <!-- Modal Content -->
+    <div class="p-6 sm:p-8 space-y-5">
+      
+      <!-- Top Branding Strip -->
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-amber-800 text-white font-black text-sm flex items-center justify-center shadow-md">
+          T
+        </div>
+        <div>
+          <div class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">TEEPUL CURTAINS</div>
+          <div class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Direct Panipat Mill Delivery
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Enter Mobile Number & Name -->
+      <div id="auth-step-1" class="space-y-4">
+        <div>
+          <h3 id="customer-auth-title" class="text-xl font-black text-slate-900 leading-tight">
+            Quick Checkout Login ⚡
+          </h3>
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+            Enter your mobile number to instantly verify your order and get live courier tracking updates on WhatsApp.
+          </p>
+        </div>
+
+        <div class="space-y-3 pt-1">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
+            <input
+              type="text"
+              id="auth-customer-name"
+              placeholder="e.g. Rahul Sharma"
+              autocomplete="name"
+              class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:bg-white transition"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number (WhatsApp) *</label>
+            <div class="flex rounded-xl border border-slate-300 overflow-hidden bg-slate-50 focus-within:ring-2 focus-within:ring-amber-600 focus-within:bg-white transition">
+              <span class="inline-flex items-center px-3.5 bg-slate-100 text-slate-600 font-bold text-xs border-r border-slate-300 select-none">
+                🇮🇳 +91
+              </span>
+              <input
+                type="tel"
+                id="auth-customer-phone"
+                maxlength="10"
+                inputmode="numeric"
+                autocomplete="tel"
+                placeholder="98963 74239"
+                class="w-full text-sm bg-transparent px-4 py-3 font-mono font-bold text-slate-900 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div id="auth-step-1-error" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-3"></div>
+
+        <button
+          type="button"
+          id="auth-send-otp-btn"
+          class="w-full bg-amber-800 hover:bg-amber-900 active:scale-95 text-white font-black text-xs sm:text-sm py-3.5 rounded-2xl shadow-lg shadow-amber-900/30 transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>Send Verification OTP</span>
+          <span>📩</span>
+        </button>
+
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+          <span>🔒 100% Data Protection</span>
+          <span>🚚 Free Delivery Pan-India</span>
+          <span>7-Day Returns</span>
+        </div>
+      </div>
+
+      <!-- STEP 2: Enter 6-Digit OTP -->
+      <div id="auth-step-2" class="space-y-4 hidden">
+        <div>
+          <button
+            type="button"
+            id="auth-back-to-step-1"
+            class="text-[11px] font-extrabold text-amber-800 hover:underline flex items-center gap-1 mb-2 cursor-pointer"
+          >
+            ← Change Mobile Number
+          </button>
+          <h3 class="text-xl font-black text-slate-900 leading-tight">
+            Verify Mobile Number 🔐
+          </h3>
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+            Enter 6-digit OTP code sent to <strong id="auth-display-phone" class="font-mono text-slate-900 font-bold text-xs"></strong>
+          </p>
+        </div>
+
+        <!-- Dev / Instant OTP Helper Pill -->
+        <div id="auth-dev-otp-pill" class="hidden bg-emerald-50 border border-emerald-300 rounded-2xl p-3 text-xs text-emerald-900 flex items-center justify-between gap-2">
+          <div>
+            <span class="font-extrabold block text-[11px]">✨ Verification Code:</span>
+            <span id="auth-dev-otp-code" class="font-mono font-black text-base text-emerald-800 tracking-wider"></span>
+          </div>
+          <button
+            type="button"
+            id="auth-dev-otp-autofill"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] px-3 py-1.5 rounded-xl shadow-sm cursor-pointer"
+          >
+            Auto-Fill OTP
+          </button>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-700">Enter 6-Digit Code</label>
+          <input
+            type="text"
+            id="auth-otp-input"
+            maxlength="6"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="• • • • • •"
+            class="w-full text-center tracking-[0.5em] text-xl font-black font-mono bg-slate-50 border border-slate-300 rounded-2xl py-3.5 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:bg-white text-slate-900"
+          />
+        </div>
+
+        <div id="auth-step-2-error" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-3"></div>
+
+        <button
+          type="button"
+          id="auth-verify-otp-btn"
+          class="w-full bg-amber-800 hover:bg-amber-900 active:scale-95 text-white font-black text-xs sm:text-sm py-3.5 rounded-2xl shadow-lg shadow-amber-900/30 transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>Verify & Proceed to Checkout</span>
+          <span>&rarr;</span>
+        </button>
+
+        <div class="text-center pt-1">
+          <button
+            type="button"
+            id="auth-resend-otp-btn"
+            class="text-xs font-bold text-slate-500 hover:text-amber-800 transition cursor-pointer"
+          >
+            Didn't receive code? Resend OTP
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    let pendingCallback = null;
+    let currentPhone = '';
+    let currentName = '';
+
+    const modal = document.getElementById('customer-auth-modal');
+    const dialog = document.getElementById('customer-auth-dialog');
+    const closeBtn = document.getElementById('customer-auth-close');
+    const step1 = document.getElementById('auth-step-1');
+    const step2 = document.getElementById('auth-step-2');
+    const sendOtpBtn = document.getElementById('auth-send-otp-btn');
+    const verifyOtpBtn = document.getElementById('auth-verify-otp-btn');
+    const backBtn = document.getElementById('auth-back-to-step-1');
+    const resendBtn = document.getElementById('auth-resend-otp-btn');
+    const nameInput = document.getElementById('auth-customer-name');
+    const phoneInput = document.getElementById('auth-customer-phone');
+    const otpInput = document.getElementById('auth-otp-input');
+    const step1Error = document.getElementById('auth-step-1-error');
+    const step2Error = document.getElementById('auth-step-2-error');
+    const displayPhone = document.getElementById('auth-display-phone');
+    const devOtpPill = document.getElementById('auth-dev-otp-pill');
+    const devOtpCode = document.getElementById('auth-dev-otp-code');
+    const autoFillBtn = document.getElementById('auth-dev-otp-autofill');
+
+    function openModal(callback) {
+      pendingCallback = callback;
+      
+      // Check if already authenticated or saved
+      const savedPhone = localStorage.getItem('teepul_customer_phone');
+      const savedName = localStorage.getItem('teepul_customer_name');
+      if (savedPhone) {
+        if (typeof pendingCallback === 'function') {
+          pendingCallback({ phone: savedPhone, name: savedName || '' });
+          pendingCallback = null;
+        }
+        return;
+      }
+
+      // Reset form
+      if (step1 && step2) {
+        step1.classList.remove('hidden');
+        step2.classList.add('hidden');
+      }
+      if (step1Error) step1Error.classList.add('hidden');
+      if (step2Error) step2Error.classList.add('hidden');
+      if (devOtpPill) devOtpPill.classList.add('hidden');
+      if (otpInput) otpInput.value = '';
+
+      // Pre-fill name if stored
+      if (nameInput && savedName) nameInput.value = savedName;
+
+      modal?.classList.remove('hidden');
+      modal?.classList.add('flex');
+      setTimeout(() => {
+        dialog?.classList.remove('scale-95', 'opacity-0');
+        dialog?.classList.add('scale-100', 'opacity-100');
+        phoneInput?.focus();
+      }, 20);
+    }
+
+    function closeModal() {
+      dialog?.classList.remove('scale-100', 'opacity-100');
+      dialog?.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal?.classList.add('hidden');
+        modal?.classList.remove('flex');
+      }, 200);
+    }
+
+    closeBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    backBtn?.addEventListener('click', () => {
+      step2?.classList.add('hidden');
+      step1?.classList.remove('hidden');
+      phoneInput?.focus();
+    });
+
+    // Auto-clean phone input to digits only
+    phoneInput?.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // Send OTP Handler
+    sendOtpBtn?.addEventListener('click', async () => {
+      const rawPhone = (phoneInput?.value || '').trim();
+      const rawName = (nameInput?.value || '').trim();
+
+      if (!rawPhone || rawPhone.length < 10) {
+        if (step1Error) {
+          step1Error.innerText = 'Please enter a valid 10-digit Indian mobile number.';
+          step1Error.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (step1Error) step1Error.classList.add('hidden');
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.innerHTML = '<span>Sending OTP...</span><span>⏳</span>';
+
+      try {
+        const res = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: rawPhone, name: rawName }),
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          if (step1Error) {
+            step1Error.innerText = data.error || 'Failed to send OTP. Please try again.';
+            step1Error.classList.remove('hidden');
+          }
+          sendOtpBtn.disabled = false;
+          sendOtpBtn.innerHTML = '<span>Send Verification OTP</span><span>📩</span>';
+          return;
+        }
+
+        currentPhone = data.phone || `+91${rawPhone}`;
+        currentName = rawName;
+        if (displayPhone) displayPhone.innerText = currentPhone;
+
+        // Show dev OTP helper
+        if (data.otp && devOtpPill && devOtpCode) {
+          devOtpCode.innerText = data.otp;
+          devOtpPill.classList.remove('hidden');
+          autoFillBtn.onclick = () => {
+            if (otpInput) otpInput.value = data.otp;
+            verifyOtpBtn?.click();
+          };
+        }
+
+        step1?.classList.add('hidden');
+        step2?.classList.remove('hidden');
+        otpInput?.focus();
+      } catch (err) {
+        if (step1Error) {
+          step1Error.innerText = 'Network error. Please check your connection.';
+          step1Error.classList.remove('hidden');
+        }
+      } finally {
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.innerHTML = '<span>Send Verification OTP</span><span>📩</span>';
+      }
+    });
+
+    // Verify OTP Handler
+    verifyOtpBtn?.addEventListener('click', async () => {
+      const code = (otpInput?.value || '').trim().replace(/\D/g, '');
+
+      if (!code || code.length < 6) {
+        if (step2Error) {
+          step2Error.innerText = 'Please enter the full 6-digit OTP code.';
+          step2Error.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (step2Error) step2Error.classList.add('hidden');
+      verifyOtpBtn.disabled = true;
+      verifyOtpBtn.innerHTML = '<span>Verifying...</span><span>⏳</span>';
+
+      try {
+        const res = await fetch('/api/auth/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: currentPhone, otp: code, name: currentName }),
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          if (step2Error) {
+            step2Error.innerText = data.error || 'Invalid OTP code. Please try again.';
+            step2Error.classList.remove('hidden');
+          }
+          verifyOtpBtn.disabled = false;
+          verifyOtpBtn.innerHTML = '<span>Verify & Proceed to Checkout</span><span>&rarr;</span>';
+          return;
+        }
+
+        // Save phone locally for frictionless future orders
+        localStorage.setItem('teepul_customer_phone', currentPhone.replace('+91', ''));
+        if (currentName) localStorage.setItem('teepul_customer_name', currentName);
+
+        closeModal();
+
+        if (typeof pendingCallback === 'function') {
+          pendingCallback({ phone: currentPhone.replace('+91', ''), name: currentName });
+          pendingCallback = null;
+        }
+      } catch (err) {
+        if (step2Error) {
+          step2Error.innerText = 'Network error during verification.';
+          step2Error.classList.remove('hidden');
+        }
+      } finally {
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtn.innerHTML = '<span>Verify & Proceed to Checkout</span><span>&rarr;</span>';
+      }
+    });
+
+    resendBtn?.addEventListener('click', () => {
+      step2?.classList.add('hidden');
+      step1?.classList.remove('hidden');
+      sendOtpBtn?.click();
+    });
+
+    // Expose global helper
+    window.openCustomerAuthModal = openModal;
+  })();
+</script>

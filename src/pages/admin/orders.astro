@@ -12,7 +12,9 @@ const totalRevenue = orders
   .reduce((sum, o) => sum + o.totalAmount, 0);
 
 const paidOrdersCount = orders.filter((o) => o.paymentStatus === 'PAID').length;
-const pendingOrdersCount = orders.filter((o) => o.paymentStatus === 'PENDING' || o.paymentStatus === 'COD_PENDING').length;
+const pendingPaymentCount = orders.filter((o) => o.paymentStatus === 'PENDING').length;
+const codOrdersCount = orders.filter((o) => o.paymentStatus === 'COD_PENDING' || o.paymentMethod === 'COD').length;
+const pendingOrdersCount = pendingPaymentCount + codOrdersCount;
 const bookedEKartCount = orders.filter((o) => o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber)).length;
 
 // Helper to calculate estimated EKart shipping rate
@@ -72,34 +74,48 @@ function getEkartRate(pincode: string) {
       </div>
     </div>
 
-    <!-- Day-by-Day & Status Filter Control Bar -->
-    <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 text-xs">
+    <!-- Day-by-Day, Payment Status & Fulfillment Filter Control Bar -->
+    <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3.5 text-xs">
       
-      <!-- Date Filter Buttons -->
-      <div class="flex flex-wrap items-center gap-2" id="date-filter-group">
-        <span class="font-extrabold text-slate-800 uppercase tracking-wider text-[10px] mr-1">📅 Date Filter:</span>
-        <button data-date="all" class="date-btn bg-amber-800 text-white font-bold px-3.5 py-1.5 rounded-full shadow-sm transition">All Time ({orders.length})</button>
-        <button data-date="today" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">☀️ Today</button>
-        <button data-date="yesterday" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">🌙 Yesterday</button>
-        <button data-date="7days" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">🗓️ Last 7 Days</button>
-        <button data-date="month" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">📊 This Month</button>
+      <!-- Row 1: Payment Status Filter Pills -->
+      <div class="flex flex-wrap items-center gap-2 pb-3 border-b border-slate-100" id="payment-filter-group">
+        <span class="font-extrabold text-slate-900 uppercase tracking-wider text-[11px] mr-1 flex items-center gap-1">
+          <span>💳</span> Payment Status:
+        </span>
+        <button data-payment="all" class="payment-btn bg-slate-900 text-white font-bold px-3.5 py-1.5 rounded-full shadow-sm transition">All Orders ({orders.length})</button>
+        <button data-payment="PAID" class="payment-btn bg-emerald-50 text-emerald-900 border border-emerald-300 font-bold px-3.5 py-1.5 rounded-full hover:bg-emerald-100 transition">✓ Paid / Confirmed ({paidOrdersCount})</button>
+        <button data-payment="PENDING" class="payment-btn bg-amber-50 text-amber-950 border border-amber-300 font-bold px-3.5 py-1.5 rounded-full hover:bg-amber-100 transition">⚠️ Payment Pending ({pendingPaymentCount})</button>
+        <button data-payment="COD" class="payment-btn bg-sky-50 text-sky-950 border border-sky-300 font-bold px-3.5 py-1.5 rounded-full hover:bg-sky-100 transition">🚚 Cash on Delivery ({codOrdersCount})</button>
       </div>
 
-      <!-- Status & Search Inputs -->
-      <div class="flex flex-wrap items-center gap-2.5">
-        <select id="status-filter" class="bg-slate-100 text-xs font-bold text-slate-800 rounded-2xl px-3 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500">
-          <option value="all">Fulfillment: All Statuses</option>
-          <option value="PROCESSING">PROCESSING (Unbooked)</option>
-          <option value="SHIPPED">SHIPPED (EKart Active)</option>
-          <option value="DELIVERED">DELIVERED</option>
-        </select>
+      <!-- Row 2: Date Filters & Search -->
+      <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+        <!-- Date Filter Buttons -->
+        <div class="flex flex-wrap items-center gap-2" id="date-filter-group">
+          <span class="font-extrabold text-slate-800 uppercase tracking-wider text-[10px] mr-1">📅 Date:</span>
+          <button data-date="all" class="date-btn bg-amber-800 text-white font-bold px-3.5 py-1.5 rounded-full shadow-sm transition">All Time</button>
+          <button data-date="today" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">☀️ Today</button>
+          <button data-date="yesterday" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">🌙 Yesterday</button>
+          <button data-date="7days" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">🗓️ Last 7 Days</button>
+          <button data-date="month" class="date-btn bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-full hover:bg-amber-100 hover:text-amber-900 transition">📊 This Month</button>
+        </div>
 
-        <input
-          type="text"
-          id="order-search-input"
-          placeholder="Search Order #, Phone, Name..."
-          class="bg-slate-100 text-xs font-medium text-slate-800 rounded-2xl px-4 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-56"
-        />
+        <!-- Status & Search Inputs -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <select id="status-filter" class="bg-slate-100 text-xs font-bold text-slate-800 rounded-2xl px-3 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            <option value="all">Fulfillment: All Statuses</option>
+            <option value="PROCESSING">PROCESSING (Unbooked)</option>
+            <option value="SHIPPED">SHIPPED (EKart Active)</option>
+            <option value="DELIVERED">DELIVERED</option>
+          </select>
+
+          <input
+            type="text"
+            id="order-search-input"
+            placeholder="Search Order #, Phone, Name..."
+            class="bg-slate-100 text-xs font-medium text-slate-800 rounded-2xl px-4 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-56"
+          />
+        </div>
       </div>
     </div>
 
@@ -131,6 +147,8 @@ function getEkartRate(pincode: string) {
                 class="order-card-row p-6 hover:bg-slate-50/50 transition space-y-4"
                 data-created-at={isoDate}
                 data-status={o.orderStatus}
+                data-payment-status={o.paymentStatus}
+                data-payment-method={o.paymentMethod}
                 data-search={searchText}
               >
                 
@@ -149,12 +167,18 @@ function getEkartRate(pincode: string) {
                     <span class="bg-slate-100 text-slate-800 font-bold px-3 py-1 rounded-full text-[10px] uppercase">
                       Payment: {o.paymentMethod}
                     </span>
-                    <span class={`font-black px-3 py-1 rounded-full text-[10px] uppercase border ${
+                    <span class={`font-black px-3 py-1 rounded-full text-[10px] uppercase border shadow-sm ${
                       o.paymentStatus === 'PAID'
-                        ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                        : 'bg-amber-100 text-amber-800 border-amber-300'
+                        ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                        : o.paymentStatus === 'COD_PENDING' || o.paymentMethod === 'COD'
+                        ? 'bg-sky-100 text-sky-900 border-sky-300'
+                        : 'bg-amber-100 text-amber-950 border-amber-300'
                     }`}>
-                      {o.paymentStatus}
+                      {o.paymentStatus === 'PAID'
+                        ? '✓ PAID'
+                        : o.paymentStatus === 'COD_PENDING' || o.paymentMethod === 'COD'
+                        ? '🚚 COD PENDING'
+                        : '⚠️ PAYMENT PENDING'}
                     </span>
                     <span class={`font-black px-3 py-1 rounded-full text-[10px] uppercase ${
                       o.orderStatus === 'DELIVERED'
@@ -317,14 +341,16 @@ function getEkartRate(pincode: string) {
       });
     });
 
-    // Day-by-Day & Status Interactive Filter Script
+    // Day-by-Day, Payment Status & Fulfillment Interactive Filter Script
     document.addEventListener('DOMContentLoaded', () => {
+      const paymentBtns = document.querySelectorAll('.payment-btn');
       const dateBtns = document.querySelectorAll('.date-btn');
       const statusSelect = document.getElementById('status-filter');
       const searchInput = document.getElementById('order-search-input');
       const orderRows = document.querySelectorAll('.order-card-row');
       const visibleCountEl = document.getElementById('visible-order-count');
 
+      let currentPaymentFilter = 'all';
       let currentDateFilter = 'all';
       let currentStatusFilter = 'all';
       let currentQuery = '';
@@ -342,9 +368,23 @@ function getEkartRate(pincode: string) {
           const rawDate = row.getAttribute('data-created-at');
           const rowTime = rawDate ? new Date(rawDate).getTime() : 0;
           const rowStatus = row.getAttribute('data-status') || '';
+          const rowPaymentStatus = row.getAttribute('data-payment-status') || '';
+          const rowPaymentMethod = row.getAttribute('data-payment-method') || '';
           const rowSearch = row.getAttribute('data-search') || '';
 
-          // 1. Date filter condition
+          // 1. Payment status condition
+          let passPayment = false;
+          if (currentPaymentFilter === 'all') {
+            passPayment = true;
+          } else if (currentPaymentFilter === 'PAID') {
+            passPayment = rowPaymentStatus === 'PAID';
+          } else if (currentPaymentFilter === 'PENDING') {
+            passPayment = rowPaymentStatus === 'PENDING';
+          } else if (currentPaymentFilter === 'COD') {
+            passPayment = rowPaymentStatus === 'COD_PENDING' || rowPaymentMethod === 'COD';
+          }
+
+          // 2. Date filter condition
           let passDate = false;
           if (currentDateFilter === 'all') passDate = true;
           else if (currentDateFilter === 'today' && rowTime >= todayStart) passDate = true;
@@ -352,15 +392,15 @@ function getEkartRate(pincode: string) {
           else if (currentDateFilter === '7days' && rowTime >= sevenDaysAgo) passDate = true;
           else if (currentDateFilter === 'month' && rowTime >= monthStart) passDate = true;
 
-          // 2. Status filter condition
+          // 3. Status filter condition
           let passStatus = false;
           if (currentStatusFilter === 'all' || rowStatus === currentStatusFilter) passStatus = true;
 
-          // 3. Search query condition
+          // 4. Search query condition
           let passSearch = false;
           if (!currentQuery || rowSearch.includes(currentQuery)) passSearch = true;
 
-          if (passDate && passStatus && passSearch) {
+          if (passPayment && passDate && passStatus && passSearch) {
             row.style.display = 'block';
             visibleCount += 1;
           } else {
@@ -370,6 +410,20 @@ function getEkartRate(pincode: string) {
 
         if (visibleCountEl) visibleCountEl.innerText = String(visibleCount);
       }
+
+      paymentBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          paymentBtns.forEach((b) => {
+            b.classList.remove('bg-slate-900', 'text-white');
+            b.classList.add('bg-slate-100', 'text-slate-700');
+          });
+          btn.classList.remove('bg-slate-100', 'text-slate-700', 'bg-emerald-50', 'bg-amber-50', 'bg-sky-50');
+          btn.classList.add('bg-slate-900', 'text-white');
+
+          currentPaymentFilter = btn.getAttribute('data-payment') || 'all';
+          applyFilters();
+        });
+      });
 
       dateBtns.forEach((btn) => {
         btn.addEventListener('click', () => {

@@ -22,14 +22,14 @@ if (!isMasterAdmin) {
 }
 
 const navItems = [
-  { id: 'dashboard', label: '📊 Dashboard Overview', icon: '📊', href: '/admin' },
   { id: 'orders', label: '🛍️ Orders & EKart Courier', icon: '🛍️', href: '/admin/orders' },
+  { id: 'users', label: '👥 Customers & Users', icon: '👥', href: '/admin/users' },
+  { id: 'audit', label: '🛡️ Active Logs & Cart History', icon: '🛡️', href: '/admin/audit-logs' },
   { id: 'products_catalog', label: '📦 Curtains & Decor Catalog', icon: '📦', href: '/admin/products' },
+  { id: 'dashboard', label: '📊 Dashboard Overview', icon: '📊', href: '/admin' },
   { id: 'analytics', label: '📈 Live Sales Analytics', icon: '📈', href: '/admin/analytics' },
   { id: 'integrations', label: '⚡ Payments & Logistics', icon: '⚡', href: '/admin/integrations' },
   { id: 'categories', label: '📁 Categories & Fabrics', icon: '📁', href: '/admin/categories' },
-  { id: 'users', label: '👥 Customers & Users', icon: '👥', href: '/admin/users' },
-  { id: 'audit', label: '🛡️ Audit & Cart Activity Logs', icon: '🛡️', href: '/admin/audit-logs' },
   { id: 'posts', label: '📝 Interior Decor Blog', icon: '📝', href: '/admin/posts' },
   { id: 'pages', label: '📄 Custom Pages', icon: '📄', href: '/admin/pages' },
   { id: 'settings', label: '⚙️ Store Settings', icon: '⚙️', href: '/admin/settings/general' },
@@ -124,6 +124,59 @@ const navItems = [
             </form>
           </div>
         </header>
+
+        <!-- Top Core Navigation Tabs Bar (Visible on Desktop & Mobile) -->
+        <div class="bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none shadow-sm flex-shrink-0">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <a
+              href="/admin/orders"
+              class={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition whitespace-nowrap ${
+                activeNav === 'orders' ? 'bg-amber-800 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
+              }`}
+            >
+              <span>🛍️ Orders</span>
+            </a>
+            <a
+              href="/admin/users"
+              class={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition whitespace-nowrap ${
+                activeNav === 'users' ? 'bg-amber-800 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
+              }`}
+            >
+              <span>👥 Customers</span>
+            </a>
+            <a
+              href="/admin/audit-logs"
+              class={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition whitespace-nowrap ${
+                activeNav === 'audit' ? 'bg-amber-800 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
+              }`}
+            >
+              <span>🛡️ Active Logs</span>
+            </a>
+            <a
+              href="/admin/products"
+              class={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition whitespace-nowrap ${
+                activeNav === 'products_catalog' ? 'bg-amber-800 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
+              }`}
+            >
+              <span>📦 Products</span>
+            </a>
+            <a
+              href="/admin"
+              class={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition whitespace-nowrap ${
+                activeNav === 'dashboard' ? 'bg-amber-800 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
+              }`}
+            >
+              <span>📊 Dashboard</span>
+            </a>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <a href="/" target="_blank" class="text-xs font-extrabold text-amber-800 hover:underline flex items-center gap-1 whitespace-nowrap px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-200 transition">
+              <span>🌐 View Store</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
 
         <!-- Main Body Content -->
         <main class="flex-1 overflow-y-auto p-6 md:p-8">

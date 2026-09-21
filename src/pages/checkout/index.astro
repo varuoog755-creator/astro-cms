@@ -32,6 +32,11 @@ if (priceParam && !isNaN(parseFloat(priceParam)) && parseFloat(priceParam) > 0) 
 }
 
 const itemTotal = unitPrice * quantity;
+
+const sessionUser = Astro.locals.user;
+const initialPhone = Astro.url.searchParams.get('phone') || sessionUser?.phone?.replace('+91', '') || '';
+const initialName = Astro.url.searchParams.get('name') || (sessionUser?.displayName?.startsWith('Customer (+') ? '' : sessionUser?.displayName) || '';
+const initialEmail = Astro.url.searchParams.get('email') || (sessionUser?.email?.endsWith('@teepul.com') ? '' : sessionUser?.email) || '';
 ---
 
 <PublicLayout
@@ -80,6 +85,7 @@ const itemTotal = unitPrice * quantity;
               <input
                 type="text"
                 name="customerName"
+                value={initialName}
                 required
                 autocomplete="name"
                 placeholder="e.g. Rahul Sharma"
@@ -93,6 +99,7 @@ const itemTotal = unitPrice * quantity;
                 <input
                   type="tel"
                   name="customerPhone"
+                  value={initialPhone}
                   required
                   inputmode="numeric"
                   autocomplete="tel"
@@ -106,6 +113,7 @@ const itemTotal = unitPrice * quantity;
                 <input
                   type="email"
                   name="customerEmail"
+                  value={initialEmail}
                   autocomplete="email"
                   placeholder="rahul@example.com"
                   class="w-full text-base sm:text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
@@ -185,7 +193,7 @@ const itemTotal = unitPrice * quantity;
                     <input type="radio" name="paymentMethod" value="PAYTM" class="text-blue-600 focus:ring-blue-500" />
                     <div>
                       <span class="font-bold text-xs text-slate-900 block">📱 Paytm / Direct UPI</span>
-                      <span class="text-[10px] text-slate-500">VPA Handle: {settings.paytm_vpa}</span>
+                      <span class="text-[10px] text-slate-500">Fast UPI QR, GooglePay &amp; PhonePe</span>
                     </div>
                   </label>
                 )}
