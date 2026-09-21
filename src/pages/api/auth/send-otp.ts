@@ -3,6 +3,7 @@ import prisma from '../../../lib/db';
 import { logAudit } from '../../../lib/utilities/audit';
 import { resolveGeoLocation } from '../../../lib/utilities/geo';
 import { checkRateLimit } from '../../../lib/utilities/rateLimit';
+import { sendSmsOtp } from '../../../lib/sms';
 
 export const POST: APIRoute = async ({ request }) => {
   const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
@@ -46,6 +47,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     const geo = await resolveGeoLocation(clientIp, request.headers);
 
+    // Dispatch real SMS OTP via Indian SMS Gateway (Fast2SMS / 2Factor / Twilio / MSG91)
+    const smsResult = await sendSmsOtp(last10, otp);
+
     // 1. Immediately preserve customer lead in Supabase AuditLog
     await logAudit({
       action: 'auth.otp_sent',
@@ -58,6 +62,8 @@ export const POST: APIRoute = async ({ request }) => {
         customerName: name || 'Customer',
         otp: otp,
         expiresAt: expiresAt,
+        smsDispatched: smsResult.success,
+        smsProvider: smsResult.provider,
         location: geo.locationStr,
         city: geo.city,
         state: geo.state,
@@ -115,9 +121,10 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: `OTP sent successfully to +91 ${last10}`,
+        message: `OTP sent to +91 ${last10}`,
         phone: formattedPhone,
-        otp: otp, // Returned for instant free verification on screen
+        smsDispatched: smsResult.success,
+        provider: smsResult.provider,
       }),
       {
         status: 200,

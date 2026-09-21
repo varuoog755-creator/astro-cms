@@ -116,19 +116,15 @@
           </p>
         </div>
 
-        <!-- Dev / Instant OTP Helper Pill -->
-        <div id="auth-dev-otp-pill" class="hidden bg-emerald-50 border border-emerald-300 rounded-2xl p-3 text-xs text-emerald-900 flex items-center justify-between gap-2">
-          <div>
-            <span class="font-extrabold block text-[11px]">✨ Verification Code:</span>
-            <span id="auth-dev-otp-code" class="font-mono font-black text-base text-emerald-800 tracking-wider"></span>
+        <!-- SMS Delivery Status Banner -->
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs text-amber-950 space-y-1">
+          <div class="flex items-center gap-1.5 font-extrabold text-[11px] text-amber-900">
+            <span>📩</span>
+            <span>SMS OTP Sent to Your Mobile Number</span>
           </div>
-          <button
-            type="button"
-            id="auth-dev-otp-autofill"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] px-3 py-1.5 rounded-xl shadow-sm cursor-pointer"
-          >
-            Auto-Fill OTP
-          </button>
+          <p class="text-[11px] text-slate-600 leading-relaxed font-medium">
+            Please check your incoming SMS messages. Enter the 6-digit verification code below.
+          </p>
         </div>
 
         <div class="space-y-2">
@@ -155,14 +151,22 @@
           <span>&rarr;</span>
         </button>
 
-        <div class="text-center pt-1">
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
           <button
             type="button"
             id="auth-resend-otp-btn"
             class="text-xs font-bold text-slate-500 hover:text-amber-800 transition cursor-pointer"
           >
-            Didn't receive code? Resend OTP
+            Didn't receive SMS? Resend
           </button>
+          <a
+            id="auth-whatsapp-help-btn"
+            href="https://wa.me/919896374239?text=Hi%20Teepul!%20I%20am%20verifying%20my%20mobile%20number."
+            target="_blank"
+            class="text-xs font-extrabold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 transition"
+          >
+            <span>💬 WhatsApp Help</span>
+          </a>
         </div>
       </div>
 
@@ -191,9 +195,7 @@
     const step1Error = document.getElementById('auth-step-1-error');
     const step2Error = document.getElementById('auth-step-2-error');
     const displayPhone = document.getElementById('auth-display-phone');
-    const devOtpPill = document.getElementById('auth-dev-otp-pill');
-    const devOtpCode = document.getElementById('auth-dev-otp-code');
-    const autoFillBtn = document.getElementById('auth-dev-otp-autofill');
+    const whatsappHelpBtn = document.getElementById('auth-whatsapp-help-btn');
 
     function openModal(callback) {
       pendingCallback = callback;
@@ -216,7 +218,6 @@
       }
       if (step1Error) step1Error.classList.add('hidden');
       if (step2Error) step2Error.classList.add('hidden');
-      if (devOtpPill) devOtpPill.classList.add('hidden');
       if (otpInput) otpInput.value = '';
 
       // Pre-fill name if stored
@@ -295,14 +296,11 @@
         currentName = rawName;
         if (displayPhone) displayPhone.innerText = currentPhone;
 
-        // Show dev OTP helper
-        if (data.otp && devOtpPill && devOtpCode) {
-          devOtpCode.innerText = data.otp;
-          devOtpPill.classList.remove('hidden');
-          autoFillBtn.onclick = () => {
-            if (otpInput) otpInput.value = data.otp;
-            verifyOtpBtn?.click();
-          };
+        if (whatsappHelpBtn) {
+          whatsappHelpBtn.setAttribute(
+            'href',
+            `https://wa.me/919896374239?text=${encodeURIComponent('Hi Teepul! I am verifying my mobile number ' + currentPhone + '. Please send my order OTP.')}`
+          );
         }
 
         step1?.classList.add('hidden');

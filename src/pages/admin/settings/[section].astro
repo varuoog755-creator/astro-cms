@@ -12,6 +12,7 @@ const settingsMap = Object.fromEntries(settingsList.map((s) => [s.key, s.value])
 
 const sections = [
   { id: 'general', label: 'General' },
+  { id: 'sms', label: '📱 SMS & OTP' },
   { id: 'reading', label: 'Reading' },
   { id: 'writing', label: 'Writing' },
   { id: 'discussion', label: 'Discussion' },
@@ -55,6 +56,95 @@ const sections = [
             <input type="email" name="admin_email" value={settingsMap['admin_email'] || ''} class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2" />
           </div>
         </>
+      )}
+
+      {section === 'sms' && (
+        <div class="space-y-6">
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs space-y-2">
+            <h4 class="font-extrabold text-amber-950 text-sm flex items-center gap-1.5">
+              <span>🇮🇳</span> Real Indian SMS OTP Gateway Integration
+            </h4>
+            <p class="text-slate-600 leading-relaxed">
+              To deliver real SMS OTP codes to customer mobile numbers in India, configure your preferred SMS provider API key below. <strong>Fast2SMS</strong> is recommended for India because its pre-approved OTP route delivers instantly without requiring manual DLT registration.
+            </p>
+          </div>
+
+          <!-- Fast2SMS Configuration -->
+          <div class="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900 uppercase tracking-wider">Fast2SMS (Recommended for India)</span>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">Instant OTP Route</span>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Fast2SMS API Authorization Key</label>
+              <input
+                type="password"
+                name="fast2sms_api_key"
+                value={settingsMap['fast2sms_api_key'] || ''}
+                placeholder="Paste Fast2SMS API Key from fast2sms.com/dev/bulkV2"
+                class="w-full text-sm font-mono border border-gray-300 rounded-lg px-3 py-2 bg-white"
+              />
+              <p class="text-[10px] text-slate-500 mt-1">Free ₹50 test credits available at <a href="https://www.fast2sms.com" target="_blank" class="text-blue-600 underline">fast2sms.com</a></p>
+            </div>
+          </div>
+
+          <!-- 2Factor.in Configuration -->
+          <div class="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900 uppercase tracking-wider">2Factor.in Gateway</span>
+              <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">Indian SMS</span>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">2Factor API Key</label>
+              <input
+                type="password"
+                name="twofactor_api_key"
+                value={settingsMap['twofactor_api_key'] || ''}
+                placeholder="2Factor.in API Key"
+                class="w-full text-sm font-mono border border-gray-300 rounded-lg px-3 py-2 bg-white"
+              />
+            </div>
+          </div>
+
+          <!-- Twilio Configuration -->
+          <div class="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900 uppercase tracking-wider">Twilio SMS (Global)</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Account SID</label>
+                <input
+                  type="text"
+                  name="twilio_account_sid"
+                  value={settingsMap['twilio_account_sid'] || ''}
+                  placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxx"
+                  class="w-full text-sm font-mono border border-gray-300 rounded-lg px-3 py-2 bg-white"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Auth Token</label>
+                <input
+                  type="password"
+                  name="twilio_auth_token"
+                  value={settingsMap['twilio_auth_token'] || ''}
+                  placeholder="Twilio Auth Token"
+                  class="w-full text-sm font-mono border border-gray-300 rounded-lg px-3 py-2 bg-white"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">From Phone Number</label>
+              <input
+                type="text"
+                name="twilio_from_phone"
+                value={settingsMap['twilio_from_phone'] || ''}
+                placeholder="+1234567890"
+                class="w-full text-sm font-mono border border-gray-300 rounded-lg px-3 py-2 bg-white"
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {section === 'reading' && (
