@@ -181,15 +181,16 @@ const customerReviews = [
         <div
           id="product-gallery-viewport"
           class="relative aspect-square w-full rounded-2xl overflow-hidden shadow-sm bg-slate-200 group touch-pan-y cursor-grab active:cursor-grabbing"
+          style="aspect-ratio: 1 / 1; width: 100%; height: auto; max-width: 100%;"
         >
           <!-- Sliding Image Track -->
           <div
             id="product-slider-track"
             class="flex h-full w-full transition-transform duration-300 ease-out will-change-transform"
-            style="transform: translateX(0%);"
+            style="transform: translateX(0%); aspect-ratio: 1 / 1; width: 100%; height: 100%;"
           >
             {product.images.map((img, idx) => (
-              <div class="w-full h-full flex-shrink-0 relative">
+              <div class="w-full h-full flex-shrink-0 relative flex items-center justify-center bg-slate-100" style="aspect-ratio: 1 / 1; width: 100%; height: 100%;">
                 <img
                   src={img}
                   alt={`${product.name} - Official View ${idx + 1}`}
@@ -200,6 +201,7 @@ const customerReviews = [
                   width="700"
                   height="700"
                   draggable="false"
+                  style="aspect-ratio: 1 / 1; width: 100%; height: 100%; object-fit: cover;"
                 />
               </div>
             ))}
@@ -367,10 +369,10 @@ const customerReviews = [
                     data-stock={sz.stock ?? 50}
                     data-in-stock={!isOutOfStock}
                     disabled={isOutOfStock}
-                    class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] sm:min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap flex items-center gap-1.5 ${isOutOfStock ? 'opacity-40 border-slate-200 bg-slate-100 line-through cursor-not-allowed text-slate-400' : (idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md cursor-pointer' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800 cursor-pointer')}`}
+                    class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] sm:min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${isOutOfStock ? 'disabled-size' : (idx === 0 ? 'active-size' : '')}`}
                   >
-                    <span>{sz.name}</span>
-                    <span class={`size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md ${isOutOfStock ? 'bg-slate-200 text-slate-500' : (idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700')}`}>
+                    <span class="size-title">{sz.name}</span>
+                    <span class="size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md">
                       {isOutOfStock ? 'Out of Stock' : `${product.currency}${sz.price.toLocaleString('en-IN')}`}
                     </span>
                   </button>
@@ -715,12 +717,12 @@ const customerReviews = [
   <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, productImages: product.images || [] }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
-      let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || '';
+      let selectedSize = document.querySelector('.size-btn.active-size')?.getAttribute('data-size') || '';
       let selectedPack = 'Pack of 2';
       let packMultiplier = 1;
       let quantity = 1;
-      let baseSizePrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-price') || document.getElementById('unit-price')?.innerText?.replace(/,/g, '') || '0');
-      let baseSizeOrigPrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-original-price') || '0');
+      let baseSizePrice = parseFloat(document.querySelector('.size-btn.active-size')?.getAttribute('data-price') || document.getElementById('unit-price')?.innerText?.replace(/,/g, '') || '0');
+      let baseSizeOrigPrice = parseFloat(document.querySelector('.size-btn.active-size')?.getAttribute('data-original-price') || '0');
       let unitPrice = baseSizePrice;
       let currentSlideIndex = 0;
       const totalSlides = Array.isArray(productImages) ? productImages.length : 1;
@@ -957,20 +959,9 @@ const customerReviews = [
           }
 
           document.querySelectorAll('.size-btn').forEach((b) => {
-            b.classList.remove('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-md');
-            b.classList.add('border-slate-200', 'text-slate-800');
-            const priceBadge = b.querySelector('.size-badge');
-            if (priceBadge) {
-              priceBadge.className = 'size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700';
-            }
+            b.classList.remove('active-size');
           });
-
-          btn.classList.remove('border-slate-200', 'text-slate-800');
-          btn.classList.add('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-md');
-          const activeBadge = btn.querySelector('.size-badge');
-          if (activeBadge) {
-            activeBadge.className = 'size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md bg-white/20 text-white';
-          }
+          btn.classList.add('active-size');
         });
       });
 
@@ -1092,4 +1083,64 @@ const customerReviews = [
       </button>
     </div>
   </div>
+
+  <style is:inline>
+    /* Strict 1:1 Square Aspect Ratio for Mobile & Desktop Product Images */
+    #product-gallery-viewport {
+      aspect-ratio: 1 / 1 !important;
+      width: 100% !important;
+      max-height: 100vw !important;
+    }
+    #product-gallery-viewport img {
+      aspect-ratio: 1 / 1 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+
+    /* Size Selector High-Contrast Clean Styles */
+    .size-btn {
+      background-color: #ffffff !important;
+      color: #0f172a !important; /* slate-900 */
+      border-color: #cbd5e1 !important; /* slate-300 */
+      transition: all 0.2s ease !important;
+    }
+    .size-btn .size-title {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    .size-btn .size-badge {
+      background-color: #f1f5f9 !important;
+      color: #334155 !important;
+    }
+
+    /* Active / Selected Size State - Maximum Visual Clarity (No white-on-white) */
+    .size-btn.active-size {
+      background-color: #78350f !important; /* Rich Dark Amber */
+      color: #ffffff !important;
+      border-color: #78350f !important;
+      box-shadow: 0 4px 14px -2px rgba(120, 53, 15, 0.4) !important;
+    }
+    .size-btn.active-size .size-title {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+    .size-btn.active-size .size-badge {
+      background-color: #92400e !important; /* Amber 800 badge */
+      color: #ffffff !important;
+    }
+
+    /* Disabled / Out of Stock Size */
+    .size-btn.disabled-size {
+      opacity: 0.45 !important;
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      cursor: not-allowed !important;
+      text-decoration: line-through !important;
+    }
+    .size-btn.disabled-size .size-title,
+    .size-btn.disabled-size .size-badge {
+      color: #94a3b8 !important;
+    }
+  </style>
 </PublicLayout>
