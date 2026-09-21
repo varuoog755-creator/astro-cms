@@ -21,6 +21,8 @@ if (!isMasterAdmin) {
   return Astro.redirect('/admin/login');
 }
 
+Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+
 const navItems = [
   { id: 'orders', label: '🛍️ Orders & EKart Courier', icon: '🛍️', href: '/admin/orders' },
   { id: 'users', label: '👥 Customers & Users', icon: '👥', href: '/admin/users' },

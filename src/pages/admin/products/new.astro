@@ -98,9 +98,23 @@ if (!productSizes.length) {
         </h1>
         <p class="text-sm text-slate-500 mt-1">List new door curtains, window drapes, lights, and home decor items.</p>
       </div>
-      <a href="/admin/products" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl transition">
-        &larr; Back to Products
-      </a>
+      <div class="flex items-center gap-2">
+        {product && (
+          <button
+            type="button"
+            id="top-delete-product-btn"
+            data-id={product.id}
+            data-slug={product.slug}
+            data-name={product.name}
+            class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-xs"
+          >
+            <span>🗑️</span> Delete Product
+          </button>
+        )}
+        <a href="/admin/products" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl transition">
+          &larr; Back to Products
+        </a>
+      </div>
     </div>
 
     {error && (
@@ -535,40 +549,47 @@ if (!productSizes.length) {
         syncSizes();
       });
 
+      async function executeDelete(btn) {
+        const id = btn.getAttribute('data-id');
+        const slug = btn.getAttribute('data-slug');
+        const name = btn.getAttribute('data-name') || 'this product';
+
+        if (!confirm(`Are you sure you want to delete "${name}"?\n\nThis will permanently remove the product listing from the store catalog.`)) {
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> Deleting...';
+
+        try {
+          const res = await fetch('/api/admin/products/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, slug }),
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            window.location.href = '/admin/products?deleted=true';
+          } else {
+            alert('Error deleting product: ' + (data.error || 'Failed to delete'));
+            btn.disabled = false;
+            btn.innerHTML = '<span>🗑️</span> Delete Product Listing';
+          }
+        } catch (e) {
+          alert('Network error while deleting product.');
+          btn.disabled = false;
+          btn.innerHTML = '<span>🗑️</span> Delete Product Listing';
+        }
+      }
+
       const deleteProductBtn = document.getElementById('delete-product-btn');
       if (deleteProductBtn) {
-        deleteProductBtn.addEventListener('click', async () => {
-          const id = deleteProductBtn.getAttribute('data-id');
-          const slug = deleteProductBtn.getAttribute('data-slug');
-          const name = deleteProductBtn.getAttribute('data-name') || 'this product';
+        deleteProductBtn.addEventListener('click', () => executeDelete(deleteProductBtn));
+      }
 
-          if (!confirm(`Are you sure you want to delete "${name}"?\n\nThis will permanently remove the product listing from the store catalog.`)) {
-            return;
-          }
-
-          deleteProductBtn.disabled = true;
-          deleteProductBtn.innerHTML = '<span>⏳</span> Deleting...';
-
-          try {
-            const res = await fetch('/api/admin/products/delete', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id, slug }),
-            });
-            const data = await res.json();
-            if (res.ok && data.success) {
-              window.location.href = '/admin/products?deleted=true';
-            } else {
-              alert('Error deleting product: ' + (data.error || 'Failed to delete'));
-              deleteProductBtn.disabled = false;
-              deleteProductBtn.innerHTML = '<span>🗑️</span> Delete Product Listing';
-            }
-          } catch (e) {
-            alert('Network error while deleting product.');
-            deleteProductBtn.disabled = false;
-            deleteProductBtn.innerHTML = '<span>🗑️</span> Delete Product Listing';
-          }
-        });
+      const topDeleteBtn = document.getElementById('top-delete-product-btn');
+      if (topDeleteBtn) {
+        topDeleteBtn.addEventListener('click', () => executeDelete(topDeleteBtn));
       }
 
       syncSizes();
