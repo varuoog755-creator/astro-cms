@@ -1,4 +1,5 @@
 import prisma from './db';
+import { getOrSetCache } from './cache';
 
 export interface IntegrationSettings {
   // Razorpay
@@ -97,62 +98,64 @@ export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
 };
 
 export async function getIntegrationSettings(): Promise<IntegrationSettings> {
-  try {
-    const settingsRows = await prisma.setting.findMany({
-      where: {
-        group: { in: ['integrations', 'payments', 'seo', 'analytics', 'logistics', 'sms'] },
-      },
-    });
+  return getOrSetCache('integration_settings', 120, async () => {
+    try {
+      const settingsRows = await prisma.setting.findMany({
+        where: {
+          group: { in: ['integrations', 'payments', 'seo', 'analytics', 'logistics', 'sms'] },
+        },
+      });
 
-    const settingsMap: Record<string, string> = {};
-    for (const row of settingsRows) {
-      settingsMap[row.key] = row.value;
+      const settingsMap: Record<string, string> = {};
+      for (const row of settingsRows) {
+        settingsMap[row.key] = row.value;
+      }
+
+      return {
+        razorpay_key_id: settingsMap.razorpay_key_id ?? DEFAULT_INTEGRATION_SETTINGS.razorpay_key_id,
+        razorpay_key_secret: settingsMap.razorpay_key_secret ?? DEFAULT_INTEGRATION_SETTINGS.razorpay_key_secret,
+        razorpay_enabled: settingsMap.razorpay_enabled !== undefined ? settingsMap.razorpay_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.razorpay_enabled,
+
+        paytm_mid: settingsMap.paytm_mid ?? DEFAULT_INTEGRATION_SETTINGS.paytm_mid,
+        paytm_mkey: settingsMap.paytm_mkey ?? DEFAULT_INTEGRATION_SETTINGS.paytm_mkey,
+        paytm_vpa: settingsMap.paytm_vpa ?? DEFAULT_INTEGRATION_SETTINGS.paytm_vpa,
+        paytm_enabled: settingsMap.paytm_enabled !== undefined ? settingsMap.paytm_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.paytm_enabled,
+
+        cod_enabled: settingsMap.cod_enabled !== undefined ? settingsMap.cod_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.cod_enabled,
+        whatsapp_number: settingsMap.whatsapp_number ?? DEFAULT_INTEGRATION_SETTINGS.whatsapp_number,
+        whatsapp_enabled: settingsMap.whatsapp_enabled !== undefined ? settingsMap.whatsapp_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_enabled,
+        whatsapp_floating_widget: settingsMap.whatsapp_floating_widget !== undefined ? settingsMap.whatsapp_floating_widget === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_floating_widget,
+        whatsapp_buy_button: settingsMap.whatsapp_buy_button !== undefined ? settingsMap.whatsapp_buy_button === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_buy_button,
+        whatsapp_default_message: settingsMap.whatsapp_default_message ?? DEFAULT_INTEGRATION_SETTINGS.whatsapp_default_message,
+
+        ekart_enabled: settingsMap.ekart_enabled !== undefined ? settingsMap.ekart_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.ekart_enabled,
+        ekart_merchant_id: settingsMap.ekart_merchant_id ?? DEFAULT_INTEGRATION_SETTINGS.ekart_merchant_id,
+        ekart_api_key: settingsMap.ekart_api_key ?? DEFAULT_INTEGRATION_SETTINGS.ekart_api_key,
+        ekart_pickup_pincode: settingsMap.ekart_pickup_pincode ?? DEFAULT_INTEGRATION_SETTINGS.ekart_pickup_pincode,
+
+        firebase_api_key: settingsMap.firebase_api_key ?? DEFAULT_INTEGRATION_SETTINGS.firebase_api_key,
+        firebase_auth_domain: settingsMap.firebase_auth_domain ?? DEFAULT_INTEGRATION_SETTINGS.firebase_auth_domain,
+        firebase_project_id: settingsMap.firebase_project_id ?? DEFAULT_INTEGRATION_SETTINGS.firebase_project_id,
+
+        gsc_verification_tag: settingsMap.gsc_verification_tag ?? DEFAULT_INTEGRATION_SETTINGS.gsc_verification_tag,
+        gsc_enabled: settingsMap.gsc_enabled !== undefined ? settingsMap.gsc_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.gsc_enabled,
+
+        gmc_enabled: settingsMap.gmc_enabled !== undefined ? settingsMap.gmc_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.gmc_enabled,
+        gmc_brand_name: settingsMap.gmc_brand_name ?? DEFAULT_INTEGRATION_SETTINGS.gmc_brand_name,
+        gmc_currency: settingsMap.gmc_currency ?? DEFAULT_INTEGRATION_SETTINGS.gmc_currency,
+
+        ga_measurement_id: settingsMap.ga_measurement_id ?? DEFAULT_INTEGRATION_SETTINGS.ga_measurement_id,
+        ga_enabled: settingsMap.ga_enabled !== undefined ? settingsMap.ga_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.ga_enabled,
+
+        meta_pixel_id: settingsMap.meta_pixel_id ?? DEFAULT_INTEGRATION_SETTINGS.meta_pixel_id,
+        meta_pixel_enabled: settingsMap.meta_pixel_enabled !== undefined ? settingsMap.meta_pixel_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.meta_pixel_enabled,
+
+        sms_otp_dispatch_enabled: settingsMap.sms_otp_dispatch_enabled !== undefined ? settingsMap.sms_otp_dispatch_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.sms_otp_dispatch_enabled,
+        fast2sms_api_key: settingsMap.fast2sms_api_key ?? DEFAULT_INTEGRATION_SETTINGS.fast2sms_api_key,
+      };
+    } catch (error) {
+      console.error('Failed to load integration settings:', error);
+      return DEFAULT_INTEGRATION_SETTINGS;
     }
-
-    return {
-      razorpay_key_id: settingsMap.razorpay_key_id ?? DEFAULT_INTEGRATION_SETTINGS.razorpay_key_id,
-      razorpay_key_secret: settingsMap.razorpay_key_secret ?? DEFAULT_INTEGRATION_SETTINGS.razorpay_key_secret,
-      razorpay_enabled: settingsMap.razorpay_enabled !== undefined ? settingsMap.razorpay_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.razorpay_enabled,
-
-      paytm_mid: settingsMap.paytm_mid ?? DEFAULT_INTEGRATION_SETTINGS.paytm_mid,
-      paytm_mkey: settingsMap.paytm_mkey ?? DEFAULT_INTEGRATION_SETTINGS.paytm_mkey,
-      paytm_vpa: settingsMap.paytm_vpa ?? DEFAULT_INTEGRATION_SETTINGS.paytm_vpa,
-      paytm_enabled: settingsMap.paytm_enabled !== undefined ? settingsMap.paytm_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.paytm_enabled,
-
-      cod_enabled: settingsMap.cod_enabled !== undefined ? settingsMap.cod_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.cod_enabled,
-      whatsapp_number: settingsMap.whatsapp_number ?? DEFAULT_INTEGRATION_SETTINGS.whatsapp_number,
-      whatsapp_enabled: settingsMap.whatsapp_enabled !== undefined ? settingsMap.whatsapp_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_enabled,
-      whatsapp_floating_widget: settingsMap.whatsapp_floating_widget !== undefined ? settingsMap.whatsapp_floating_widget === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_floating_widget,
-      whatsapp_buy_button: settingsMap.whatsapp_buy_button !== undefined ? settingsMap.whatsapp_buy_button === 'true' : DEFAULT_INTEGRATION_SETTINGS.whatsapp_buy_button,
-      whatsapp_default_message: settingsMap.whatsapp_default_message ?? DEFAULT_INTEGRATION_SETTINGS.whatsapp_default_message,
-
-      ekart_enabled: settingsMap.ekart_enabled !== undefined ? settingsMap.ekart_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.ekart_enabled,
-      ekart_merchant_id: settingsMap.ekart_merchant_id ?? DEFAULT_INTEGRATION_SETTINGS.ekart_merchant_id,
-      ekart_api_key: settingsMap.ekart_api_key ?? DEFAULT_INTEGRATION_SETTINGS.ekart_api_key,
-      ekart_pickup_pincode: settingsMap.ekart_pickup_pincode ?? DEFAULT_INTEGRATION_SETTINGS.ekart_pickup_pincode,
-
-      firebase_api_key: settingsMap.firebase_api_key ?? DEFAULT_INTEGRATION_SETTINGS.firebase_api_key,
-      firebase_auth_domain: settingsMap.firebase_auth_domain ?? DEFAULT_INTEGRATION_SETTINGS.firebase_auth_domain,
-      firebase_project_id: settingsMap.firebase_project_id ?? DEFAULT_INTEGRATION_SETTINGS.firebase_project_id,
-
-      gsc_verification_tag: settingsMap.gsc_verification_tag ?? DEFAULT_INTEGRATION_SETTINGS.gsc_verification_tag,
-      gsc_enabled: settingsMap.gsc_enabled !== undefined ? settingsMap.gsc_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.gsc_enabled,
-
-      gmc_enabled: settingsMap.gmc_enabled !== undefined ? settingsMap.gmc_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.gmc_enabled,
-      gmc_brand_name: settingsMap.gmc_brand_name ?? DEFAULT_INTEGRATION_SETTINGS.gmc_brand_name,
-      gmc_currency: settingsMap.gmc_currency ?? DEFAULT_INTEGRATION_SETTINGS.gmc_currency,
-
-      ga_measurement_id: settingsMap.ga_measurement_id ?? DEFAULT_INTEGRATION_SETTINGS.ga_measurement_id,
-      ga_enabled: settingsMap.ga_enabled !== undefined ? settingsMap.ga_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.ga_enabled,
-
-      meta_pixel_id: settingsMap.meta_pixel_id ?? DEFAULT_INTEGRATION_SETTINGS.meta_pixel_id,
-      meta_pixel_enabled: settingsMap.meta_pixel_enabled !== undefined ? settingsMap.meta_pixel_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.meta_pixel_enabled,
-
-      sms_otp_dispatch_enabled: settingsMap.sms_otp_dispatch_enabled !== undefined ? settingsMap.sms_otp_dispatch_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.sms_otp_dispatch_enabled,
-      fast2sms_api_key: settingsMap.fast2sms_api_key ?? DEFAULT_INTEGRATION_SETTINGS.fast2sms_api_key,
-    };
-  } catch (error) {
-    console.error('Failed to load integration settings:', error);
-    return DEFAULT_INTEGRATION_SETTINGS;
-  }
+  });
 }

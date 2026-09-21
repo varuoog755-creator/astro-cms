@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import prisma from '../../../../lib/db';
 import { logAudit } from '../../../../lib/utilities/audit';
 import { hasPermission, PERMISSIONS } from '../../../../lib/permissions/rbac';
+import { invalidateCache } from '../../../../lib/cache';
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
   if (!locals.user) {
@@ -82,7 +83,10 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
       console.error('Failed to update deleted_product_ids setting:', settingErr);
     }
 
-    // 3. Log Audit
+    // 3. Invalidate storefront memory cache
+    invalidateCache('storefront_products');
+
+    // 4. Log Audit
     await logAudit({
       userId: locals.user.userId,
       action: 'product.delete',

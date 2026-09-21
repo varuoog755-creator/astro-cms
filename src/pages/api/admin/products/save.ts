@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import prisma from '../../../../lib/db';
 import { hasPermission, PERMISSIONS } from '../../../../lib/permissions/rbac';
 import { logAudit } from '../../../../lib/utilities/audit';
+import { invalidateCache } from '../../../../lib/cache';
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
   if (!locals.user) {
@@ -252,5 +253,6 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     });
   }
 
+  invalidateCache('storefront_products');
   return redirect('/admin/products?saved=true');
 };

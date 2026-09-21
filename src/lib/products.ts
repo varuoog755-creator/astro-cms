@@ -1,4 +1,5 @@
 import prisma from './db/index.ts';
+import { getOrSetCache } from './cache';
 
 export interface ProductSize {
   name: string;
@@ -459,97 +460,99 @@ export const PRODUCTS_CATALOG: Product[] = [
 ];
 
 export async function getStorefrontProducts(): Promise<Product[]> {
-  try {
-    let mappedDb: Product[] = [];
+  return getOrSetCache('storefront_products', 60, async () => {
     try {
-      const dbProducts = await prisma.product.findMany({
-        orderBy: { createdAt: 'desc' },
-      });
+      let mappedDb: Product[] = [];
+      try {
+        const dbProducts = await prisma.product.findMany({
+          orderBy: { createdAt: 'desc' },
+        });
 
-      if (dbProducts && dbProducts.length > 0) {
-        mappedDb = dbProducts.map((p) => {
-          try {
-            const parseJson = (str: string) => {
-              try {
-                return JSON.parse(str || '[]');
-              } catch {
-                return [];
-              }
-            };
+        if (dbProducts && dbProducts.length > 0) {
+          mappedDb = dbProducts.map((p) => {
+            try {
+              const parseJson = (str: string) => {
+                try {
+                  return JSON.parse(str || '[]');
+                } catch {
+                  return [];
+                }
+              };
 
-            return {
-              id: p.id,
-              slug: p.slug,
-              name: p.name,
-              tagline: p.tagline || '',
-              description: p.description,
-              price: p.price,
-              originalPrice: p.originalPrice || undefined,
-              currency: p.currency || '₹',
-              category: p.category,
-              badge: p.badge || undefined,
-              rating: p.rating,
-              reviewCount: p.reviewCount,
-              inStock: p.inStock,
-              colors: parseJson(p.colorsJson),
-              sizes: parseJson(p.sizesJson),
-              fabricSpecs: {
-                gsm: p.gsm || 280,
-                material: p.material || '100% Premium Polyester',
-                fit: p.fit || 'Silver Eyelet Grommets',
-                care: p.care || 'Hand & Machine Wash Cold',
-              },
-              images: parseJson(p.imagesJson),
-              features: parseJson(p.featuresJson),
-            };
-          } catch (err) {
-            console.error('Failed to map product item:', err);
-            return null;
+              return {
+                id: p.id,
+                slug: p.slug,
+                name: p.name,
+                tagline: p.tagline || '',
+                description: p.description,
+                price: p.price,
+                originalPrice: p.originalPrice || undefined,
+                currency: p.currency || '₹',
+                category: p.category,
+                badge: p.badge || undefined,
+                rating: p.rating,
+                reviewCount: p.reviewCount,
+                inStock: p.inStock,
+                colors: parseJson(p.colorsJson),
+                sizes: parseJson(p.sizesJson),
+                fabricSpecs: {
+                  gsm: p.gsm || 280,
+                  material: p.material || '100% Premium Polyester',
+                  fit: p.fit || 'Silver Eyelet Grommets',
+                  care: p.care || 'Hand & Machine Wash Cold',
+                },
+                images: parseJson(p.imagesJson),
+                features: parseJson(p.featuresJson),
+              };
+            } catch (err) {
+              console.error('Failed to map product item:', err);
+              return null;
+            }
+          }).filter(Boolean) as Product[];
+        }
+      } catch (dbErr) {
+        console.error('Failed to query DB products:', dbErr);
+      }
+
+      const catalog = PRODUCTS_CATALOG.filter(Boolean);
+      const combinedMap = new Map<string, Product>();
+
+      // Add catalog items first so base products are present
+      for (const p of catalog) {
+        combinedMap.set(p.id, p);
+      }
+
+      // Overwrite with DB items so admin edits are live on storefront!
+      for (const p of mappedDb) {
+        // Remove any catalog entry that might share the same slug if id differs
+        for (const [catId, catItem] of combinedMap.entries()) {
+          if (catItem.slug === p.slug && catId !== p.id) {
+            combinedMap.delete(catId);
           }
-        }).filter(Boolean) as Product[];
-      }
-    } catch (dbErr) {
-      console.error('Failed to query DB products:', dbErr);
-    }
-
-    const catalog = PRODUCTS_CATALOG.filter(Boolean);
-    const combinedMap = new Map<string, Product>();
-
-    // Add catalog items first so base products are present
-    for (const p of catalog) {
-      combinedMap.set(p.id, p);
-    }
-
-    // Overwrite with DB items so admin edits are live on storefront!
-    for (const p of mappedDb) {
-      // Remove any catalog entry that might share the same slug if id differs
-      for (const [catId, catItem] of combinedMap.entries()) {
-        if (catItem.slug === p.slug && catId !== p.id) {
-          combinedMap.delete(catId);
         }
+        combinedMap.set(p.id, p);
       }
-      combinedMap.set(p.id, p);
-    }
 
-    // Check for deleted product IDs/slugs recorded in settings
-    let deletedSet = new Set<string>();
-    try {
-      const deletedSetting = await prisma.setting.findUnique({
-        where: { key: 'deleted_product_ids' },
-      });
-      if (deletedSetting?.value) {
-        const parsed = JSON.parse(deletedSetting.value);
-        if (Array.isArray(parsed)) {
-          deletedSet = new Set(parsed.map(String));
+      // Check for deleted product IDs/slugs recorded in settings
+      let deletedSet = new Set<string>();
+      try {
+        const deletedSetting = await prisma.setting.findUnique({
+          where: { key: 'deleted_product_ids' },
+        });
+        if (deletedSetting?.value) {
+          const parsed = JSON.parse(deletedSetting.value);
+          if (Array.isArray(parsed)) {
+            deletedSet = new Set(parsed.map(String));
+          }
         }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
 
-    return Array.from(combinedMap.values()).filter((p) => !deletedSet.has(p.id) && !deletedSet.has(p.slug));
-  } catch (error) {
-    console.error('Failed to load DB products:', error);
-    return PRODUCTS_CATALOG.filter(Boolean);
-  }
+      return Array.from(combinedMap.values()).filter((p) => !deletedSet.has(p.id) && !deletedSet.has(p.slug));
+    } catch (error) {
+      console.error('Failed to load DB products:', error);
+      return PRODUCTS_CATALOG.filter(Boolean);
+    }
+  });
 }

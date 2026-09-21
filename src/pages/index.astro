@@ -2,20 +2,25 @@
 import PublicLayout from '../layouts/PublicLayout.astro';
 import prisma from '../lib/db';
 import { getStorefrontProducts, PRODUCTS_CATALOG } from '../lib/products';
+import { getOrSetCache } from '../lib/cache';
 
-let posts: any[] = [];
-try {
-  posts = await prisma.post.findMany({
-    where: { status: 'published' },
-    orderBy: { publishedAt: 'desc' },
-    take: 3,
-    include: { author: true, categories: { include: { category: true } } },
-  });
-} catch (error) {
-  console.error('Failed to load posts for homepage:', error);
-}
-
-const allProducts = await getStorefrontProducts();
+// Parallel cached loading for ultra-fast homepage TTFB
+const [posts, allProducts] = await Promise.all([
+  getOrSetCache('homepage_posts', 120, async () => {
+    try {
+      return await prisma.post.findMany({
+        where: { status: 'published' },
+        orderBy: { publishedAt: 'desc' },
+        take: 3,
+        include: { author: true, categories: { include: { category: true } } },
+      });
+    } catch (error) {
+      console.error('Failed to load posts for homepage:', error);
+      return [];
+    }
+  }),
+  getStorefrontProducts(),
+]);
 
 // Top Sellers: Highest rated items (4.7+)
 const topSellers = [...allProducts].sort((a, b) => b.rating - a.rating).slice(0, 4);

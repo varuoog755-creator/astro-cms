@@ -1,4 +1,5 @@
 import prisma from './db';
+import { getOrSetCache } from './cache';
 
 export interface BlogPost {
   id: string;
@@ -675,57 +676,59 @@ export const BLOGS_CATALOG: BlogPost[] = [
 ];
 
 export async function getStorefrontBlogs(): Promise<BlogPost[]> {
-  try {
-    const dbPosts = await prisma.post.findMany({
-      where: { status: 'published' },
-      orderBy: { publishedAt: 'desc' },
-      include: {
-        author: true,
-        categories: { include: { category: true } },
-        tags: { include: { tag: true } }
-      }
-    });
+  return getOrSetCache('storefront_blogs', 120, async () => {
+    try {
+      const dbPosts = await prisma.post.findMany({
+        where: { status: 'published' },
+        orderBy: { publishedAt: 'desc' },
+        include: {
+          author: true,
+          categories: { include: { category: true } },
+          tags: { include: { tag: true } }
+        }
+      });
 
-    if (dbPosts && dbPosts.length > 0) {
-      const mappedDb: BlogPost[] = dbPosts.map((p) => ({
-        id: p.id,
-        title: p.title,
-        slug: p.slug,
-        excerpt: p.excerpt || '',
-        content: p.content,
-        publishedAt: p.publishedAt ? p.publishedAt.toISOString() : p.createdAt.toISOString(),
-        author: {
-          displayName: p.author?.displayName || 'Teepul Editor',
-          bio: p.author?.bio || undefined
-        },
-        categories: p.categories.map((c) => ({
-          category: {
-            name: c.category.name,
-            slug: c.category.slug
-          }
-        })),
-        tags: p.tags.map((t) => ({
-          tag: {
-            name: t.tag.name,
-            slug: t.tag.slug
-          }
-        }))
-      }));
+      if (dbPosts && dbPosts.length > 0) {
+        const mappedDb: BlogPost[] = dbPosts.map((p) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          excerpt: p.excerpt || '',
+          content: p.content,
+          publishedAt: p.publishedAt ? p.publishedAt.toISOString() : p.createdAt.toISOString(),
+          author: {
+            displayName: p.author?.displayName || 'Teepul Editor',
+            bio: p.author?.bio || undefined
+          },
+          categories: p.categories.map((c) => ({
+            category: {
+              name: c.category.name,
+              slug: c.category.slug
+            }
+          })),
+          tags: p.tags.map((t) => ({
+            tag: {
+              name: t.tag.name,
+              slug: t.tag.slug
+            }
+          }))
+        }));
 
-      const combinedMap = new Map<string, BlogPost>();
-      for (const b of BLOGS_CATALOG) {
-        combinedMap.set(b.slug, b);
-      }
-      for (const b of mappedDb) {
-        if (!combinedMap.has(b.slug)) {
+        const combinedMap = new Map<string, BlogPost>();
+        for (const b of BLOGS_CATALOG) {
           combinedMap.set(b.slug, b);
         }
+        for (const b of mappedDb) {
+          if (!combinedMap.has(b.slug)) {
+            combinedMap.set(b.slug, b);
+          }
+        }
+        return Array.from(combinedMap.values());
       }
-      return Array.from(combinedMap.values());
+    } catch (err) {
+      console.error('Failed to query DB blogs, using catalog fallback:', err);
     }
-  } catch (err) {
-    console.error('Failed to query DB blogs, using catalog fallback:', err);
-  }
 
-  return BLOGS_CATALOG;
+    return BLOGS_CATALOG;
+  });
 }

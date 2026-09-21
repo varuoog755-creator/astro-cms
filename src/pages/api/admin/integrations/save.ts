@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import prisma from '../../../../lib/db';
 import { hasPermission, PERMISSIONS } from '../../../../lib/permissions/rbac';
 import { logAudit } from '../../../../lib/utilities/audit';
+import { invalidateCache } from '../../../../lib/cache';
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
   if (!locals.user || !hasPermission(locals.user, PERMISSIONS.SETTINGS_MANAGE)) {
@@ -88,5 +89,6 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     metadata: { action: 'Updated Payments, EKart & Marketing Integration Keys' },
   });
 
+  invalidateCache('integration_settings');
   return redirect('/admin/integrations?saved=true');
 };
