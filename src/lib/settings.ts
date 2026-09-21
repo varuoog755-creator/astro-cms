@@ -47,6 +47,10 @@ export interface IntegrationSettings {
   // Meta Pixel
   meta_pixel_id: string;
   meta_pixel_enabled: boolean;
+
+  // SMS OTP & Lead Preservation
+  sms_otp_dispatch_enabled: boolean;
+  fast2sms_api_key: string;
 }
 
 export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
@@ -87,13 +91,16 @@ export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
 
   meta_pixel_id: '',
   meta_pixel_enabled: true,
+
+  sms_otp_dispatch_enabled: false,
+  fast2sms_api_key: 'JKqErnfVoATGhbYB0yzvlFOPxUkMHm5XtL3N8Q91Da6e7Rsj24Sg5m4oXfkYExLbjt71Dh0wWJOcreMR',
 };
 
 export async function getIntegrationSettings(): Promise<IntegrationSettings> {
   try {
     const settingsRows = await prisma.setting.findMany({
       where: {
-        group: { in: ['integrations', 'payments', 'seo', 'analytics', 'logistics'] },
+        group: { in: ['integrations', 'payments', 'seo', 'analytics', 'logistics', 'sms'] },
       },
     });
 
@@ -140,6 +147,9 @@ export async function getIntegrationSettings(): Promise<IntegrationSettings> {
 
       meta_pixel_id: settingsMap.meta_pixel_id ?? DEFAULT_INTEGRATION_SETTINGS.meta_pixel_id,
       meta_pixel_enabled: settingsMap.meta_pixel_enabled !== undefined ? settingsMap.meta_pixel_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.meta_pixel_enabled,
+
+      sms_otp_dispatch_enabled: settingsMap.sms_otp_dispatch_enabled !== undefined ? settingsMap.sms_otp_dispatch_enabled === 'true' : DEFAULT_INTEGRATION_SETTINGS.sms_otp_dispatch_enabled,
+      fast2sms_api_key: settingsMap.fast2sms_api_key ?? DEFAULT_INTEGRATION_SETTINGS.fast2sms_api_key,
     };
   } catch (error) {
     console.error('Failed to load integration settings:', error);

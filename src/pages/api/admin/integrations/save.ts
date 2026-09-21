@@ -52,13 +52,18 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     ga_enabled: 'analytics',
     meta_pixel_id: 'analytics',
     meta_pixel_enabled: 'analytics',
+
+    // SMS OTP & Customer Lead Preservation
+    sms_otp_dispatch_enabled: 'sms',
+    fast2sms_api_key: 'sms',
   };
 
   // Set boolean defaults to false if missing from unchecked checkboxes
   const checkboxKeys = [
     'razorpay_enabled', 'paytm_enabled', 'cod_enabled', 'ekart_enabled',
     'whatsapp_enabled', 'whatsapp_floating_widget', 'whatsapp_buy_button',
-    'gsc_enabled', 'gmc_enabled', 'ga_enabled', 'meta_pixel_enabled'
+    'gsc_enabled', 'gmc_enabled', 'ga_enabled', 'meta_pixel_enabled',
+    'sms_otp_dispatch_enabled'
   ];
 
   for (const key of Object.keys(keyGroups)) {

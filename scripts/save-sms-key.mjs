@@ -16,7 +16,13 @@ async function main() {
     create: { key: 'sms_gateway_provider', value: 'fast2sms', group: 'sms' },
   });
 
-  console.log('Saved setting successfully:', result.key);
+  await prisma.setting.upsert({
+    where: { key: 'sms_otp_dispatch_enabled' },
+    update: { value: 'false', group: 'sms' },
+    create: { key: 'sms_otp_dispatch_enabled', value: 'false', group: 'sms' },
+  });
+
+  console.log('Saved settings successfully: fast2sms_api_key, sms_otp_dispatch_enabled=false');
 }
 
 main()

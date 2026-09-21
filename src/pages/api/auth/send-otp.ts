@@ -47,8 +47,26 @@ export const POST: APIRoute = async ({ request }) => {
 
     const geo = await resolveGeoLocation(clientIp, request.headers);
 
-    // Dispatch real SMS OTP via Indian SMS Gateway (Fast2SMS / 2Factor / Twilio / MSG91)
-    const smsResult = await sendSmsOtp(last10, otp);
+    // Check if store owner enabled real SMS OTP dispatch in admin settings
+    let smsDispatchEnabled = false;
+    try {
+      const toggleSetting = await prisma.setting.findUnique({
+        where: { key: 'sms_otp_dispatch_enabled' },
+      });
+      if (toggleSetting && toggleSetting.value === 'true') {
+        smsDispatchEnabled = true;
+      }
+    } catch (e) {}
+
+    // Dispatch real SMS OTP only if explicitly enabled in admin panel
+    let smsResult: { success: boolean; provider: string; messageId?: string } = {
+      success: false,
+      provider: 'lead_preservation',
+    };
+
+    if (smsDispatchEnabled) {
+      smsResult = await sendSmsOtp(last10, otp);
+    }
 
     // 1. Immediately preserve customer lead in Supabase AuditLog
     await logAudit({
@@ -64,6 +82,7 @@ export const POST: APIRoute = async ({ request }) => {
         expiresAt: expiresAt,
         smsDispatched: smsResult.success,
         smsProvider: smsResult.provider,
+        leadPreservationMode: !smsDispatchEnabled,
         location: geo.locationStr,
         city: geo.city,
         state: geo.state,
@@ -121,10 +140,13 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: `OTP sent to +91 ${last10}`,
+        message: smsDispatchEnabled && smsResult.success
+          ? `OTP sent to +91 ${last10}`
+          : `Mobile number preserved. Instant verification code generated.`,
         phone: formattedPhone,
         smsDispatched: smsResult.success,
         provider: smsResult.provider,
+        instantCode: (!smsDispatchEnabled || !smsResult.success) ? otp : undefined,
       }),
       {
         status: 200,
