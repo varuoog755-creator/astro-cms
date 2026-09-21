@@ -34,35 +34,40 @@ export interface Product {
   features: string[];
 }
 
-export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice: number, baseOriginalPrice?: number): ProductSize[] {
+export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice: number = 459, baseOriginalPrice: number = 899): ProductSize[] {
+  const defaultSizes: ProductSize[] = [
+    { name: "5 Feet (Window)", price: 459, originalPrice: 899, stock: 50, inStock: true },
+    { name: "6 Feet", price: 499, originalPrice: 999, stock: 50, inStock: true },
+    { name: "7 Feet (Door)", price: 549, originalPrice: 1099, stock: 50, inStock: true },
+    { name: "9 Feet (Long Door)", price: 579, originalPrice: 1199, stock: 50, inStock: true },
+  ];
+
   if (!sizes || !Array.isArray(sizes) || sizes.length === 0) {
-    return [
-      { name: "5 Feet (Window)", price: Math.round(basePrice * 0.85), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.85) : undefined, stock: 50, inStock: true },
-      { name: "6 Feet", price: Math.round(basePrice * 0.92), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 0.92) : undefined, stock: 50, inStock: true },
-      { name: "7 Feet (Door)", price: basePrice, originalPrice: baseOriginalPrice, stock: 50, inStock: true },
-      { name: "9 Feet (Long Door)", price: Math.round(basePrice * 1.25), originalPrice: baseOriginalPrice ? Math.round(baseOriginalPrice * 1.25) : undefined, stock: 50, inStock: true },
-    ];
+    return defaultSizes;
   }
 
-  // If curtain product has standard sizes, ensure 5ft, 6ft, 7ft, 9ft have distinct proportional prices
+  // Ensure 5ft, 6ft, 7ft, 9ft have distinct psychological prices
   return sizes.map((s) => {
     if (typeof s === 'string') {
       const lower = s.toLowerCase();
-      let price = basePrice;
-      let origPrice = baseOriginalPrice;
+      let price = 459;
+      let origPrice: number | undefined = 899;
 
       if (lower.includes('5') || (lower.includes('window') && !lower.includes('door'))) {
-        price = Math.round(basePrice * 0.85);
-        origPrice = baseOriginalPrice ? Math.round(baseOriginalPrice * 0.85) : undefined;
+        price = 459;
+        origPrice = 899;
       } else if (lower.includes('6')) {
-        price = Math.round(basePrice * 0.92);
-        origPrice = baseOriginalPrice ? Math.round(baseOriginalPrice * 0.92) : undefined;
+        price = 499;
+        origPrice = 999;
       } else if (lower.includes('7') || (lower.includes('door') && !lower.includes('long') && !lower.includes('9'))) {
-        price = basePrice;
-        origPrice = baseOriginalPrice;
+        price = 549;
+        origPrice = 1099;
       } else if (lower.includes('9') || lower.includes('long')) {
-        price = Math.round(basePrice * 1.25);
-        origPrice = baseOriginalPrice ? Math.round(baseOriginalPrice * 1.25) : undefined;
+        price = 579;
+        origPrice = 1199;
+      } else {
+        price = basePrice || 459;
+        origPrice = baseOriginalPrice || 899;
       }
 
       return {
@@ -75,8 +80,8 @@ export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice
     }
     return {
       name: s.name,
-      price: typeof s.price === 'number' && !isNaN(s.price) ? s.price : basePrice,
-      originalPrice: typeof s.originalPrice === 'number' && !isNaN(s.originalPrice) ? s.originalPrice : baseOriginalPrice,
+      price: typeof s.price === 'number' && !isNaN(s.price) ? s.price : 459,
+      originalPrice: typeof s.originalPrice === 'number' && !isNaN(s.originalPrice) ? s.originalPrice : 899,
       stock: typeof s.stock === 'number' && !isNaN(s.stock) ? s.stock : 50,
       inStock: s.inStock !== false,
     };
@@ -90,8 +95,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Premium Brown Thermal Blackout Door Curtain (Pack of 2)",
     tagline: "Pack of 2 | Silver Eyelets 100% Light Blocking Thermal Insulated Curtain",
     description: "Transform your bedroom or living room with Teepul Premium Brown Thermal Blackout Curtains (Pack of 2). Features heavy-duty silver ring eyelets, 100% noise and light blocking thermal insulation, and rich solid texture. Net Quantity (N): 2.",
-    price: 301,
-    originalPrice: 699,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Top Seller",
@@ -110,8 +115,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
-    price: 450,
-    originalPrice: 810,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Top Seller",
@@ -130,8 +135,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Blue Floral Leaf Printed Curtain for Window & Door | Light Filtering Eyelet Curtain | Premium Polyester Home Decor Curtain | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Blue Floral Leaf Printed Curtain for Window & Door | Light Filtering Eyelet Curtain | Premium Polyester Home Decor Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nSize: 7Feet\nNet Quantity (N): 2\nGive your home a fresh and elegant look with this Blue Floral Leaf Printed Curtain (Pack of 2). The attractive blue base with delicate leaf detailing adds a stylish touch to living rooms, bedrooms, windows and doors. Its eyelet design makes hanging simple, while the fabric helps filter daylight and provides added privacy.\n\nProduct Highlights\n\nPack of 2 Curtains\nBlue floral leaf printed design\nLight-filtering curtain\nEyelet/grommet top\nSuitable for windows and doors\nSuitable for living room, bedroom and home décor\nAvailable in 5, 6, 7 & 9 Feet\nEasy-care fabric\n Size Information\n\nAvailable Heights:\n5 Feet | 6 Feet | 7 Feet | 9 Feet\n\nPack: 2 Curtain Panels\n\nBlue Curtain, Floral Curtain, Leaf Print Curtain, Window Curtain, Door Curtain\n\nBlue Floral Curtain, Printed Curtain, Eyelet Curtain, Polyester Curtain, Living Room Curtain, Bedroom Curtain, Home Decor Curtain, Light Filtering Curtain\n\nBlue floral curtain for window, blue curtain for bedroom, leaf print curtain for living room, printed eyelet curtain for door, blue home decor curtain",
-    price: 347,
-    originalPrice: 624,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Top Seller",
@@ -150,8 +155,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Grey Eyelet Curtain | Premium Polyester Door & Window Curtain for Bedroom, Living Room & Home Decor | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Grey Eyelet Curtain | Premium Polyester Door & Window Curtain for Bedroom, Living Room & Home Decor | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Conversational\nSize: 7Feet\nNet Quantity (N): 2\nPremium Grey Eyelet Curtain – Pack of 2\n\nGive your home a clean and sophisticated look with this Premium Grey Curtain, designed for modern bedrooms, living rooms and other indoor spaces. Made from polyester fabric, the curtain features a subtle textured finish and silver metal eyelets for a neat, contemporary appearance.\n\nThe curtain panels are suitable for compatible door and window curtain rods. Its neutral grey colour blends easily with different interior styles, making it a practical choice for everyday home décor.\n\nKey Features\nColour: Grey / Silver Grey\nMaterial: Polyester\nPattern: Solid Textured\nCurtain Type: Eyelet Curtain\nEyelet: Silver Metal Eyelets\nPack: 2 Curtain Panels\nSuitable For: Bedroom, Living Room, Door & Window\nStyle: Modern\nInstallation: Easy to hang on a compatible curtain rod\nCare: Follow the fabric care instructions\nPerfect For\n\nUse this grey curtain for bedroom décor, living room décor, window covering, door covering and modern home interiors.",
-    price: 337,
-    originalPrice: 606,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Top Seller",
@@ -170,8 +175,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Trendy Print Curtains for Home (Pack of 2)",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Trendy Print Curtains for Home (Pack of 2)\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door and Window\nPrint or Pattern Type: Floral\nSize: 9Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric room ko look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
-    price: 453,
-    originalPrice: 815,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Best Seller",
@@ -190,8 +195,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft) \n\n BULLET POINTS\n\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\n\n PRODUCT DESCRIPTION\n\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
-    price: 362,
-    originalPrice: 651,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Best Seller",
@@ -210,8 +215,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Luxury Feather Print Eyelet Curtains for Living Room & Bedroom (Set of 2) - 7ft/9ft",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Luxury Feather Print Eyelet Curtains for Living Room & Bedroom (Set of 2) - 7ft/9ft\nMaterial: 100% Premium Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: 3d Printed\nSize: 9Feet\nNet Quantity (N): 2\nPremium Fabric: Made from high-quality heavyweight polyester for a rich feel and long-lasting durability.\n\nPerfect Size: Available in 5ft (Window), 7ft (Door), and 9ft (Long Door) to fit every corner of your home.\n\nEasy Installation: Features rust-resistant metallic eyelet rings for smooth sliding and a modern look.\n\nLight & Privacy Control: Room darkening/Blackout technology blocks 80-90% of Sun light while ensuring complete privacy.\n\nEasy Maintenance: 100% machine washable; color-fast fabric that doesn't shrink or fade after washing.\n\nbest Design: Modern 3D prints/Botanical patterns that instantly elevate your living room, bedroom, or office decor.\nMain Terms\tCurtains, , Door Curtains, Window Curtains, Pared, Net Curtain\nMaterial\t100% Premium Polyester\nFeatures\tBlackout, Room Darkening, Thermal Insulated, Eyelet, Ring , Washable\nStyle/Pattern\t3D Printed, Floral, Solid, Striped, Abstract, Embroidered, Modern\nSizes/Sets\tSet of 2, Pack of 4, 7 Feet, 9 Feet, Long Door, Window Screen",
-    price: 601,
-    originalPrice: 1081,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Best Seller",
@@ -230,8 +235,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Premium Black Door Curtain | Light Filtering & Privacy | Silver Eyelet Polyester Curtain | 5, 6, 7 & 9 Feet | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Premium Black Door Curtain | Light Filtering & Privacy | Silver Eyelet Polyester Curtain | 5, 6, 7 & 9 Feet | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door and Window\nPrint or Pattern Type: Solid\nSize: 7Feet\nNet Quantity (N): 2\nUpgrade your home with this elegant black door curtain (Pack of 2) designed for doors and long windows. Made from durable polyester fabric, it offers a clean, sophisticated look while helping provide privacy and control incoming light.\n\nKey Features:\n\nPremium black polyester fabric\nLight-filtering design for comfortable indoor lighting\nHelps enhance privacy\nSilver metal eyelets for easy installation and smooth movement\nSuitable for bedrooms, living rooms, balconies, offices and doors\nAvailable in 5, 6, 7 and 9 feet height options\nEasy to hang and maintain\nSuitable for modern and traditional interiors",
-    price: 322,
-    originalPrice: 579,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Best Seller",
@@ -250,8 +255,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
-    price: 511,
-    originalPrice: 919,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Luxury Drapery",
@@ -270,8 +275,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Premium Blue & White Leaf Print Eyelet Curtain | Polyester Door & Window Curtain for Bedroom & Living Room | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Premium Blue & White Leaf Print Eyelet Curtain | Polyester Door & Window Curtain for Bedroom & Living Room | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: 3D\nSet: Door and Window\nSize: 7Feet\nNet Quantity (N): 2\nPremium Blue Printed Eyelet Curtain – Pack of 2\n\nGive your home a stylish and refreshing makeover with this Blue Printed Eyelet Curtain, featuring a combination of royal blue side panels and a white centre panel with blue leaf motifs. The attractive botanical-inspired design adds a modern decorative touch to bedrooms, living rooms, doors and windows.\n\nMade from polyester fabric, this curtain is designed with metal eyelets for easy hanging on a compatible curtain rod. The combination of solid blue and printed panels creates a balanced look that works well with both contemporary and classic interiors.\n\nKey Features\n\nColour: Royal Blue & White\nMaterial: Polyester\nPattern: Leaf / Botanical Print\nCurtain Type: Eyelet Curtain\nDesign: Blue Side Panels with Blue Leaf Print Centre\nPack: 2 Curtain Panels\nSuitable For: Bedroom, Living Room, Door & Window\nStyle: Modern, Elegant & Decorative\nHanging: Metal Eyelet\n\nPerfect For:\nBedroom curtains, living room curtains, window curtains, door curtains, home décor and modern interior styling.",
-    price: 337,
-    originalPrice: 606,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Teepul Choice",
@@ -290,8 +295,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Solid\nSize: 7Feet\nNet Quantity (N): 2\nAdd a soft and elegant touch to your home with this Pink Window Curtain (Pack of 2), designed for bedrooms, living rooms, guest rooms and other indoor spaces. Its attractive pink colour complements modern and contemporary interiors, while the eyelet/grommet top makes it convenient to hang on a compatible curtain rod.\n\nThe curtain is suitable for everyday home décor and helps create a comfortable, private indoor environment while allowing natural light to brighten the room.\n\n✨ Key Features\nElegant Pink Colour – Gives your room a fresh, soft and stylish appearance.\nLight Filtering – Allows natural daylight to enter while helping soften the brightness.\nPrivacy Support – Helps reduce direct outside visibility for a more comfortable space.\nEyelet/Grommet Top – Easy to hang on a compatible curtain rod.\nVersatile Home Décor – Suitable for bedrooms, living rooms, guest rooms, study rooms and home offices.\nEasy Everyday Styling – Works well with neutral walls, wooden furniture and contemporary interiors.\nPack of 2 – Includes two curtain panels.",
-    price: 448,
-    originalPrice: 806,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Best Seller",
@@ -310,8 +315,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "ASHANK Premium Double Panel Curtains – Pack of 2 Solid Eyelet Door Curtains 4x7 ft",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: ASHANK Premium Double Panel Curtains – Pack of 2 Solid Eyelet Door Curtains 4x7 ft\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nPackage Contains: 2 Panels (Pack of 2) Curtains with pre-installed rust-resistant eyelets/grommets for smooth sliding.\n\nPremium Fabric & Finish: Crafted from high-quality, durable polyester fabric featuring a sophisticated, wrinkle-resistant texture that drapes beautifully.\n\nLight Control & Privacy: Offers optimal room darkening/light filtering capabilities, softening harsh sun light while ensuring 100% complete indoor privacy.\n\nVersatile Sizing: Available in standard sizes (5 Feet for Windows, 7 Feet for Doors, and 9 Feet for Long Doors) to fit seamlessly across your living room, bedroom, or balcony.\n\nEasy Maintenance: Machine washable in cold water, fade-resistant color, and shrink-proof material designed for long-lasting home styling.",
-    price: 256,
-    originalPrice: 460,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Teepul Choice",
@@ -330,8 +335,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Green Floral Leaf Printed Curtain for Window & Door | Light Filtering Privacy Curtain | Eyelet Polyester Curtain | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Green Floral Leaf Printed Curtain for Window & Door | Light Filtering Privacy Curtain | Eyelet Polyester Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nUpgrade your home décor with this elegant Green Floral Leaf Printed Curtain (Pack of 2), designed for windows and doors. The cream base with deep green leafy print creates a modern, natural look that works well in living rooms, bedrooms, balconies and other home spaces.\n\nKey Features:\n\nPack of 2 Curtains\nGreen & cream floral leaf design\nLight filtering for a soft, comfortable ambience\nHelps provide privacy\nEyelet/grommet top for easy hanging\nSuitable for windows and doors\nEasy-care polyester fabric\nAvailable in 5, 6, 7 & 9 feet height options\n\nAvailable Sizes:\n5 Feet | 6 Feet | 7 Feet | 9 Feet\n\nBest For: Living Room, Bedroom, Window, Door, Home Décor, Balcony & Interior Decoration.",
-    price: 347,
-    originalPrice: 624,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Best Seller",
@@ -350,8 +355,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Feather Printed Curtain for Living Room & Bedroom | Beige & Black Eyelet Door Window Curtain | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Feather Printed Curtain for Living Room & Bedroom | Beige & Black Eyelet Door Window Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Abstract\nSize: 7Feet\nNet Quantity (N): 2\nGive your home a clean and elegant look with this Beige & Black Feather Printed Curtain (Pack of 2). The curtain features a stylish feather pattern on a light beige/ivory background, making it suitable for modern and contemporary home interiors.\n\nDesigned with metal eyelets/grommets, the curtain is easy to hang on a compatible curtain rod and creates neat, natural folds when installed.\n\nKey Features:\n\nDesign: Feather Printed\nColor: Beige/Ivory with Black & Grey Print\nStyle: Modern & Elegant\nHanging Type: Eyelet / Grommet\nPack: 2 Curtain Panels\nSuitable For: Living Room, Bedroom, Study Room, Dining Area and Door/Window\nUse: Home Décor, Window Curtain, Door Curtain\nPattern: Repeated Feather Print\n\nWhy Choose This Curtain?\nThe neutral beige base with black and grey feather motifs blends easily with a variety of interior décor styles. It can be used to enhance windows or doors while adding a refined decorative touch to your room.\n\nPackage Includes:\n2 × Feather Printed Curtains",
-    price: 349,
-    originalPrice: 628,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Teepul Choice",
@@ -370,8 +375,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Maroon Leaf Print Eyelet Curtain for Door & Window | Light Filtering | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Maroon Leaf Print Eyelet Curtain for Door & Window | Light Filtering | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nSize: 7Feet\nNet Quantity: 2\nRefresh your home décor with this elegant Maroon Leaf Print Eyelet Curtain (Pack of 2), designed to complement living rooms, bedrooms, doors and windows. The curtain features a stylish botanical leaf pattern on a rich maroon base, giving your space a warm and contemporary look.\n\nMade from polyester fabric, this semi-transparent curtain allows natural daylight to filter through while adding a comfortable level of visual privacy. The eyelet hanging design makes installation and opening or closing convenient with a compatible curtain rod.\n\nThe printed leaf pattern works well with modern, contemporary and traditional Indian home interiors. Use it for living room windows, bedroom windows, balcony doors or other suitable door and window spaces.\n\n### Key Features\n\n• Maroon leaf and botanical print design\n• Polyester fabric\n• Semi-transparent, light-filtering construction\n• Eyelet hanging style\n• Suitable for door and window use\n• Pack of 2 curtain panels\n• Available in 5 Feet, 6 Feet, 7 Feet and 9 Feet sizes\n• Hand and machine washable\n\n### Ideal For\n\nLiving room curtains, bedroom curtains, window curtains, door curtains, home décor, apartment interiors and everyday home furnishing.\n\n### Product Details\n\nColor: Maroon\nMaterial: Polyester\nPattern: Leaf Print\nHanging Type: Eyelet\nOpacity: Light Filtering\nType: Polyester Semi Transparent\nNet Quantity: 2",
-    price: 342,
-    originalPrice: 615,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Window Curtains",
     badge: "Best Seller",
@@ -390,8 +395,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Magenta Printed Door Curtain for Home | Premium Leaf Design Polyester Curtain | Light Filtering Privacy Curtain | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Magenta Printed Door Curtain for Home | Premium Leaf Design Polyester Curtain | Light Filtering Privacy Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Ethnic Motifs\nSize: 7Feet\nNet Quantity (N): 2\nUpgrade your home décor with this magenta printed door curtain (Pack of 2), designed with an elegant leaf pattern and a premium-looking finish. The combination of rich magenta side panels and a contrasting printed center adds a stylish decorative touch to doors, bedrooms and living spaces.\n\nKey Features\nElegant Leaf Print: Attractive magenta leaf-and-vine pattern creates a modern decorative look.\nPremium Polyester Fabric: Smooth fabric with a neat drape and glossy appearance.\nLight Filtering: Allows soft natural light into the room while helping create a more comfortable indoor space.\nPrivacy Support: Helps reduce direct outside visibility when the curtain is closed.\nSilver Eyelets: Metal eyelets make installation on a compatible curtain rod simple and convenient.\nVersatile Home Décor: Suitable for doors, bedrooms, living rooms and other indoor spaces.\nPack of 2: Includes two curtain panels.\nWhy Choose This Curtain?\n\nIf you are looking for a magenta door curtain, printed curtain for bedroom, leaf design curtain or stylish polyester curtain for home, this design combines decorative appeal with everyday functionality. Its vibrant color and botanical-inspired print can complement contemporary and traditional interiors.\n\nProduct Information\n\nProduct Type: Door Curtain\nDesign: Leaf / Floral-Inspired Print\nColor: Magenta & White\nMaterial: Polyester\nPattern: Printed\nLight Control: Light Filter",
-    price: 347,
-    originalPrice: 624,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Teepul Choice",
@@ -410,8 +415,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
-    price: 534,
-    originalPrice: 961,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Best Seller",
@@ -430,8 +435,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Trendy Marble Print Curtains for Home (Pack of 2)",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Trendy Marble Print Curtains for Home (Pack of 2)\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: 3D\nSet: Door\nPrint or Pattern Type: Floral\nSize: 7Feet\nNet Quantity (N): 2\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
-    price: 392,
-    originalPrice: 705,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Teepul Choice",
@@ -450,8 +455,8 @@ export const PRODUCTS_CATALOG: Product[] = [
     name: "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Typography\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
-    price: 514,
-    originalPrice: 925,
+    price: 459,
+    originalPrice: 899,
     currency: "₹",
     category: "Door Curtains",
     badge: "Best Seller",

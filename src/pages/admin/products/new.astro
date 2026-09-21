@@ -81,10 +81,10 @@ if (id) {
 
 if (!productSizes.length) {
   productSizes = [
-    { name: '5 Feet (Window)', price: 499, originalPrice: 799, stock: 50, inStock: true },
-    { name: '6 Feet', price: 549, originalPrice: 849, stock: 50, inStock: true },
-    { name: '7 Feet (Door)', price: 599, originalPrice: 999, stock: 100, inStock: true },
-    { name: '9 Feet (Long Door)', price: 799, originalPrice: 1299, stock: 40, inStock: true },
+    { name: '5 Feet (Window)', price: 459, originalPrice: 899, stock: 50, inStock: true },
+    { name: '6 Feet', price: 499, originalPrice: 999, stock: 50, inStock: true },
+    { name: '7 Feet (Door)', price: 549, originalPrice: 1099, stock: 100, inStock: true },
+    { name: '9 Feet (Long Door)', price: 579, originalPrice: 1199, stock: 40, inStock: true },
   ];
 }
 ---
@@ -321,7 +321,7 @@ if (!productSizes.length) {
               id="preset-curtains-btn"
               class="text-blue-600 hover:underline font-semibold bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-xs cursor-pointer"
             >
-              Curtain Standard (5ft, 6ft, 7ft, 9ft)
+              Curtain Standard (5ft: ₹459, 6ft: ₹499, 7ft: ₹549, 9ft: ₹579)
             </button>
           </div>
         </div>
@@ -477,12 +477,11 @@ if (!productSizes.length) {
       });
 
       presetBtn?.addEventListener('click', () => {
-        const basePrice = parseFloat(document.querySelector('input[name="price"]')?.value || '599') || 599;
         const presets = [
-          { name: '5 Feet (Window)', price: Math.round(basePrice * 0.85), orig: Math.round(basePrice * 1.4), stock: 50 },
-          { name: '6 Feet', price: Math.round(basePrice * 0.92), orig: Math.round(basePrice * 1.5), stock: 50 },
-          { name: '7 Feet (Door)', price: basePrice, orig: Math.round(basePrice * 1.6), stock: 100 },
-          { name: '9 Feet (Long Door)', price: Math.round(basePrice * 1.25), orig: Math.round(basePrice * 1.9), stock: 40 },
+          { name: '5 Feet (Window)', price: 459, orig: 899, stock: 50 },
+          { name: '6 Feet', price: 499, orig: 999, stock: 50 },
+          { name: '7 Feet (Door)', price: 549, orig: 1099, stock: 100 },
+          { name: '9 Feet (Long Door)', price: 579, orig: 1199, stock: 40 },
         ];
         tableBody.innerHTML = '';
         presets.forEach((p) => {
