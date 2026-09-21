@@ -49,11 +49,12 @@ export async function sendSmsOtp(phone10Digits: string, otp: string): Promise<Se
   const msg91Key = process.env.MSG91_AUTH_KEY || dbSettings.msg91_auth_key;
   const msg91Template = process.env.MSG91_TEMPLATE_ID || dbSettings.msg91_template_id;
 
-  // 1. Fast2SMS Quick OTP Route (No DLT required for pre-approved OTP route)
+  // 1. Fast2SMS (Pre-approved OTP Route, with automatic Quick SMS fallback)
   if (fast2smsKey) {
     try {
-      const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2smsKey)}&variables_values=${encodeURIComponent(otp)}&route=otp&numbers=${cleanDigits}`;
-      const res = await fetch(url, {
+      // Primary: Pre-approved OTP route
+      const otpUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2smsKey)}&variables_values=${encodeURIComponent(otp)}&route=otp&numbers=${cleanDigits}`;
+      const res = await fetch(otpUrl, {
         method: 'GET',
         headers: { 'cache-control': 'no-cache' },
       });
@@ -61,7 +62,19 @@ export async function sendSmsOtp(phone10Digits: string, otp: string): Promise<Se
       if (data && data.return === true) {
         return { success: true, provider: 'fast2sms', messageId: data.request_id };
       }
-      console.warn('Fast2SMS response notice:', data);
+
+      // Secondary: Quick SMS Route fallback (Direct international route, no DLT template required)
+      console.warn('Fast2SMS OTP route response, attempting Quick SMS fallback:', data);
+      const quickUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2smsKey)}&route=q&message=${encodeURIComponent('Your Teepul Store OTP is ' + otp + '. Valid for 10 minutes.')}&language=english&flash=0&numbers=${cleanDigits}`;
+      const quickRes = await fetch(quickUrl, {
+        method: 'GET',
+        headers: { 'cache-control': 'no-cache' },
+      });
+      const quickData: any = await quickRes.json();
+      if (quickData && quickData.return === true) {
+        return { success: true, provider: 'fast2sms', messageId: quickData.request_id };
+      }
+      console.warn('Fast2SMS Quick SMS fallback notice:', quickData);
     } catch (err: any) {
       console.error('Fast2SMS error:', err?.message);
     }
