@@ -343,12 +343,27 @@ if (!productSizes.length) {
           <span class="text-xs font-bold text-slate-800">Product In Stock & Available for Order</span>
         </label>
 
-        <button
-          type="submit"
-          class="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-8 py-3.5 rounded-xl shadow-lg shadow-blue-500/20 transition"
-        >
-          {product ? 'Update Product' : 'Publish Product to Storefront'} &rarr;
-        </button>
+        <div class="flex items-center gap-3">
+          {product && (
+            <button
+              type="button"
+              id="delete-product-btn"
+              data-id={product.id}
+              data-slug={product.slug}
+              data-name={product.name}
+              class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-extrabold text-xs px-5 py-3.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-xs"
+            >
+              <span>🗑️</span> Delete Product Listing
+            </button>
+          )}
+
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-8 py-3.5 rounded-xl shadow-lg shadow-blue-500/20 transition cursor-pointer"
+          >
+            {product ? 'Update Product' : 'Publish Product to Storefront'} &rarr;
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -519,6 +534,42 @@ if (!productSizes.length) {
       form?.addEventListener('submit', () => {
         syncSizes();
       });
+
+      const deleteProductBtn = document.getElementById('delete-product-btn');
+      if (deleteProductBtn) {
+        deleteProductBtn.addEventListener('click', async () => {
+          const id = deleteProductBtn.getAttribute('data-id');
+          const slug = deleteProductBtn.getAttribute('data-slug');
+          const name = deleteProductBtn.getAttribute('data-name') || 'this product';
+
+          if (!confirm(`Are you sure you want to delete "${name}"?\n\nThis will permanently remove the product listing from the store catalog.`)) {
+            return;
+          }
+
+          deleteProductBtn.disabled = true;
+          deleteProductBtn.innerHTML = '<span>⏳</span> Deleting...';
+
+          try {
+            const res = await fetch('/api/admin/products/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id, slug }),
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              window.location.href = '/admin/products?deleted=true';
+            } else {
+              alert('Error deleting product: ' + (data.error || 'Failed to delete'));
+              deleteProductBtn.disabled = false;
+              deleteProductBtn.innerHTML = '<span>🗑️</span> Delete Product Listing';
+            }
+          } catch (e) {
+            alert('Network error while deleting product.');
+            deleteProductBtn.disabled = false;
+            deleteProductBtn.innerHTML = '<span>🗑️</span> Delete Product Listing';
+          }
+        });
+      }
 
       syncSizes();
     });

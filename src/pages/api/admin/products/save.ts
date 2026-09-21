@@ -19,7 +19,38 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
 
   // Delete product action
   if (action === 'delete' && id) {
-    await prisma.product.delete({ where: { id } });
+    try {
+      await prisma.product.deleteMany({
+        where: {
+          OR: [{ id }, { slug: id }],
+        },
+      });
+    } catch (err) {
+      console.error('Failed to delete product from DB:', err);
+    }
+
+    try {
+      const setting = await prisma.setting.findUnique({
+        where: { key: 'deleted_product_ids' },
+      });
+      const currentList: string[] = setting?.value ? JSON.parse(setting.value) : [];
+      if (!currentList.includes(id)) currentList.push(id);
+
+      await prisma.setting.upsert({
+        where: { key: 'deleted_product_ids' },
+        create: {
+          key: 'deleted_product_ids',
+          value: JSON.stringify(currentList),
+          group: 'catalog',
+        },
+        update: {
+          value: JSON.stringify(currentList),
+        },
+      });
+    } catch (settingErr) {
+      console.error('Failed to update deleted_product_ids setting:', settingErr);
+    }
+
     await logAudit({
       userId: locals.user.userId,
       action: 'product.delete',

@@ -115,20 +115,30 @@ const deleted = Astro.url.searchParams.get('deleted') === 'true';
                       </span>
                     )}
                   </td>
-                  <td class="p-4 text-right space-x-2">
+                  <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
                     <a
                       href={`/products/${p.slug}`}
                       target="_blank"
-                      class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] px-3 py-1.5 rounded-lg transition"
+                      class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] px-2.5 py-1.5 rounded-lg transition inline-flex items-center gap-1"
                     >
                       View ↗
                     </a>
                     <a
                       href={`/admin/products/new?id=${p.id}`}
-                      class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition shadow-sm"
+                      class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-lg transition shadow-xs inline-flex items-center gap-1"
                     >
                       Edit
                     </a>
+                    <button
+                      type="button"
+                      data-id={p.id}
+                      data-slug={p.slug}
+                      data-name={p.name}
+                      class="delete-product-btn bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-bold text-[10px] px-2.5 py-1.5 rounded-lg transition shadow-xs cursor-pointer inline-flex items-center gap-1"
+                      onclick="handleDeleteProduct(this)"
+                    >
+                      <span>🗑️</span> Delete
+                    </button>
                   </td>
                 </tr>
               );
@@ -193,6 +203,52 @@ const deleted = Astro.url.searchParams.get('deleted') === 'true';
         if (status) status.classList.add('hidden');
       } finally {
         selectEl.disabled = false;
+      }
+    }
+
+    async function handleDeleteProduct(btn) {
+      const id = btn.getAttribute('data-id');
+      const slug = btn.getAttribute('data-slug');
+      const name = btn.getAttribute('data-name') || 'this product';
+
+      if (!confirm(`Are you sure you want to delete "${name}"?\n\nThis will permanently remove the product listing from the store catalog.`)) {
+        return;
+      }
+
+      const row = btn.closest('tr');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Deleting...';
+
+      try {
+        const res = await fetch('/api/admin/products/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, slug })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          if (row) {
+            row.style.transition = 'all 0.4s ease';
+            row.style.opacity = '0';
+            row.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              row.remove();
+              const remaining = document.querySelectorAll('tbody tr').length;
+              const titleEl = document.querySelector('h1');
+              if (titleEl) {
+                titleEl.textContent = `Products Catalog (${remaining})`;
+              }
+            }, 400);
+          }
+        } else {
+          alert('Error deleting product: ' + (data.error || 'Failed to delete'));
+          btn.disabled = false;
+          btn.innerHTML = '<span>🗑️</span> Delete';
+        }
+      } catch (e) {
+        alert('Network error while deleting product.');
+        btn.disabled = false;
+        btn.innerHTML = '<span>🗑️</span> Delete';
       }
     }
   </script>

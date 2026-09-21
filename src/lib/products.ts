@@ -551,7 +551,23 @@ export async function getStorefrontProducts(): Promise<Product[]> {
       combinedMap.set(p.id, p);
     }
 
-    return Array.from(combinedMap.values());
+    // Check for deleted product IDs/slugs recorded in settings
+    let deletedSet = new Set<string>();
+    try {
+      const deletedSetting = await prisma.setting.findUnique({
+        where: { key: 'deleted_product_ids' },
+      });
+      if (deletedSetting?.value) {
+        const parsed = JSON.parse(deletedSetting.value);
+        if (Array.isArray(parsed)) {
+          deletedSet = new Set(parsed.map(String));
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    return Array.from(combinedMap.values()).filter((p) => !deletedSet.has(p.id) && !deletedSet.has(p.slug));
   } catch (error) {
     console.error('Failed to load DB products:', error);
     return PRODUCTS_CATALOG.filter(Boolean);
