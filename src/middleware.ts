@@ -65,6 +65,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (process.env.NODE_ENV === 'production') {
       response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
+
+    // Edge & browser caching for high-speed delivery
+    if (context.request.method === 'GET') {
+      const isPrivatePath =
+        pathname.startsWith('/admin') ||
+        pathname.startsWith('/api') ||
+        pathname.startsWith('/account') ||
+        pathname.startsWith('/checkout') ||
+        pathname.startsWith('/cart');
+
+      if (isPrivatePath || sessionUser) {
+        response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      } else {
+        // Public storefront pages: Cloudflare edge (s-maxage=600 = 10 mins) + browser (max-age=60)
+        response.headers.set(
+          'Cache-Control',
+          'public, max-age=60, s-maxage=600, stale-while-revalidate=86400'
+        );
+      }
+    } else {
+      response.headers.set('Cache-Control', 'no-store');
+    }
+
     return response;
   } catch (error) {
     console.error('Middleware execution error:', error);
