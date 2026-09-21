@@ -5,6 +5,36 @@ import { checkRateLimit } from '../../../lib/utilities/rateLimit';
 import { logAudit } from '../../../lib/utilities/audit';
 import { resolveGeoLocation } from '../../../lib/utilities/geo';
 import { initiatePaytmTransaction } from '../../../lib/paytm';
+import { getStorefrontProducts, normalizeProductSizes } from '../../../lib/products';
+
+// ── Server-side price verification ──────────────────────────────────────────
+// Looks up the real price for a given productId + size from DB/catalog.
+// Returns null if product not found (order will be rejected).
+async function verifyPrice(productId: string, productSlug: string, sizeName: string): Promise<number | null> {
+  try {
+    const products = await getStorefrontProducts();
+    const product =
+      products.find((p) => p.id === productId) ||
+      products.find((p) => p.slug === productSlug) ||
+      products.find((p) => p.id === productId.replace('prod-', ''));
+
+    if (!product) return null;
+
+    const sizes = normalizeProductSizes(product.sizes as any[], product.price, product.originalPrice);
+    if (!sizes.length) return product.price;
+
+    // Match size by name (case-insensitive, partial ok)
+    const sizeKey = sizeName?.toLowerCase().trim() || '';
+    const matched =
+      sizes.find((s) => s.name.toLowerCase() === sizeKey) ||
+      sizes.find((s) => s.name.toLowerCase().includes(sizeKey.slice(0, 3))) ||
+      sizes[0];
+
+    return matched?.price ?? product.price;
+  } catch {
+    return null;
+  }
+}
 
 export const POST: APIRoute = async ({ request }) => {
   const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
@@ -29,9 +59,20 @@ export const POST: APIRoute = async ({ request }) => {
 
     const qty = parseInt(quantity) || 1;
     const itemTitle = productTitle || 'Teepul Luxury Curtain Panel';
+    const productSlug = body.productSlug || '';
 
-    // Verify unit price against dynamic sizing or default fallback
-    let realUnitPrice = parseFloat(body.unitPrice) || 301;
+    // ── SERVER-SIDE PRICE VERIFICATION ──────────────────────────────────────
+    // Never trust client-sent unitPrice. Look it up from DB/catalog.
+    const verifiedPrice = await verifyPrice(productId || '', productSlug, size || '');
+    if (!verifiedPrice) {
+      return new Response(JSON.stringify({ error: 'Product not found or price could not be verified. Please refresh and try again.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    const realUnitPrice = verifiedPrice;
+    // ────────────────────────────────────────────────────────────────────────
+
     const totalAmount = realUnitPrice * qty;
     const orderNumber = `TP-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
