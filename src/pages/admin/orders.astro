@@ -41,6 +41,14 @@ function getEkartRate(pincode: string) {
       </div>
 
       <div class="flex items-center gap-3">
+        <button
+          type="button"
+          id="export-orders-top-btn"
+          class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2 cursor-pointer"
+        >
+          <span>📊</span>
+          <span>Download Excel Sheet</span>
+        </button>
         <a href="/admin/analytics" class="bg-amber-800 hover:bg-amber-900 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow">
           📈 Live Sales Analytics
         </a>
@@ -121,11 +129,44 @@ function getEkartRate(pincode: string) {
 
     <!-- Orders Cards / Detailed Permanent List -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-6 border-b border-slate-200 flex items-center justify-between">
-        <h2 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
-          <span>🛍️</span> Orders Records (<span id="visible-order-count">{orders.length}</span>)
-        </h2>
-        <span class="text-xs text-slate-500 font-medium">All orders remain permanently saved in database</span>
+      <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/70">
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 text-xs font-black text-slate-800 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              id="select-all-orders-checkbox"
+              class="w-4 h-4 rounded text-amber-800 focus:ring-amber-500 border-slate-300 cursor-pointer"
+            />
+            <span>Select All</span>
+          </label>
+          <span class="text-xs text-slate-400 font-bold">•</span>
+          <span class="text-xs font-bold text-slate-600">
+            Selected: <strong id="selected-orders-count" class="text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full font-mono">0</strong>
+          </span>
+          <span class="text-xs text-slate-400 font-bold">•</span>
+          <span class="text-xs text-slate-500 font-medium">Visible: <strong id="visible-order-count">{orders.length}</strong></span>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button
+            type="button"
+            id="download-selected-orders-btn"
+            class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold px-4 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled
+          >
+            <span>📥</span>
+            <span>Download Selected (<span id="btn-selected-count">0</span>)</span>
+          </button>
+
+          <button
+            type="button"
+            id="download-all-orders-btn"
+            class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold px-4 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>📑</span>
+            <span>Download All ({orders.length})</span>
+          </button>
+        </div>
       </div>
 
       {orders.length === 0 ? (
@@ -145,6 +186,7 @@ function getEkartRate(pincode: string) {
             return (
               <div
                 class="order-card-row p-6 hover:bg-slate-50/50 transition space-y-4"
+                data-order-id={o.id}
                 data-created-at={isoDate}
                 data-status={o.orderStatus}
                 data-payment-status={o.paymentStatus}
@@ -155,6 +197,12 @@ function getEkartRate(pincode: string) {
                 <!-- Top Row: Order ID, Date, Payment Status & EKart Rate -->
                 <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div class="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      class="order-select-checkbox w-4 h-4 rounded text-amber-800 focus:ring-amber-500 border-slate-300 cursor-pointer shrink-0"
+                      data-order-id={o.id}
+                      aria-label={`Select order ${o.orderNumber}`}
+                    />
                     <span class="font-mono font-black text-slate-900 text-base bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
                       #{o.orderNumber}
                     </span>
@@ -448,6 +496,247 @@ function getEkartRate(pincode: string) {
         currentQuery = e.target.value.toLowerCase().trim();
         applyFilters();
       });
+
+      // ==========================================
+      // Order Checkbox Selection & Excel / CSV Export
+      // ==========================================
+      const rawOrdersJson = document.getElementById('orders-json-data')?.textContent;
+      const allOrders = rawOrdersJson ? JSON.parse(rawOrdersJson) : [];
+
+      const selectAllCheckbox = document.getElementById('select-all-orders-checkbox');
+      const orderCheckboxes = document.querySelectorAll('.order-select-checkbox');
+      const selectedCountBadge = document.getElementById('selected-orders-count');
+      const btnSelectedCount = document.getElementById('btn-selected-count');
+      const downloadSelectedBtn = document.getElementById('download-selected-orders-btn');
+      const downloadAllBtn = document.getElementById('download-all-orders-btn');
+      const exportTopBtn = document.getElementById('export-orders-top-btn');
+
+      function getSelectedOrderIds() {
+        const ids = [];
+        orderCheckboxes.forEach((cb) => {
+          if (cb.checked) {
+            ids.push(cb.getAttribute('data-order-id'));
+          }
+        });
+        return ids;
+      }
+
+      function updateSelectionUI() {
+        const selectedIds = getSelectedOrderIds();
+        const count = selectedIds.length;
+
+        if (selectedCountBadge) selectedCountBadge.innerText = String(count);
+        if (btnSelectedCount) btnSelectedCount.innerText = String(count);
+
+        if (downloadSelectedBtn) {
+          downloadSelectedBtn.disabled = count === 0;
+        }
+
+        // Highlight selected order rows
+        orderRows.forEach((row) => {
+          const cb = row.querySelector('.order-select-checkbox');
+          if (cb && cb.checked) {
+            row.classList.add('bg-amber-50/40', 'ring-1', 'ring-amber-400');
+          } else {
+            row.classList.remove('bg-amber-50/40', 'ring-1', 'ring-amber-400');
+          }
+        });
+
+        // Update Select All checkbox state
+        const visibleRows = Array.from(orderRows).filter((r) => r.style.display !== 'none');
+        const visibleCheckboxes = visibleRows.map((r) => r.querySelector('.order-select-checkbox')).filter(Boolean);
+        if (selectAllCheckbox && visibleCheckboxes.length > 0) {
+          const allVisibleChecked = visibleCheckboxes.every((cb) => cb.checked);
+          const someVisibleChecked = visibleCheckboxes.some((cb) => cb.checked);
+          selectAllCheckbox.checked = allVisibleChecked;
+          selectAllCheckbox.indeterminate = !allVisibleChecked && someVisibleChecked;
+        }
+      }
+
+      selectAllCheckbox?.addEventListener('change', (e) => {
+        const isChecked = e.target.checked;
+        orderRows.forEach((row) => {
+          if (row.style.display !== 'none') {
+            const cb = row.querySelector('.order-select-checkbox');
+            if (cb) cb.checked = isChecked;
+          }
+        });
+        updateSelectionUI();
+      });
+
+      orderCheckboxes.forEach((cb) => {
+        cb.addEventListener('change', updateSelectionUI);
+      });
+
+      // Escape CSV values
+      function escapeCsv(val) {
+        if (val === null || val === undefined) return '';
+        const str = String(val).trim();
+        if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      }
+
+      // Format Date: DD-MM-YYYY
+      function formatDate(raw) {
+        if (!raw) return '';
+        const d = new Date(raw);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+
+      // Generate Exact Courier CSV Format
+      function generateOrdersCsv(ordersToExport) {
+        const headers = [
+          'Order_id',
+          'Order_Created_Date',
+          'Shipping_Address_FirstName',
+          'Shipping_Address_LastName',
+          'Shipping_Address',
+          'Shipping_Address_Phone',
+          'Shipping_Address_Alternate_Phone',
+          'Shipping_Address_Pincode/Zipcode',
+          'Customer_GSTIN',
+          'Line_Item_SKU',
+          'Line_Item_HSN',
+          'Line_Item_Name',
+          'Line_Item_Description',
+          'Line_Item_Retail_Price',
+          'Line_Item_Tax/VAT_Slab',
+          'Shipping_Charges',
+          'Line_Item_Quantity',
+          'Payment_Mode',
+          'Is_Confirmed',
+          'Latitude',
+          'Longitude'
+        ];
+
+        const rows = [headers.join(',')];
+
+        ordersToExport.forEach((o) => {
+          const dateStr = formatDate(o.createdAt);
+          const nameParts = (o.customerName || '').trim().split(/\s+/);
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+          const fullAddress = [o.shippingAddress, o.city, o.state].filter(Boolean).join(', ');
+          const phone = o.customerPhone || '';
+          const altPhone = '';
+          const pincode = o.pincode || '';
+          const gstin = '';
+          const paymentMode = (o.paymentMethod === 'COD' || o.paymentStatus === 'COD_PENDING') ? 'COD' : 'Prepaid';
+          const isConfirmed = (o.paymentStatus === 'PAID' || o.orderStatus === 'PROCESSING' || o.orderStatus === 'SHIPPED' || o.orderStatus === 'DELIVERED') ? 'true' : 'false';
+
+          const items = (o.items && o.items.length > 0) ? o.items : [
+            {
+              productId: 'CURTAIN-PANEL',
+              productTitle: 'Luxury Curtain Panel',
+              color: 'Standard',
+              size: '7ft Door',
+              unitPrice: o.totalAmount,
+              quantity: 1
+            }
+          ];
+
+          items.forEach((item) => {
+            const sku = item.productId || 'SKU-' + (item.productTitle ? item.productTitle.slice(0, 10).replace(/\s+/g, '-').toUpperCase() : 'CURTAIN');
+            const hsn = '6303';
+            const itemName = item.productTitle || 'Teepul Luxury Curtain Panel';
+            const descParts = [];
+            if (item.color) descParts.push(`Color: ${item.color}`);
+            if (item.size) descParts.push(`Size: ${item.size}`);
+            const itemDesc = descParts.join(', ') || 'Curtains & Drapery';
+            const price = item.unitPrice ?? o.totalAmount;
+            const taxSlab = 0;
+            const shippingCharges = 0;
+            const qty = item.quantity ?? 1;
+
+            const row = [
+              escapeCsv(o.orderNumber || o.id),
+              escapeCsv(dateStr),
+              escapeCsv(firstName),
+              escapeCsv(lastName),
+              escapeCsv(fullAddress),
+              escapeCsv(phone),
+              escapeCsv(altPhone),
+              escapeCsv(pincode),
+              escapeCsv(gstin),
+              escapeCsv(sku),
+              escapeCsv(hsn),
+              escapeCsv(itemName),
+              escapeCsv(itemDesc),
+              escapeCsv(price),
+              escapeCsv(taxSlab),
+              escapeCsv(shippingCharges),
+              escapeCsv(qty),
+              escapeCsv(paymentMode),
+              escapeCsv(isConfirmed),
+              escapeCsv(''),
+              escapeCsv('')
+            ];
+            rows.push(row.join(','));
+          });
+        });
+
+        // Prepend UTF-8 BOM so Excel opens with proper character encoding
+        return '\uFEFF' + rows.join('\r\n');
+      }
+
+      function triggerDownload(csvContent, filename) {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      // Download Selected Action
+      downloadSelectedBtn?.addEventListener('click', () => {
+        const selectedIds = getSelectedOrderIds();
+        if (selectedIds.length === 0) {
+          alert('Please select at least 1 order using the checkboxes.');
+          return;
+        }
+        const selectedOrders = allOrders.filter((o) => selectedIds.includes(o.id));
+        const csv = generateOrdersCsv(selectedOrders);
+        const filename = `teepul-selected-orders-${selectedOrders.length}-${new Date().toISOString().slice(0, 10)}.csv`;
+        triggerDownload(csv, filename);
+      });
+
+      // Download All Orders Action
+      downloadAllBtn?.addEventListener('click', () => {
+        if (allOrders.length === 0) {
+          alert('No orders found to export.');
+          return;
+        }
+        const csv = generateOrdersCsv(allOrders);
+        const filename = `teepul-all-orders-${allOrders.length}-${new Date().toISOString().slice(0, 10)}.csv`;
+        triggerDownload(csv, filename);
+      });
+
+      // Top Header Export Button (Downloads selected if any, otherwise all)
+      exportTopBtn?.addEventListener('click', () => {
+        const selectedIds = getSelectedOrderIds();
+        const exportList = selectedIds.length > 0 ? allOrders.filter((o) => selectedIds.includes(o.id)) : allOrders;
+        if (exportList.length === 0) {
+          alert('No orders found to export.');
+          return;
+        }
+        const csv = generateOrdersCsv(exportList);
+        const prefix = selectedIds.length > 0 ? `selected-${exportList.length}` : `all-${exportList.length}`;
+        const filename = `teepul-orders-${prefix}-${new Date().toISOString().slice(0, 10)}.csv`;
+        triggerDownload(csv, filename);
+      });
     });
   </script>
+
+  <!-- Embed orders JSON data for instant client-side Excel/CSV generation -->
+  <script id="orders-json-data" type="application/json" set:html={JSON.stringify(orders)} />
 </AdminLayout>
+

@@ -277,26 +277,6 @@ export const PRODUCTS_CATALOG: Product[] = [
     features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
   },
   {
-    id: "meesho-hnjfvf",
-    slug: "premium-blue-white-leaf-print-eyelet-curtain-polyester-door-window-curtain-for-bedroom-living-room-pack-of-1",
-    name: "Premium Blue & White Leaf Print Eyelet Curtain | Polyester Door & Window Curtain for Bedroom & Living Room | Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Premium Blue & White Leaf Print Eyelet Curtain | Polyester Door & Window Curtain for Bedroom & Living Room | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: 3D\nSet: Door and Window\nSize: 7Feet\nNet Quantity (N): 2\nPremium Blue Printed Eyelet Curtain – Pack of 2\n\nGive your home a stylish and refreshing makeover with this Blue Printed Eyelet Curtain, featuring a combination of royal blue side panels and a white centre panel with blue leaf motifs. The attractive botanical-inspired design adds a modern decorative touch to bedrooms, living rooms, doors and windows.\n\nMade from polyester fabric, this curtain is designed with metal eyelets for easy hanging on a compatible curtain rod. The combination of solid blue and printed panels creates a balanced look that works well with both contemporary and classic interiors.\n\nKey Features\n\nColour: Royal Blue & White\nMaterial: Polyester\nPattern: Leaf / Botanical Print\nCurtain Type: Eyelet Curtain\nDesign: Blue Side Panels with Blue Leaf Print Centre\nPack: 2 Curtain Panels\nSuitable For: Bedroom, Living Room, Door & Window\nStyle: Modern, Elegant & Decorative\nHanging: Metal Eyelet\n\nPerfect For:\nBedroom curtains, living room curtains, window curtains, door curtains, home décor and modern interior styling.",
-    price: 479,
-    originalPrice: 959,
-    currency: "₹",
-    category: "Window Curtains",
-    badge: "Teepul Choice",
-    rating: 4.5,
-    reviewCount: 42,
-    inStock: true,
-    colors: [{"name": "Blue & White Leaf", "hex": "#1e40af"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1067463195/okexo_512.jpg", "https://images.meesho.com/images/products/1067463195/h6czi_512.jpg", "https://images.meesho.com/images/products/1067463195/yadep_512.jpg", "https://images.meesho.com/images/products/1067463195/c43ue_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
-  },
-  {
     id: "meesho-hr66fp",
     slug: "pink-curtain-for-window-door-eyeletgrommet-curtain-for-bedroom-living-room-light-filtering-privacy-curtain-pack-of-1",
     name: "Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2",
