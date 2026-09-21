@@ -1,4 +1,4 @@
-import prisma from './db/index';
+import prisma from './db/index.ts';
 
 export interface ProductSize {
   name: string;
