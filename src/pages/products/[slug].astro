@@ -344,58 +344,60 @@ const customerReviews = [
             </div>
           </div>
 
-          <!-- Size Selector -->
+          <!-- Size Selector with Real-time Stock Display -->
           <div class="space-y-2">
             <div class="flex items-center justify-between text-xs font-bold text-slate-700">
               <span class="uppercase tracking-wider">Select Size / Length</span>
-              <span id="selected-size-label" class="text-amber-800 font-semibold">{initialSize.name}</span>
+              <div class="flex items-center gap-2">
+                <span id="selected-size-label" class="text-amber-800 font-semibold">{initialSize.name}</span>
+                <span id="selected-size-stock" class={`text-[10px] px-2 py-0.5 rounded-full font-bold ${initialSize.inStock === false ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                  {initialSize.inStock === false ? 'Out of Stock' : (initialSize.stock && initialSize.stock <= 5 ? `Only ${initialSize.stock} Left` : '✓ In Stock')}
+                </span>
+              </div>
             </div>
             <div class="flex flex-wrap gap-2 sm:gap-2.5">
-              {normalizedSizes.map((sz, idx) => (
-                <button
-                  type="button"
-                  data-size={sz.name}
-                  data-price={sz.price}
-                  data-original-price={sz.originalPrice || ''}
-                  class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] sm:min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800'}`}
-                >
-                  <span>{sz.name}</span>
-                  <span class={`size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md ${idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'}`}>
-                    {product.currency}{sz.price.toLocaleString('en-IN')}
-                  </span>
-                </button>
-              ))}
+              {normalizedSizes.map((sz, idx) => {
+                const isOutOfStock = sz.inStock === false || (typeof sz.stock === 'number' && sz.stock <= 0);
+                return (
+                  <button
+                    type="button"
+                    data-size={sz.name}
+                    data-price={sz.price}
+                    data-original-price={sz.originalPrice || ''}
+                    data-stock={sz.stock ?? 50}
+                    data-in-stock={!isOutOfStock}
+                    disabled={isOutOfStock}
+                    class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] sm:min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap flex items-center gap-1.5 ${isOutOfStock ? 'opacity-40 border-slate-200 bg-slate-100 line-through cursor-not-allowed text-slate-400' : (idx === 0 ? 'border-slate-900 bg-slate-900 text-white shadow-md cursor-pointer' : 'border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800 cursor-pointer')}`}
+                  >
+                    <span>{sz.name}</span>
+                    <span class={`size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md ${isOutOfStock ? 'bg-slate-200 text-slate-500' : (idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700')}`}>
+                      {isOutOfStock ? 'Out of Stock' : `${product.currency}${sz.price.toLocaleString('en-IN')}`}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <!-- Pack Selector (Pack of 1 & Pack of 2 Only) -->
+          <!-- Pack Configuration (Standardized to Pack of 2 / Set of 2 Panels) -->
           <div class="space-y-2 pt-1">
             <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-              <span class="uppercase tracking-wider">Select Pack</span>
-              <span id="selected-pack-label" class="text-amber-800 font-semibold">Pack of 1 (Single Panel)</span>
+              <span class="uppercase tracking-wider">Pack Configuration</span>
+              <span id="selected-pack-label" class="text-amber-800 font-semibold">Pack of 2 (Set of 2 Curtains)</span>
             </div>
-            <div class="grid grid-cols-2 gap-2 sm:gap-3">
-              <button
-                type="button"
-                data-pack="Pack of 1"
-                data-pack-multiplier="1"
-                data-pack-label="Pack of 1 (Single Panel)"
-                class="pack-btn px-3 py-2.5 rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none cursor-pointer flex items-center justify-between border-slate-900 bg-slate-900 text-white shadow-sm"
+            <div class="w-full">
+              <div
+                class="w-full px-4 py-3 rounded-2xl border-2 border-slate-900 bg-slate-900 text-white shadow-sm flex items-center justify-between"
               >
-                <span>Pack of 1</span>
-                <span class="pack-badge text-[10px] font-medium bg-white/20 px-1.5 py-0.5 rounded">1 Panel</span>
-              </button>
-
-              <button
-                type="button"
-                data-pack="Pack of 2"
-                data-pack-multiplier="2"
-                data-pack-label="Pack of 2 (Set of 2 Panels)"
-                class="pack-btn px-3 py-2.5 rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none cursor-pointer flex items-center justify-between border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 text-slate-800"
-              >
-                <span>Pack of 2</span>
-                <span class="pack-badge text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Set of 2</span>
-              </button>
+                <div class="flex items-center gap-2.5">
+                  <span class="text-lg">📦</span>
+                  <div>
+                    <div class="font-extrabold text-xs sm:text-sm text-white">Pack of 2 (Set of 2 Curtains)</div>
+                    <div class="text-[10px] text-slate-300">Contains 2 matching curtain panels with pre-fitted silver eyelets</div>
+                  </div>
+                </div>
+                <span class="text-[10px] font-black bg-emerald-500 text-slate-950 px-2.5 py-1 rounded-full uppercase tracking-wider">Standard Pack</span>
+              </div>
             </div>
           </div>
 
@@ -574,7 +576,7 @@ const customerReviews = [
               </div>
               <div class="pt-3 flex justify-between items-center">
                 <span class="text-slate-400 font-medium">Available Packs</span>
-                <span class="font-bold text-emerald-400 text-right">Pack of 1 & Pack of 2</span>
+                <span class="font-bold text-emerald-400 text-right">Pack of 2 (Set of 2 Panels)</span>
               </div>
               <div class="pt-3 flex justify-between items-center">
                 <span class="text-slate-400 font-medium">Care Instructions</span>
@@ -714,12 +716,12 @@ const customerReviews = [
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
       let selectedSize = document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-size') || '';
-      let selectedPack = 'Pack of 1';
+      let selectedPack = 'Pack of 2';
       let packMultiplier = 1;
       let quantity = 1;
-      let baseSizePrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-price') || document.getElementById('unit-price')?.innerText || '0');
+      let baseSizePrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-price') || document.getElementById('unit-price')?.innerText?.replace(/,/g, '') || '0');
       let baseSizeOrigPrice = parseFloat(document.querySelector('.size-btn.bg-slate-900')?.getAttribute('data-original-price') || '0');
-      let unitPrice = baseSizePrice * packMultiplier;
+      let unitPrice = baseSizePrice;
       let currentSlideIndex = 0;
       const totalSlides = Array.isArray(productImages) ? productImages.length : 1;
 
@@ -919,12 +921,28 @@ const customerReviews = [
         });
       });
 
-      // Size Button Click Handlers - Dynamic Size Pricing Update
+      // Size Button Click Handlers - Dynamic Size Pricing & Stock Update
       document.querySelectorAll('.size-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           selectedSize = btn.getAttribute('data-size') || '';
           const label = document.getElementById('selected-size-label');
           if (label) label.innerText = selectedSize;
+
+          const stockVal = parseInt(btn.getAttribute('data-stock') || '50', 10);
+          const inStockVal = btn.getAttribute('data-in-stock') === 'true';
+          const stockBadge = document.getElementById('selected-size-stock');
+          if (stockBadge) {
+            if (!inStockVal || stockVal <= 0) {
+              stockBadge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800';
+              stockBadge.innerText = 'Out of Stock';
+            } else if (stockVal <= 5) {
+              stockBadge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800';
+              stockBadge.innerText = `Only ${stockVal} Left`;
+            } else {
+              stockBadge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800';
+              stockBadge.innerText = '✓ In Stock';
+            }
+          }
 
           const sizePriceAttr = btn.getAttribute('data-price');
           const sizeOrigPriceAttr = btn.getAttribute('data-original-price');
@@ -953,40 +971,6 @@ const customerReviews = [
           if (activeBadge) {
             activeBadge.className = 'size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md bg-white/20 text-white';
           }
-        });
-      });
-
-      // Pack Button Handlers (Pack of 1 & Pack of 2 Only)
-      document.querySelectorAll('.pack-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          selectedPack = btn.getAttribute('data-pack') || 'Pack of 1';
-          packMultiplier = parseInt(btn.getAttribute('data-pack-multiplier') || '1', 10);
-          const packLabel = btn.getAttribute('data-pack-label') || selectedPack;
-
-          const labelEl = document.getElementById('selected-pack-label');
-          if (labelEl) labelEl.innerText = packLabel;
-
-          document.querySelectorAll('.pack-btn').forEach((b) => {
-            b.classList.remove('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-sm');
-            b.classList.add('border-slate-200', 'text-slate-800');
-            const badge = b.querySelector('.pack-badge');
-            if (badge) {
-              if (b.getAttribute('data-pack') === 'Pack of 2') {
-                badge.className = 'pack-badge text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200';
-              } else {
-                badge.className = 'pack-badge text-[10px] font-medium bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded';
-              }
-            }
-          });
-
-          btn.classList.remove('border-slate-200', 'text-slate-800');
-          btn.classList.add('border-slate-900', 'bg-slate-900', 'text-white', 'shadow-sm');
-          const activeBadge = btn.querySelector('.pack-badge');
-          if (activeBadge) {
-            activeBadge.className = 'pack-badge text-[10px] font-medium bg-white/20 text-white px-1.5 py-0.5 rounded';
-          }
-
-          updatePricing();
         });
       });
 

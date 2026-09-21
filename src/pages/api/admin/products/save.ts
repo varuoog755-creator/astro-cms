@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const colorsRaw = formData.get('colors')?.toString() || 'Royal Cream Ivory, Warm Beige';
   const colorsArray = colorsRaw.split(',').map((c) => ({ name: c.trim(), hex: '#d4af37' }));
 
-  let sizesArray: { name: string; price: number; originalPrice?: number }[] = [];
+  let sizesArray: { name: string; price: number; originalPrice?: number; stock?: number; inStock?: boolean }[] = [];
 
   // 1. Check if structured JSON was submitted
   const sizesJsonRaw = formData.get('sizes_json')?.toString();
@@ -73,6 +73,8 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
             name: item.name.toString().trim(),
             price: !isNaN(parseFloat(item.price)) ? parseFloat(item.price) : price,
             originalPrice: !isNaN(parseFloat(item.originalPrice)) ? parseFloat(item.originalPrice) : (originalPrice || undefined),
+            stock: !isNaN(parseInt(item.stock, 10)) ? parseInt(item.stock, 10) : 50,
+            inStock: item.inStock !== false && item.inStock !== 'false',
           }));
       }
     } catch (e) {
@@ -85,12 +87,16 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     const sizeNames = formData.getAll('size_name').map((s) => s.toString().trim()).filter(Boolean);
     const sizePrices = formData.getAll('size_price').map((p) => parseFloat(p.toString()));
     const sizeOrigPrices = formData.getAll('size_original_price').map((p) => parseFloat(p.toString()));
+    const sizeStocks = formData.getAll('size_stock').map((s) => parseInt(s.toString(), 10));
+    const sizeInStocks = formData.getAll('size_in_stock').map((s) => s.toString() !== 'false');
 
     if (sizeNames.length > 0) {
       sizesArray = sizeNames.map((sName, i) => ({
         name: sName,
         price: !isNaN(sizePrices[i]) ? sizePrices[i] : price,
         originalPrice: !isNaN(sizeOrigPrices[i]) ? sizeOrigPrices[i] : (originalPrice || undefined),
+        stock: !isNaN(sizeStocks[i]) ? sizeStocks[i] : 50,
+        inStock: sizeInStocks[i] !== undefined ? sizeInStocks[i] : true,
       }));
     }
   }
@@ -107,12 +113,16 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
           name: sName.trim(),
           price: !isNaN(pVal) ? pVal : price,
           originalPrice: originalPrice || undefined,
+          stock: 50,
+          inStock: true,
         };
       }
       return {
         name: trimmed,
         price,
         originalPrice: originalPrice || undefined,
+        stock: 50,
+        inStock: true,
       };
     }).filter((s) => Boolean(s.name));
   }
@@ -130,10 +140,30 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   if (id) {
-    // Update existing product
-    await prisma.product.update({
+    // Upsert existing product (works even if loaded from initial catalog)
+    await prisma.product.upsert({
       where: { id },
-      data: {
+      create: {
+        id,
+        name,
+        slug,
+        tagline: finalTagline,
+        description,
+        price,
+        originalPrice,
+        category,
+        badge,
+        gsm,
+        material,
+        fit,
+        care,
+        inStock,
+        colorsJson: JSON.stringify(colorsArray),
+        sizesJson: JSON.stringify(sizesArray),
+        imagesJson: JSON.stringify(imagesArray),
+        featuresJson: JSON.stringify(featuresArray),
+      },
+      update: {
         name,
         slug,
         tagline: finalTagline,

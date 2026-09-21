@@ -1,44 +1,90 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import prisma from '../../../lib/db';
+import { PRODUCTS_CATALOG } from '../../../lib/products';
 
 const id = Astro.url.searchParams.get('id');
 const error = Astro.url.searchParams.get('error');
 
-let product = null;
-let productSizes: { name: string; price: number; originalPrice?: number }[] = [];
+let product: any = null;
+let productSizes: { name: string; price: number; originalPrice?: number; stock?: number; inStock?: boolean }[] = [];
 
 if (id) {
-  const existing = await prisma.product.findUnique({ where: { id } });
+  let existing: any = null;
+  try {
+    existing = await prisma.product.findUnique({ where: { id } });
+    if (!existing) {
+      existing = await prisma.product.findFirst({ where: { OR: [{ id }, { slug: id }] } });
+    }
+  } catch (e) {}
+
+  if (!existing) {
+    const catalogItem = PRODUCTS_CATALOG.find((p) => p.id === id || p.slug === id);
+    if (catalogItem) {
+      existing = {
+        id: catalogItem.id,
+        name: catalogItem.name,
+        slug: catalogItem.slug,
+        tagline: catalogItem.tagline,
+        description: catalogItem.description,
+        price: catalogItem.price,
+        originalPrice: catalogItem.originalPrice,
+        category: catalogItem.category,
+        badge: catalogItem.badge || '',
+        inStock: catalogItem.inStock,
+        colorsJson: JSON.stringify(catalogItem.colors),
+        sizesJson: JSON.stringify(catalogItem.sizes),
+        imagesJson: JSON.stringify(catalogItem.images),
+        featuresJson: JSON.stringify(catalogItem.features),
+      };
+    }
+  }
+
   if (existing) {
     try {
-      const raw = JSON.parse(existing.sizesJson || '[]');
+      const raw = typeof existing.sizesJson === 'string' ? JSON.parse(existing.sizesJson || '[]') : existing.sizesJson || [];
       productSizes = raw.map((s: any) => {
         if (typeof s === 'string') {
-          return { name: s, price: existing.price, originalPrice: existing.originalPrice || undefined };
+          return { name: s, price: existing.price, originalPrice: existing.originalPrice || undefined, stock: 50, inStock: true };
         }
-        return { name: s.name, price: s.price || existing.price, originalPrice: s.originalPrice };
+        return {
+          name: s.name,
+          price: typeof s.price === 'number' ? s.price : existing.price,
+          originalPrice: s.originalPrice,
+          stock: typeof s.stock === 'number' ? s.stock : 50,
+          inStock: s.inStock !== false,
+        };
       });
     } catch (e) {
       productSizes = [];
     }
 
+    const parseJson = (str: any) => {
+      if (!str) return [];
+      if (Array.isArray(str)) return str;
+      try { return JSON.parse(str); } catch { return []; }
+    };
+
+    const colorsArr = parseJson(existing.colorsJson);
+    const imagesArr = parseJson(existing.imagesJson);
+    const featuresArr = parseJson(existing.featuresJson);
+
     product = {
       ...existing,
-      colors: JSON.parse(existing.colorsJson || '[]').map((c: any) => c.name).join(', '),
+      colors: colorsArr.map((c: any) => typeof c === 'string' ? c : c.name).join(', '),
       sizes: productSizes.map(s => `${s.name}:${s.price}`).join(', '),
-      images: JSON.parse(existing.imagesJson || '[]').join('\n'),
-      features: JSON.parse(existing.featuresJson || '[]').join(', '),
+      images: imagesArr.join('\n'),
+      features: featuresArr.join(', '),
     };
   }
 }
 
 if (!productSizes.length) {
   productSizes = [
-    { name: '5 Feet (Window)', price: 499, originalPrice: 799 },
-    { name: '6 Feet', price: 549, originalPrice: 849 },
-    { name: '7 Feet (Door)', price: 599, originalPrice: 999 },
-    { name: '9 Feet (Long Door)', price: 799, originalPrice: 1299 },
+    { name: '5 Feet (Window)', price: 499, originalPrice: 799, stock: 50, inStock: true },
+    { name: '6 Feet', price: 549, originalPrice: 849, stock: 50, inStock: true },
+    { name: '7 Feet (Door)', price: 599, originalPrice: 999, stock: 100, inStock: true },
+    { name: '9 Feet (Long Door)', price: 799, originalPrice: 1299, stock: 40, inStock: true },
   ];
 }
 ---
@@ -82,10 +128,11 @@ if (!productSizes.length) {
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Category *</label>
           <select name="category" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-blue-500">
-            <option value="Door Curtains" selected={product?.category === 'Door Curtains'}>Door Curtains (7ft / 9ft)</option>
-            <option value="Window Curtains" selected={product?.category === 'Window Curtains'}>Window Curtains (5ft / 7ft)</option>
-            <option value="Ambient Lighting" selected={product?.category === 'Ambient Lighting'}>Ambient Lighting & Globes</option>
-            <option value="Home Accents" selected={product?.category === 'Home Accents'}>Luxury Cushion Covers & Accents</option>
+            <option value="Door Curtains" selected={!product?.category || product?.category === 'Door Curtains'}>Door Curtains (7ft / 9ft)</option>
+            <option value="Window Curtains" selected={product?.category === 'Window Curtains'}>Window Curtains (5ft / 6ft)</option>
+            <option value="Long Door Curtains" selected={product?.category === 'Long Door Curtains'}>Long Door Curtains (9 Feet)</option>
+            <option value="Blackout Curtains" selected={product?.category === 'Blackout Curtains'}>Thermal Blackout Curtains</option>
+            <option value="Sheer Curtains" selected={product?.category === 'Sheer Curtains'}>Sheer & Net Curtains</option>
           </select>
         </div>
       </div>
@@ -96,7 +143,7 @@ if (!productSizes.length) {
           type="text"
           name="tagline"
           value={product?.tagline || ''}
-          placeholder="100% Thermal Blackout Velvet Drapery"
+          placeholder="Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation"
           class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -134,16 +181,11 @@ if (!productSizes.length) {
             id="pack_size_select"
             class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-bold text-slate-800 focus:ring-2 focus:ring-blue-500"
           >
-            <option value="Pack of 2" selected={product?.name?.toLowerCase().includes('pack of 2') || product?.name?.toLowerCase().includes('set of 2') || product?.tagline?.toLowerCase().includes('pack of 2')}>
-              📦 Pack of 2 (Set of 2 Curtains)
-            </option>
-            <option value="Pack of 1" selected={product?.name?.toLowerCase().includes('pack of 1') || product?.tagline?.toLowerCase().includes('pack of 1') || product?.name?.toLowerCase().includes('single')}>
-              📦 Pack of 1 (Single Curtain Panel)
-            </option>
-            <option value="Pack of 4" selected={product?.name?.toLowerCase().includes('pack of 4')}>
-              📦 Pack of 4 (Set of 4 Curtains)
+            <option value="Pack of 2" selected>
+              📦 Pack of 2 (Set of 2 Curtains) - Standard
             </option>
           </select>
+          <span class="text-[10px] text-slate-500 mt-1 block">All catalog products are configured and sold as Pack of 2.</span>
         </div>
       </div>
 
@@ -199,6 +241,7 @@ if (!productSizes.length) {
                   <th class="py-2 px-3">Size / Length (e.g. 5 Feet)</th>
                   <th class="py-2 px-3">Selling Price (₹)</th>
                   <th class="py-2 px-3">MRP / Cut Price (₹)</th>
+                  <th class="py-2 px-3">Stock Units & Status</th>
                   <th class="py-2 px-3 text-right">Action</th>
                 </tr>
               </thead>
@@ -235,6 +278,26 @@ if (!productSizes.length) {
                         placeholder="999"
                         class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500"
                       />
+                    </td>
+                    <td class="py-2 px-2">
+                      <div class="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          name="size_stock"
+                          value={sz.stock !== undefined ? sz.stock : 50}
+                          min="0"
+                          placeholder="Qty"
+                          title="Stock Quantity in Units"
+                          class="size-stock-input w-16 bg-white border border-slate-300 rounded-lg px-2.5 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+                        />
+                        <select
+                          name="size_in_stock"
+                          class="size-instock-select bg-white border border-slate-300 rounded-lg px-2 py-2 text-[11px] font-bold text-slate-700 focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                        >
+                          <option value="true" selected={sz.inStock !== false}>✓ In Stock</option>
+                          <option value="false" selected={sz.inStock === false}>✕ Out of Stock</option>
+                        </select>
+                      </div>
                     </td>
                     <td class="py-2 px-2 text-right">
                       <button
@@ -308,13 +371,17 @@ if (!productSizes.length) {
           const nameInput = row.querySelector('.size-name-input');
           const priceInput = row.querySelector('.size-price-input');
           const origPriceInput = row.querySelector('.size-origprice-input');
+          const stockInput = row.querySelector('.size-stock-input');
+          const inStockSelect = row.querySelector('.size-instock-select');
 
           const name = nameInput ? nameInput.value.trim() : '';
           const price = priceInput ? parseFloat(priceInput.value) : 0;
           const origPrice = origPriceInput && origPriceInput.value ? parseFloat(origPriceInput.value) : undefined;
+          const stock = stockInput && stockInput.value !== '' ? parseInt(stockInput.value, 10) : 50;
+          const inStock = inStockSelect ? inStockSelect.value === 'true' : true;
 
           if (name) {
-            list.push({ name, price, originalPrice: origPrice });
+            list.push({ name, price, originalPrice: origPrice, stock, inStock });
             fallback.push(`${name}:${price}`);
           }
         });
@@ -335,8 +402,9 @@ if (!productSizes.length) {
             }
           });
         }
-        row.querySelectorAll('input').forEach((inp) => {
+        row.querySelectorAll('input, select').forEach((inp) => {
           inp.addEventListener('input', syncSizes);
+          inp.addEventListener('change', syncSizes);
         });
       }
 
@@ -374,6 +442,25 @@ if (!productSizes.length) {
               class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500"
             />
           </td>
+          <td class="py-2 px-2">
+            <div class="flex items-center gap-1.5">
+              <input
+                type="number"
+                name="size_stock"
+                value="50"
+                min="0"
+                placeholder="Qty"
+                class="size-stock-input w-16 bg-white border border-slate-300 rounded-lg px-2.5 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+              />
+              <select
+                name="size_in_stock"
+                class="size-instock-select bg-white border border-slate-300 rounded-lg px-2 py-2 text-[11px] font-bold text-slate-700 focus:ring-1 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value="true" selected>✓ In Stock</option>
+                <option value="false">✕ Out of Stock</option>
+              </select>
+            </div>
+          </td>
           <td class="py-2 px-2 text-right">
             <button
               type="button"
@@ -392,10 +479,10 @@ if (!productSizes.length) {
       presetBtn?.addEventListener('click', () => {
         const basePrice = parseFloat(document.querySelector('input[name="price"]')?.value || '599') || 599;
         const presets = [
-          { name: '5 Feet (Window)', price: Math.round(basePrice * 0.85), orig: Math.round(basePrice * 1.4) },
-          { name: '6 Feet', price: Math.round(basePrice * 0.92), orig: Math.round(basePrice * 1.5) },
-          { name: '7 Feet (Door)', price: basePrice, orig: Math.round(basePrice * 1.6) },
-          { name: '9 Feet (Long Door)', price: Math.round(basePrice * 1.25), orig: Math.round(basePrice * 1.9) },
+          { name: '5 Feet (Window)', price: Math.round(basePrice * 0.85), orig: Math.round(basePrice * 1.4), stock: 50 },
+          { name: '6 Feet', price: Math.round(basePrice * 0.92), orig: Math.round(basePrice * 1.5), stock: 50 },
+          { name: '7 Feet (Door)', price: basePrice, orig: Math.round(basePrice * 1.6), stock: 100 },
+          { name: '9 Feet (Long Door)', price: Math.round(basePrice * 1.25), orig: Math.round(basePrice * 1.9), stock: 40 },
         ];
         tableBody.innerHTML = '';
         presets.forEach((p) => {
@@ -410,6 +497,15 @@ if (!productSizes.length) {
             </td>
             <td class="py-2 px-2">
               <input type="number" name="size_original_price" value="${p.orig}" step="0.01" class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500" />
+            </td>
+            <td class="py-2 px-2">
+              <div class="flex items-center gap-1.5">
+                <input type="number" name="size_stock" value="${p.stock}" min="0" placeholder="Qty" class="size-stock-input w-16 bg-white border border-slate-300 rounded-lg px-2.5 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500" />
+                <select name="size_in_stock" class="size-instock-select bg-white border border-slate-300 rounded-lg px-2 py-2 text-[11px] font-bold text-slate-700 focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                  <option value="true" selected>✓ In Stock</option>
+                  <option value="false">✕ Out of Stock</option>
+                </select>
+              </div>
             </td>
             <td class="py-2 px-2 text-right">
               <button type="button" class="remove-size-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-1.5 rounded-md transition font-bold cursor-pointer" title="Delete Size">✕</button>
