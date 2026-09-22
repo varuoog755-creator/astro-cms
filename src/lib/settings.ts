@@ -90,7 +90,7 @@ export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
   ga_measurement_id: '',
   ga_enabled: true,
 
-  meta_pixel_id: '',
+  meta_pixel_id: '4602248273380617, 2664388740684324',
   meta_pixel_enabled: true,
 
   sms_otp_dispatch_enabled: false,

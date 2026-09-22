@@ -72,9 +72,17 @@ const order = await prisma.order.findUnique({
     </div>
   </div>
 
-  <script is:inline>
+  <script is:inline define:vars={{ purchaseTotal: order?.totalAmount || 0, orderId: orderNumber }}>
     (function () {
       try {
+        if (typeof window.fbq === 'function') {
+          fbq('track', 'Purchase', {
+            currency: 'INR',
+            value: Number(purchaseTotal) || 0,
+            content_type: 'product',
+            order_id: String(orderId)
+          });
+        }
         localStorage.removeItem('teepul_cart');
         if (typeof window.updateCartBadge === 'function') {
           window.updateCartBadge();
