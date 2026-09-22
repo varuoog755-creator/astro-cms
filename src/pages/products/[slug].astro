@@ -155,6 +155,7 @@ const customerReviews = [
     canonicalUrl: `/products/${product.slug}`,
     ogImage: product.images?.[0],
     preloadLcpImage: product.images?.[0],
+    type: 'product',
     productData: {
       name: product.name,
       price: product.price,
@@ -164,6 +165,7 @@ const customerReviews = [
       rating: product.rating,
       reviewCount: product.reviewCount,
       image: product.images?.[0],
+      category: product.category,
     },
     breadcrumbs: [
       { name: 'Home', url: '/' },
@@ -715,7 +717,7 @@ const customerReviews = [
     </div>
   </div>
 
-  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, productImages: product.images || [] }}>
+  <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, currentProductId: product.id, currentProductPrice: product.price, productImages: product.images || [] }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
       let selectedSize = document.querySelector('.size-btn.active-size')?.getAttribute('data-size') || '';
@@ -727,6 +729,21 @@ const customerReviews = [
       let unitPrice = baseSizePrice;
       let currentSlideIndex = 0;
       const totalSlides = Array.isArray(productImages) ? productImages.length : 1;
+
+      // Meta Pixel ViewContent Event for Catalog Auto-Sync
+      try {
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'ViewContent', {
+            content_name: currentProductName,
+            content_ids: [currentProductId],
+            content_type: 'product',
+            value: unitPrice || currentProductPrice,
+            currency: 'INR'
+          });
+        }
+      } catch (e) {
+        console.error('Meta Pixel ViewContent error:', e);
+      }
 
       // Update subtotal price
       function updateSubtotal() {
@@ -987,6 +1004,18 @@ const customerReviews = [
 
       // Add to Cart Click Handler - Opens Right Slide-over Cart Drawer
       document.getElementById('add-cart-btn')?.addEventListener('click', () => {
+        try {
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'AddToCart', {
+              content_name: currentProductName,
+              content_ids: [currentProductId],
+              content_type: 'product',
+              value: unitPrice * quantity,
+              currency: 'INR'
+            });
+          }
+        } catch (e) {}
+
         if (typeof window.quickAddToCart === 'function') {
           const currentImg = (productImages && productImages[currentSlideIndex]) || productImages[0] || '';
           const variationLabel = `${selectedSize} (${selectedPack})`;
@@ -1004,6 +1033,19 @@ const customerReviews = [
 
       // Order / Buy Now Click Handler
       document.getElementById('order-btn')?.addEventListener('click', () => {
+        try {
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'InitiateCheckout', {
+              content_name: currentProductName,
+              content_ids: [currentProductId],
+              content_type: 'product',
+              value: unitPrice * quantity,
+              currency: 'INR',
+              num_items: quantity
+            });
+          }
+        } catch (e) {}
+
         const variationLabel = `${selectedSize} (${selectedPack})`;
         const checkoutUrl = `/checkout?product=${encodeURIComponent(currentProductSlug)}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(variationLabel)}&price=${unitPrice}&qty=${quantity}`;
         
@@ -1022,6 +1064,17 @@ const customerReviews = [
 
       // WhatsApp Direct Order Handler
       document.getElementById('whatsapp-direct-btn')?.addEventListener('click', () => {
+        try {
+          if (typeof window.fbq === 'function') {
+            window.fbq('trackCustom', 'WhatsAppOrderClick', {
+              content_name: currentProductName,
+              content_ids: [currentProductId],
+              value: unitPrice * quantity,
+              currency: 'INR'
+            });
+          }
+        } catch (e) {}
+
         const msg = `Hi Teepul Store! I want to order:\n\n*Product:* ${currentProductName}\n*Color:* ${selectedColor}\n*Size:* ${selectedSize}\n*Pack:* ${selectedPack}\n*Quantity:* ${quantity}\n*Price:* ₹${(unitPrice * quantity).toLocaleString('en-IN')}`;
         window.open(`https://wa.me/919896374239?text=${encodeURIComponent(msg)}`, '_blank');
       });

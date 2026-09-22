@@ -83,6 +83,21 @@ const menuItems = rawMenuItems
     <meta property="og:type" content={meta.type} />
     <meta property="og:locale" content="en_IN" />
 
+    <!-- Meta Open Graph Product Microdata for Facebook / Meta Catalog Pixel Ingestion -->
+    {meta.productMeta && (
+      <>
+        <meta property="product:retailer_item_id" content={meta.productMeta.retailerItemId} />
+        <meta property="product:price:amount" content={meta.productMeta.priceAmount} />
+        <meta property="product:price:currency" content={meta.productMeta.priceCurrency} />
+        <meta property="product:availability" content={meta.productMeta.availability} />
+        <meta property="product:condition" content={meta.productMeta.condition} />
+        <meta property="product:brand" content={meta.productMeta.brand} />
+        <meta property="product:category" content={meta.productMeta.category} />
+        <meta property="og:price:amount" content={meta.productMeta.priceAmount} />
+        <meta property="og:price:currency" content={meta.productMeta.priceCurrency} />
+      </>
+    )}
+
     <!-- Twitter Cards (X / Twitter Preview) -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={meta.title} />
@@ -134,7 +149,7 @@ const menuItems = rawMenuItems
     <!-- Meta Pixel Code -->
     {integrationSettings.meta_pixel_enabled && integrationSettings.meta_pixel_id && (
       <>
-        <script is:inline define:vars={{ pixelId: integrationSettings.meta_pixel_id }}>
+        <script is:inline define:vars={{ rawPixelId: integrationSettings.meta_pixel_id }}>
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -143,14 +158,18 @@ const menuItems = rawMenuItems
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', pixelId);
+          
+          const pixelIds = String(rawPixelId).split(',').map(s => s.trim()).filter(Boolean);
+          pixelIds.forEach(id => fbq('init', id));
           fbq('track', 'PageView');
         </script>
-        <noscript>
-          <img height="1" width="1" style="display:none"
-            src={`https://www.facebook.com/tr?id=${integrationSettings.meta_pixel_id}&ev=PageView&noscript=1`}
-          />
-        </noscript>
+        {integrationSettings.meta_pixel_id.split(',').map((id: string) => id.trim()).filter(Boolean).map((id: string) => (
+          <noscript>
+            <img height="1" width="1" style="display:none"
+              src={`https://www.facebook.com/tr?id=${id}&ev=PageView&noscript=1`}
+            />
+          </noscript>
+        ))}
       </>
     )}
 

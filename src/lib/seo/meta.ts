@@ -140,6 +140,8 @@ export function generateSeoMetadata(options: SeoOptions) {
       image: [p.image || ogImage],
       description,
       sku: p.sku || 'TP-CURTAIN',
+      productID: p.sku || 'TP-CURTAIN',
+      mpn: p.sku || 'TP-CURTAIN',
       brand: {
         '@type': 'Brand',
         name: 'Teepul',
@@ -152,7 +154,7 @@ export function generateSeoMetadata(options: SeoOptions) {
       offers: {
         '@type': 'Offer',
         priceCurrency: p.currency || 'INR',
-        price: p.price,
+        price: typeof p.price === 'number' ? p.price.toFixed(2) : String(p.price),
         priceValidUntil: '2027-12-31',
         itemCondition: 'https://schema.org/NewCondition',
         availability: p.inStock !== false ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -235,16 +237,27 @@ export function generateSeoMetadata(options: SeoOptions) {
     });
   }
 
+  const productMeta = options.productData ? {
+    retailerItemId: options.productData.sku || 'TP-CURTAIN',
+    priceAmount: typeof options.productData.price === 'number' ? options.productData.price.toFixed(2) : String(options.productData.price),
+    priceCurrency: options.productData.currency || 'INR',
+    availability: options.productData.inStock !== false ? 'in stock' : 'out of stock',
+    condition: 'new',
+    brand: 'Teepul',
+    category: options.productData.category || 'Home & Living > Curtains & Window Treatments',
+  } : null;
+
   return {
     title: fullTitle,
     description,
     canonical,
     robots,
     ogImage,
-    type: options.type || 'website',
+    type: options.type || (options.productData ? 'product' : 'website'),
     siteName,
     preloadLcpImage: options.preloadLcpImage,
     jsonLd: JSON.stringify(jsonLd),
+    productMeta,
   };
 }
 
