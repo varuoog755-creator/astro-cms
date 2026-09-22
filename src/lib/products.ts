@@ -23,7 +23,7 @@ export interface Product {
   rating: number;
   reviewCount: number;
   inStock: boolean;
-  colors: { name: string; hex: string }[];
+  colors: { name: string; hex: string; images?: string[] }[];
   sizes: (string | ProductSize)[];
   fabricSpecs: {
     gsm: number;
@@ -114,19 +114,43 @@ export const PRODUCTS_CATALOG: Product[] = [
     "colors": [
       {
         "name": "Wine Maroon",
-        "hex": "#722f37"
+        "hex": "#722f37",
+        "images": [
+          "https://images.meesho.com/images/products/478491390/ijxnr_512.jpg",
+          "https://images.meesho.com/images/products/478491390/13vpb_512.jpg",
+          "https://images.meesho.com/images/products/478491390/gxuah_512.jpg",
+          "https://images.meesho.com/images/products/478491390/hdjib_512.jpg"
+        ]
       },
       {
         "name": "Royal Blue",
-        "hex": "#1e3a8a"
+        "hex": "#1e3a8a",
+        "images": [
+          "https://images.meesho.com/images/products/478491395/vfhok_512.jpg",
+          "https://images.meesho.com/images/products/478491395/iqfz2_512.jpg",
+          "https://images.meesho.com/images/products/478491395/kx3uc_512.jpg",
+          "https://images.meesho.com/images/products/478491395/yxm7h_512.jpg"
+        ]
       },
       {
         "name": "Royal Purple",
-        "hex": "#581c87"
+        "hex": "#581c87",
+        "images": [
+          "https://images.meesho.com/images/products/478491392/xctxd_512.jpg",
+          "https://images.meesho.com/images/products/478491392/pknla_512.jpg",
+          "https://images.meesho.com/images/products/478491392/mra8y_512.jpg",
+          "https://images.meesho.com/images/products/478491392/sdav5_512.jpg"
+        ]
       },
       {
         "name": "Mustard Gold",
-        "hex": "#d97706"
+        "hex": "#d97706",
+        "images": [
+          "https://images.meesho.com/images/products/478491396/tdbr5_512.jpg",
+          "https://images.meesho.com/images/products/478491396/b0yem_512.jpg",
+          "https://images.meesho.com/images/products/478491396/up2ky_512.jpg",
+          "https://images.meesho.com/images/products/478491396/fr4cf_512.jpg"
+        ]
       }
     ],
     "sizes": [
@@ -167,43 +191,9 @@ export const PRODUCTS_CATALOG: Product[] = [
     },
     "images": [
       "https://images.meesho.com/images/products/478491390/ijxnr_512.jpg",
-      "https://images.meesho.com/images/products/478491395/vfhok_512.jpg",
-      "https://images.meesho.com/images/products/478491392/xctxd_512.jpg",
-      "https://images.meesho.com/images/products/478491396/tdbr5_512.jpg",
-      "https://images.meesho.com/images/products/478491390/ijxnr_512.webp",
       "https://images.meesho.com/images/products/478491390/13vpb_512.jpg",
       "https://images.meesho.com/images/products/478491390/gxuah_512.jpg",
-      "https://images.meesho.com/images/products/478491390/hdjib_512.jpg",
-      "https://images.meesho.com/images/products/478491390/13vpb_512.webp",
-      "https://images.meesho.com/images/products/478491390/gxuah_512.webp",
-      "https://images.meesho.com/images/products/478491390/hdjib_512.webp",
-      "https://images.meesho.com/images/products/478491395/vfhok_512.webp",
-      "https://images.meesho.com/images/products/478491392/xctxd_512.webp",
-      "https://images.meesho.com/images/products/478491394/bqw36_512.jpg",
-      "https://images.meesho.com/images/products/478491394/bqw36_512.webp",
-      "https://images.meesho.com/images/products/478491391/e2ikb_512.jpg",
-      "https://images.meesho.com/images/products/478491391/e2ikb_512.webp",
-      "https://images.meesho.com/images/products/478491393/sahlq_512.jpg",
-      "https://images.meesho.com/images/products/478491393/sahlq_512.webp",
-      "https://images.meesho.com/images/products/478491396/tdbr5_512.webp",
-      "https://images.meesho.com/images/products/478491395/iqfz2_512.jpg",
-      "https://images.meesho.com/images/products/478491395/kx3uc_512.jpg",
-      "https://images.meesho.com/images/products/478491395/yxm7h_512.jpg",
-      "https://images.meesho.com/images/products/478491395/iqfz2_512.webp",
-      "https://images.meesho.com/images/products/478491395/kx3uc_512.webp",
-      "https://images.meesho.com/images/products/478491395/yxm7h_512.webp",
-      "https://images.meesho.com/images/products/478491392/pknla_512.jpg",
-      "https://images.meesho.com/images/products/478491392/mra8y_512.jpg",
-      "https://images.meesho.com/images/products/478491392/sdav5_512.jpg",
-      "https://images.meesho.com/images/products/478491392/pknla_512.webp",
-      "https://images.meesho.com/images/products/478491392/mra8y_512.webp",
-      "https://images.meesho.com/images/products/478491392/sdav5_512.webp",
-      "https://images.meesho.com/images/products/478491396/b0yem_512.jpg",
-      "https://images.meesho.com/images/products/478491396/up2ky_512.jpg",
-      "https://images.meesho.com/images/products/478491396/fr4cf_512.jpg",
-      "https://images.meesho.com/images/products/478491396/b0yem_512.webp",
-      "https://images.meesho.com/images/products/478491396/up2ky_512.webp",
-      "https://images.meesho.com/images/products/478491396/fr4cf_512.webp"
+      "https://images.meesho.com/images/products/478491390/hdjib_512.jpg"
     ],
     "features": [
       "Pack of 2 Panels - High Density Blackout Fabric",
