@@ -668,9 +668,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bcvrz8",
     "slug": "stylish-purple-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bcvrz8",
-    "name": "Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET (Pack of 2)",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
+    "description": "Name: Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET (Pack of 2)\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
     "price": 479,
     "originalPrice": 958,
     "currency": "₹",
@@ -682,7 +682,23 @@ export const PRODUCTS_CATALOG: Product[] = [
     "colors": [
       {
         "name": "Royal Purple",
-        "hex": "#6b21a8"
+        "hex": "#6b21a8",
+        "images": [
+          "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg",
+          "https://images.meesho.com/images/products/686765924/fhvwh_512.jpg",
+          "https://images.meesho.com/images/products/686765924/bc8tv_512.jpg",
+          "https://images.meesho.com/images/products/686765924/s7og9_512.jpg"
+        ]
+      },
+      {
+        "name": "Sky & Royal Blue",
+        "hex": "#1e40af",
+        "images": [
+          "https://images.meesho.com/images/products/686765926/exfoq_512.jpg",
+          "https://images.meesho.com/images/products/686765926/8ncwr_512.jpg",
+          "https://images.meesho.com/images/products/686765926/8tsjx_512.jpg",
+          "https://images.meesho.com/images/products/686765926/2clds_512.jpg"
+        ]
       }
     ],
     "sizes": [
@@ -725,18 +741,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg",
       "https://images.meesho.com/images/products/686765924/fhvwh_512.jpg",
       "https://images.meesho.com/images/products/686765924/bc8tv_512.jpg",
-      "https://images.meesho.com/images/products/686765924/s7og9_512.jpg",
-      "https://images.meesho.com/images/products/686765924/ijjo7_512.webp",
-      "https://images.meesho.com/images/products/686765924/fhvwh_512.webp",
-      "https://images.meesho.com/images/products/686765924/bc8tv_512.webp",
-      "https://images.meesho.com/images/products/686765924/s7og9_512.webp",
-      "https://images.meesho.com/images/products/686765926/exfoq_512.jpg",
-      "https://images.meesho.com/images/products/686765926/exfoq_512.webp",
-      "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg",
-      "https://images.meesho.com/images/products/686765924/fhvwh_512.jpg",
-      "https://images.meesho.com/images/products/686765924/bc8tv_512.jpg",
-      "https://images.meesho.com/images/products/686765924/s7og9_512.jpg",
-      "https://images.meesho.com/images/products/686765926/exfoq_512.jpg"
+      "https://images.meesho.com/images/products/686765924/s7og9_512.jpg"
     ],
     "features": [
       "100% Premium Heavyweight Polyester (Pack of 2)",
