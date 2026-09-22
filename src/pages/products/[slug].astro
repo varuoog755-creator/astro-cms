@@ -339,6 +339,7 @@ const customerReviews = [
                 <button
                   type="button"
                   data-color={c.name}
+                  data-color-index={idx}
                   class={`color-chip-btn flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border text-xs font-bold transition focus:outline-none ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
                 >
                   <span class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
@@ -938,6 +939,11 @@ const customerReviews = [
           });
           btn.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-800');
           btn.classList.add('border-amber-800', 'ring-2', 'ring-amber-800/30', 'bg-amber-50/60', 'text-amber-950');
+
+          const cIdx = parseInt(btn.getAttribute('data-color-index') || '-1', 10);
+          if (cIdx >= 0 && cIdx < totalSlides) {
+            goToSlide(cIdx);
+          }
         });
       });
 
