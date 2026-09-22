@@ -69,11 +69,27 @@ if (id) {
     const imagesArr = parseJson(existing.imagesJson);
     const featuresArr = parseJson(existing.featuresJson);
 
+    const allUniqueImages: string[] = [];
+    imagesArr.forEach((img: any) => {
+      if (typeof img === 'string' && img.trim() && !allUniqueImages.includes(img.trim())) {
+        allUniqueImages.push(img.trim());
+      }
+    });
+    colorsArr.forEach((c: any) => {
+      if (c && Array.isArray(c.images)) {
+        c.images.forEach((img: any) => {
+          if (typeof img === 'string' && img.trim() && !allUniqueImages.includes(img.trim())) {
+            allUniqueImages.push(img.trim());
+          }
+        });
+      }
+    });
+
     product = {
       ...existing,
       colors: colorsArr.map((c: any) => typeof c === 'string' ? c : c.name).join(', '),
       sizes: productSizes.map(s => `${s.name}:${s.price}`).join(', '),
-      images: imagesArr.join('\n'),
+      images: allUniqueImages.join('\n'),
       features: featuresArr.join(', '),
     };
   }
@@ -125,6 +141,8 @@ if (!productSizes.length) {
 
     <form action="/api/admin/products/save" method="POST" class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
       {product && <input type="hidden" name="id" value={product.id} />}
+      {product && <input type="hidden" name="slug" value={product.slug} />}
+      {product && <input type="hidden" name="colors_json" id="colors_json_input" value={product.colorsJson || ''} />}
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -341,14 +359,31 @@ if (!productSizes.length) {
         </div>
       </div>
 
-      <div>
-        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Image URLs (one URL per line)</label>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Product Photos (one URL per line)</label>
+            <p class="text-[11px] text-slate-500 mt-0.5">Delete any URL line below or click &times; on the photo preview to remove it from the product gallery.</p>
+          </div>
+          <span id="photo-count-badge" class="text-[10px] font-black bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full border border-slate-200">
+            0 Photos
+          </span>
+        </div>
+
         <textarea
+          id="product-images-textarea"
           name="images"
-          rows="3"
+          rows="5"
           placeholder="https://images.unsplash.com/photo-1513694203232-719a280e022f"
-          class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono focus:ring-2 focus:ring-blue-500"
+          class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono focus:ring-2 focus:ring-blue-500 leading-relaxed"
         >{product?.images || ''}</textarea>
+
+        <div>
+          <div class="text-[11px] font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Live Photo Previews:</div>
+          <div id="image-thumbnails-preview" class="flex flex-wrap gap-2.5 p-3 bg-slate-50 border border-slate-200 rounded-2xl min-h-[90px] items-center">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
       </div>
 
       <div class="flex items-center justify-between border-t border-slate-200 pt-6">
@@ -590,6 +625,64 @@ if (!productSizes.length) {
       const topDeleteBtn = document.getElementById('top-delete-product-btn');
       if (topDeleteBtn) {
         topDeleteBtn.addEventListener('click', () => executeDelete(topDeleteBtn));
+      }
+
+      // Visual Photo Previews & 1-Click Remove Logic
+      const imagesTextarea = document.getElementById('product-images-textarea');
+      const previewContainer = document.getElementById('image-thumbnails-preview');
+      const photoBadge = document.getElementById('photo-count-badge');
+
+      function renderPhotoPreviews() {
+        if (!imagesTextarea || !previewContainer) return;
+        const lines = imagesTextarea.value.split('\n').map(l => l.trim()).filter(Boolean);
+        if (photoBadge) photoBadge.innerText = `${lines.length} Photo${lines.length === 1 ? '' : 's'}`;
+        previewContainer.innerHTML = '';
+        if (lines.length === 0) {
+          previewContainer.innerHTML = '<span class="text-slate-400 text-xs italic">No photos listed. Paste image URLs above.</span>';
+          return;
+        }
+
+        lines.forEach((url, idx) => {
+          const card = document.createElement('div');
+          card.className = 'relative group w-20 h-20 rounded-xl overflow-hidden border border-slate-300 shadow-xs bg-white flex-shrink-0';
+
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = `Photo ${idx + 1}`;
+          img.className = 'w-full h-full object-cover';
+          img.onerror = () => {
+            img.style.display = 'none';
+            card.classList.add('flex', 'items-center', 'justify-center', 'text-[9px]', 'text-rose-500', 'p-1', 'text-center', 'font-bold');
+            card.innerText = 'Broken URL';
+          };
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'absolute top-1 right-1 w-5 h-5 bg-rose-600 hover:bg-rose-700 text-white rounded-full flex items-center justify-center text-xs font-black shadow-md cursor-pointer transition';
+          removeBtn.title = 'Remove this photo';
+          removeBtn.innerHTML = '&times;';
+          removeBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            lines.splice(idx, 1);
+            imagesTextarea.value = lines.join('\n');
+            renderPhotoPreviews();
+          };
+
+          const numBadge = document.createElement('span');
+          numBadge.className = 'absolute bottom-1 left-1 bg-slate-900/80 text-white text-[9px] font-black px-1.5 py-0.2 rounded shadow';
+          numBadge.innerText = `#${idx + 1}`;
+
+          card.appendChild(img);
+          card.appendChild(removeBtn);
+          card.appendChild(numBadge);
+          previewContainer.appendChild(card);
+        });
+      }
+
+      if (imagesTextarea) {
+        imagesTextarea.addEventListener('input', renderPhotoPreviews);
+        renderPhotoPreviews();
       }
 
       syncSizes();

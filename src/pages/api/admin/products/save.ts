@@ -88,8 +88,122 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const care = formData.get('care')?.toString() || 'Hand & Machine Wash Cold';
   const inStock = formData.has('inStock');
 
-  const colorsRaw = formData.get('colors')?.toString() || 'Royal Cream Ivory, Warm Beige';
-  const colorsArray = colorsRaw.split(',').map((c) => ({ name: c.trim(), hex: '#d4af37' }));
+  // Find existing product if id is provided
+  let existingProduct: any = null;
+  if (id) {
+    try {
+      existingProduct = await prisma.product.findUnique({ where: { id } });
+      if (!existingProduct) {
+        existingProduct = await prisma.product.findFirst({ where: { OR: [{ id }, { slug: id }] } });
+      }
+    } catch (e) {
+      console.error('Error finding existing product:', e);
+    }
+  }
+
+  // Preserve existing slug unless explicitly provided
+  let slug = formData.get('slug')?.toString().trim();
+  if (!slug && existingProduct?.slug) {
+    slug = existingProduct.slug;
+  }
+  if (!slug) {
+    slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
+  // Images handling: parse user submitted URLs
+  const imagesRaw = formData.get('images')?.toString();
+  let imagesArray: string[] = [];
+  if (typeof imagesRaw === 'string') {
+    imagesArray = imagesRaw
+      .split('\n')
+      .map((i) => i.trim())
+      .filter(Boolean)
+      .map((i) => {
+        if (i.includes('ibb.co/MDrxVyJY')) {
+          return '/uploads/grey-eyelet-curtain-front.webp';
+        }
+        return i;
+      });
+  }
+
+  // Only fallback if brand new product and no images provided
+  if (!id && imagesArray.length === 0) {
+    imagesArray = ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80'];
+  }
+
+  // Colors handling: reconcile with existing colors and filter removed images
+  let existingColors: any[] = [];
+  if (existingProduct?.colorsJson) {
+    try {
+      const parsed = JSON.parse(existingProduct.colorsJson);
+      if (Array.isArray(parsed)) existingColors = parsed;
+    } catch (e) {}
+  }
+
+  const colorsJsonRaw = formData.get('colors_json')?.toString();
+  if (colorsJsonRaw) {
+    try {
+      const parsed = JSON.parse(colorsJsonRaw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        existingColors = parsed;
+      }
+    } catch (e) {}
+  }
+
+  const colorsRaw = formData.get('colors')?.toString() || '';
+  const colorNames = colorsRaw.split(',').map((c) => c.trim()).filter(Boolean);
+
+  let finalColorsArray: any[] = [];
+  const currentImagesSet = new Set(imagesArray);
+
+  if (existingColors.length > 0) {
+    // Reconcile with existing colors: keep hex, filter removed images
+    finalColorsArray = existingColors.map((c: any) => {
+      let cImages = Array.isArray(c.images) ? c.images : [];
+      // Filter out any image that was removed by the user in imagesArray
+      if (imagesArray.length > 0) {
+        cImages = cImages.filter((img: string) => currentImagesSet.has(img));
+      }
+      return {
+        name: c.name || 'Color',
+        hex: c.hex || '#d4af37',
+        images: cImages.length > 0 ? cImages : (imagesArray.length > 0 ? [...imagesArray] : []),
+      };
+    });
+
+    // If user added new color names in the input, add them
+    const existingNames = new Set(existingColors.map((c: any) => (c.name || '').toLowerCase()));
+    for (const cName of colorNames) {
+      if (!existingNames.has(cName.toLowerCase())) {
+        finalColorsArray.push({
+          name: cName,
+          hex: '#d4af37',
+          images: [...imagesArray],
+        });
+      }
+    }
+  } else if (colorNames.length > 0) {
+    finalColorsArray = colorNames.map((cName) => ({
+      name: cName,
+      hex: '#d4af37',
+      images: [...imagesArray],
+    }));
+  } else {
+    finalColorsArray = [
+      {
+        name: 'Standard',
+        hex: '#d4af37',
+        images: [...imagesArray],
+      },
+    ];
+  }
+
+  // Ensure first color has images if imagesArray is populated
+  if (finalColorsArray.length > 0 && imagesArray.length > 0) {
+    if (!finalColorsArray[0].images || finalColorsArray[0].images.length === 0) {
+      finalColorsArray[0].images = [...imagesArray];
+    }
+  }
 
   let sizesArray: { name: string; price: number; originalPrice?: number; stock?: number; inStock?: boolean }[] = [];
 
@@ -159,26 +273,12 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     }).filter((s) => Boolean(s.name));
   }
 
-  const imagesRaw = formData.get('images')?.toString() || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80';
-  const imagesArray = imagesRaw
-    .split('\n')
-    .map((i) => {
-      const trimmed = i.trim();
-      if (trimmed.includes('ibb.co/MDrxVyJY')) {
-        return '/uploads/grey-eyelet-curtain-front.webp';
-      }
-      return trimmed;
-    })
-    .filter(Boolean);
-
   const featuresRaw = formData.get('features')?.toString() || '100% Heavyweight Polyester, 99% Thermal Blackout, Stainless Steel Eyelets';
   const featuresArray = featuresRaw.split(',').map((f) => f.trim());
 
   if (!name || isNaN(price)) {
     return redirect('/admin/products/new?error=Product Name and Valid Price are required.');
   }
-
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   if (id) {
     // Upsert existing product (works even if loaded from initial catalog)
@@ -199,7 +299,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
         fit,
         care,
         inStock,
-        colorsJson: JSON.stringify(colorsArray),
+        colorsJson: JSON.stringify(finalColorsArray),
         sizesJson: JSON.stringify(sizesArray),
         imagesJson: JSON.stringify(imagesArray),
         featuresJson: JSON.stringify(featuresArray),
@@ -218,7 +318,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
         fit,
         care,
         inStock,
-        colorsJson: JSON.stringify(colorsArray),
+        colorsJson: JSON.stringify(finalColorsArray),
         sizesJson: JSON.stringify(sizesArray),
         imagesJson: JSON.stringify(imagesArray),
         featuresJson: JSON.stringify(featuresArray),
@@ -248,7 +348,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
         fit,
         care,
         inStock,
-        colorsJson: JSON.stringify(colorsArray),
+        colorsJson: JSON.stringify(finalColorsArray),
         sizesJson: JSON.stringify(sizesArray),
         imagesJson: JSON.stringify(imagesArray),
         featuresJson: JSON.stringify(featuresArray),
@@ -262,6 +362,6 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     });
   }
 
-  invalidateCache('storefront_products');
+  invalidateCache(); // Full cache clear so all products and categories update immediately
   return redirect('/admin/products?saved=true');
 };
