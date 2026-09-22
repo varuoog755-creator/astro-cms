@@ -159,7 +159,7 @@ export const PRODUCTS_CATALOG: Product[] = [
   },
   {
     id: "meesho-hn79yx",
-    slug: "grey-eyelet-curtain-premium-polyester-door-window-curtain-for-bedroom-living-room-home-decor-pack-of-1-hn79yx",
+    slug: "grey-eyelet-curtain-premium-polyester-door-window-curtain-for-bedroom-living-room-home-decor-pack-of-2",
     name: "Grey Eyelet Curtain | Premium Polyester Door & Window Curtain for Bedroom, Living Room & Home Decor | Pack of 2",
     tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
     description: "Name: Grey Eyelet Curtain | Premium Polyester Door & Window Curtain for Bedroom, Living Room & Home Decor | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Conversational\nSize: 7Feet\nNet Quantity (N): 2\nPremium Grey Eyelet Curtain – Pack of 2\n\nGive your home a clean and sophisticated look with this Premium Grey Curtain, designed for modern bedrooms, living rooms and other indoor spaces. Made from polyester fabric, the curtain features a subtle textured finish and silver metal eyelets for a neat, contemporary appearance.\n\nThe curtain panels are suitable for compatible door and window curtain rods. Its neutral grey colour blends easily with different interior styles, making it a practical choice for everyday home décor.\n\nKey Features\nColour: Grey / Silver Grey\nMaterial: Polyester\nPattern: Solid Textured\nCurtain Type: Eyelet Curtain\nEyelet: Silver Metal Eyelets\nPack: 2 Curtain Panels\nSuitable For: Bedroom, Living Room, Door & Window\nStyle: Modern\nInstallation: Easy to hang on a compatible curtain rod\nCare: Follow the fabric care instructions\nPerfect For\n\nUse this grey curtain for bedroom décor, living room décor, window covering, door covering and modern home interiors.",
@@ -501,7 +501,12 @@ export async function getStorefrontProducts(): Promise<Product[]> {
                   fit: p.fit || 'Silver Eyelet Grommets',
                   care: p.care || 'Hand & Machine Wash Cold',
                 },
-                images: parseJson(p.imagesJson),
+                images: parseJson(p.imagesJson).map((img: string) => {
+                  if (typeof img === 'string' && img.includes('ibb.co/MDrxVyJY')) {
+                    return '/uploads/grey-eyelet-curtain-front.webp';
+                  }
+                  return img;
+                }),
                 features: parseJson(p.featuresJson),
               };
             } catch (err) {
