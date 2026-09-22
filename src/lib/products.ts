@@ -154,7 +154,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     colors: [{"name": "Blue Floral Leaf", "hex": "#1e40af"}],
     sizes: ["9 Feet", "5 Feet", "6 Feet", "7 Feet"],
     fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1068577517/dwkky_512.jpg", "https://images.meesho.com/images/products/1068577517/7d95j_512.jpg", "https://images.meesho.com/images/products/1068577517/t94in_512.jpg", "https://images.meesho.com/images/products/1068577517/6xs5w_512.jpg"],
+    images: ["/uploads/blue-floral-leaf-curtain-front.webp", "https://images.meesho.com/images/products/1068577517/7d95j_512.jpg", "https://images.meesho.com/images/products/1068577517/t94in_512.jpg", "https://images.meesho.com/images/products/1068577517/6xs5w_512.jpg"],
     features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
   },
   {
@@ -174,7 +174,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     colors: [{"name": "Slate Grey", "hex": "#4b5563"}],
     sizes: ["7 Feet", "9 Feet", "5 Feet", "6 Feet"],
     fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1066895673/jv7gh_512.jpg", "https://images.meesho.com/images/products/1066895673/j0wld_512.jpg", "https://images.meesho.com/images/products/1066895673/8wzrf_512.jpg", "https://images.meesho.com/images/products/1066895673/sg049_512.jpg"],
+    images: ["/uploads/grey-eyelet-curtain-front.webp", "https://images.meesho.com/images/products/1066895673/j0wld_512.jpg", "https://images.meesho.com/images/products/1066895673/8wzrf_512.jpg", "https://images.meesho.com/images/products/1066895673/sg049_512.jpg"],
     features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
   },
   {
@@ -254,7 +254,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     colors: [{"name": "Premium Black", "hex": "#18181b"}],
     sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
     fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1065474957/iilfa_512.jpg", "https://images.meesho.com/images/products/1065474957/otnrr_512.jpg", "https://images.meesho.com/images/products/1065474957/dvozh_512.jpg", "https://images.meesho.com/images/products/1065474957/mrfcs_512.jpg"],
+    images: ["/uploads/premium-black-door-curtain-front.webp", "https://images.meesho.com/images/products/1065474957/otnrr_512.jpg", "https://images.meesho.com/images/products/1065474957/dvozh_512.jpg", "https://images.meesho.com/images/products/1065474957/mrfcs_512.jpg"],
     features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
   },
   {
@@ -314,7 +314,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     colors: [{"name": "Solid Maroon", "hex": "#881337"}],
     sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
     fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/951446142/rz5kg_512.jpg", "https://images.meesho.com/images/products/951446142/qs2gk_512.jpg", "https://images.meesho.com/images/products/951446142/f4cue_512.jpg", "https://images.meesho.com/images/products/951446142/7ofgs_512.jpg"],
+    images: ["/uploads/ashank-premium-single-panel-curtain-front.webp", "https://images.meesho.com/images/products/951446142/qs2gk_512.jpg", "https://images.meesho.com/images/products/951446142/f4cue_512.jpg", "https://images.meesho.com/images/products/951446142/7ofgs_512.jpg"],
     features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
   },
   {
