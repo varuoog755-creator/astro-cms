@@ -98,244 +98,838 @@ export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice
 
 export const PRODUCTS_CATALOG: Product[] = [
   {
-    id: "meesho-eupceo",
-    slug: "stylish-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-eupceo",
-    name: "Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
-    price: 479,
-    originalPrice: 959,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Top Seller",
-    rating: 4.2,
-    reviewCount: 35,
-    inStock: true,
-    colors: [{"name": "Coffee Brown & Cream", "hex": "#5d4037"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/898097424/wz7fn_512.jpg", "https://images.meesho.com/images/products/898097424/ihoaz_512.jpg", "https://images.meesho.com/images/products/898097424/g2ks9_512.jpg", "https://images.meesho.com/images/products/898097424/drcoz_512.jpg"],
-    features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
+    "id": "meesho-bcvrza",
+    "slug": "stylish-blue-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bcvrza",
+    "name": "Stylish Blue Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Blue Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Window\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
+    "price": 489,
+    "originalPrice": 978,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Top Seller",
+    "rating": 4.4,
+    "reviewCount": 117,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Sky & Royal Blue",
+        "hex": "#1e40af"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/686765926/exfoq_512.jpg",
+      "https://images.meesho.com/images/products/686765926/8ncwr_512.jpg",
+      "https://images.meesho.com/images/products/686765926/8tsjx_512.jpg",
+      "https://images.meesho.com/images/products/686765926/2clds_512.jpg",
+      "https://images.meesho.com/images/products/686765926/exfoq_512.webp",
+      "https://images.meesho.com/images/products/686765926/8ncwr_512.webp",
+      "https://images.meesho.com/images/products/686765926/8tsjx_512.webp",
+      "https://images.meesho.com/images/products/686765926/2clds_512.webp",
+      "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg",
+      "https://images.meesho.com/images/products/686765924/ijjo7_512.webp",
+      "https://images.meesho.com/images/products/686765926/exfoq_512.jpg",
+      "https://images.meesho.com/images/products/686765926/8ncwr_512.jpg",
+      "https://images.meesho.com/images/products/686765926/8tsjx_512.jpg",
+      "https://images.meesho.com/images/products/686765926/2clds_512.jpg",
+      "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
   },
   {
-    id: "meesho-euou2r",
-    slug: "trendy-print-curtains-for-home-pack-of-2-euou2r",
-    name: "Trendy Print Curtains for Home (Pack of 2)",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Trendy Print Curtains for Home (Pack of 2)\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door and Window\nPrint or Pattern Type: Floral\nSize: 9Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric room ko look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
-    price: 489,
-    originalPrice: 979,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Best Seller",
-    rating: 4.5,
-    reviewCount: 89,
-    inStock: true,
-    colors: [{"name": "Aqua Blue Printed", "hex": "#0891b2"}],
-    sizes: ["6 Feet", "7 Feet", "9 Feet", "5 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/898073667/pfe5s_512.jpg", "https://images.meesho.com/images/products/898073667/cqiah_512.jpg", "https://images.meesho.com/images/products/898073667/db7dt_512.jpg", "https://images.meesho.com/images/products/898073667/moxae_512.jpg"],
-    features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
+    "id": "meesho-bf01yu",
+    "slug": "stylish-brown-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bf01yu",
+    "name": "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Door 7 Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur  look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern &lt;warning name=&#x27;Holme&#x27;s&#x27;&gt;homes&lt;/warning&gt; \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric room ko look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "price": 459,
+    "originalPrice": 918,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.8,
+    "reviewCount": 102,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Coffee Brown",
+        "hex": "#4e342e"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/690324726/znomm_512.jpg",
+      "https://images.meesho.com/images/products/690324726/g2x8f_512.jpg",
+      "https://images.meesho.com/images/products/690324726/ppcfb_512.jpg",
+      "https://images.meesho.com/images/products/690324726/lv5v4_512.jpg",
+      "https://images.meesho.com/images/products/690324726/znomm_512.webp",
+      "https://images.meesho.com/images/products/690324726/g2x8f_512.webp",
+      "https://images.meesho.com/images/products/690324726/ppcfb_512.webp",
+      "https://images.meesho.com/images/products/690324726/lv5v4_512.webp",
+      "https://images.meesho.com/images/products/690324726/znomm_512.jpg",
+      "https://images.meesho.com/images/products/690324726/g2x8f_512.jpg",
+      "https://images.meesho.com/images/products/690324726/ppcfb_512.jpg",
+      "https://images.meesho.com/images/products/690324726/lv5v4_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
   },
   {
-    id: "meesho-bazczz",
-    slug: "trending-polyester-7-feet-door-curtains-set-of-2-ghar-ke-parde-home-room-parda-bazczz",
-    name: "Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft) \n\n BULLET POINTS\n\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\n\n PRODUCT DESCRIPTION\n\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
-    price: 499,
-    originalPrice: 999,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Best Seller",
-    rating: 4.6,
-    reviewCount: 107,
-    inStock: true,
-    colors: [{"name": "Maroon Printed", "hex": "#881337"}],
-    sizes: ["9 Feet", "5 Feet", "6 Feet", "7 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/683573903/vnzkz_512.jpg", "https://images.meesho.com/images/products/683573903/um7nh_512.jpg", "https://images.meesho.com/images/products/683573903/qdd0t_512.jpg", "https://images.meesho.com/images/products/683573903/q8yqh_512.jpg"],
-    features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
+    "id": "meesho-glmlio",
+    "slug": "trending-polyester-7-feet-door-curtains-set-of-2-ghar-ke-parde-home-room-parda-glmlio",
+    "name": "Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Blackout\nSet: Door\nSize: 7Feet\nNet Quantity (N): 2\n✔ Premium  Style Fabric – Rich texture aur classy look  room ko luxury feel deta hai room ko luxury feel deta hai✔ Soft & Heavy Quality – Better fall, elegant finishing aur long-lasting use\n✔ Light Control & Privacy – Brightness ko control karta hai aur proper privacy deta hai\n✔ Designer Look – Modern aur premium design  living room & bedroom ko upgrade kare\n✔ Easy Care Fabric – Hand wash / gentle machine wash, color  tak same rehta hai\nBring luxury and elegance to your home with Premium  Style Curtains.\nHigh-quality soft aur heavy fabric se bane hue ye curtains room ko rich aur stylish look dete hain.  pattern design modern interiors ke saath perfectly match karta hai.\n\nLiving room, bedroom, hall, office ya hotel décor ke liye ideal choice.\nStrong stitching, smooth texture aur beautiful fall ke saath ye curtains aapke home décor ko next level par le jaate hain.\nTransform your living space with the ASHANK premium curtain collection, where Scandinavian simplicity meets modern elegance. Crafted from high-quality fabrics, these curtains offer excellent light filtering and privacy while enhancing the calm, minimalist vibe of your home. Perfect for any living room or bedroom, they bring effortless style and sophistication to your daily life.",
+    "price": 489,
+    "originalPrice": 978,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.6,
+    "reviewCount": 72,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Floral Wine / Maroon",
+        "hex": "#881337"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/1003785072/erg6c_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/c6hrk_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/6usb9_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/0vlcv_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/erg6c_512.webp",
+      "https://images.meesho.com/images/products/1003785072/c6hrk_512.webp",
+      "https://images.meesho.com/images/products/1003785072/6usb9_512.webp",
+      "https://images.meesho.com/images/products/1003785072/0vlcv_512.webp",
+      "https://images.meesho.com/images/products/1003785073/iihpe_512.jpg",
+      "https://images.meesho.com/images/products/1003785073/iihpe_512.webp",
+      "https://images.meesho.com/images/products/1003785072/erg6c_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/c6hrk_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/6usb9_512.jpg",
+      "https://images.meesho.com/images/products/1003785072/0vlcv_512.jpg",
+      "https://images.meesho.com/images/products/1003785073/iihpe_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
   },
   {
-    id: "meesho-cqurq3",
-    slug: "luxury-feather-print-eyelet-curtains-for-living-room-bedroom-set-of-2-7ft-9ft-cqurq3",
-    name: "Luxury Feather Print Eyelet Curtains for Living Room & Bedroom (Set of 2) - 7ft/9ft",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Luxury Feather Print Eyelet Curtains for Living Room & Bedroom (Set of 2) - 7ft/9ft\nMaterial: 100% Premium Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: 3d Printed\nSize: 9Feet\nNet Quantity (N): 2\nPremium Fabric: Made from high-quality heavyweight polyester for a rich feel and long-lasting durability.\n\nPerfect Size: Available in 5ft (Window), 7ft (Door), and 9ft (Long Door) to fit every corner of your home.\n\nEasy Installation: Features rust-resistant metallic eyelet rings for smooth sliding and a modern look.\n\nLight & Privacy Control: Room darkening/Blackout technology blocks 80-90% of Sun light while ensuring complete privacy.\n\nEasy Maintenance: 100% machine washable; color-fast fabric that doesn't shrink or fade after washing.\n\nbest Design: Modern 3D prints/Botanical patterns that instantly elevate your living room, bedroom, or office decor.\nMain Terms\tCurtains, , Door Curtains, Window Curtains, Pared, Net Curtain\nMaterial\t100% Premium Polyester\nFeatures\tBlackout, Room Darkening, Thermal Insulated, Eyelet, Ring , Washable\nStyle/Pattern\t3D Printed, Floral, Solid, Striped, Abstract, Embroidered, Modern\nSizes/Sets\tSet of 2, Pack of 4, 7 Feet, 9 Feet, Long Door, Window Screen",
-    price: 549,
-    originalPrice: 1099,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Best Seller",
-    rating: 4.7,
-    reviewCount: 125,
-    inStock: true,
-    colors: [{"name": "Beige & Black Feather", "hex": "#d7c4b7"}],
-    sizes: ["6 Feet", "7 Feet", "9 Feet", "5 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/770699739/ow9uo_512.jpg", "https://images.meesho.com/images/products/770699739/wdklh_512.jpg", "https://images.meesho.com/images/products/770699739/jgo5w_512.jpg", "https://images.meesho.com/images/products/770699739/wzcpa_512.jpg"],
-    features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
+    "id": "meesho-bf034v",
+    "slug": "stylish-brown-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bf034v",
+    "name": "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
+    "price": 479,
+    "originalPrice": 958,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Top Seller",
+    "rating": 4.5,
+    "reviewCount": 57,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Classic Brown",
+        "hex": "#5d4037"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/690326239/ca80u_512.jpg",
+      "https://images.meesho.com/images/products/690326239/ahkzs_512.jpg",
+      "https://images.meesho.com/images/products/690326239/wf1uu_512.jpg",
+      "https://images.meesho.com/images/products/690326239/klwpk_512.jpg",
+      "https://images.meesho.com/images/products/690326239/ca80u_512.webp",
+      "https://images.meesho.com/images/products/690326239/ahkzs_512.webp",
+      "https://images.meesho.com/images/products/690326239/wf1uu_512.webp",
+      "https://images.meesho.com/images/products/690326239/klwpk_512.webp",
+      "https://images.meesho.com/images/products/690326239/ca80u_512.jpg",
+      "https://images.meesho.com/images/products/690326239/ahkzs_512.jpg",
+      "https://images.meesho.com/images/products/690326239/wf1uu_512.jpg",
+      "https://images.meesho.com/images/products/690326239/klwpk_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
   },
   {
-    id: "meesho-bf04nh",
-    slug: "stylish-brown-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bf04nh",
-    name: "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
-    price: 519,
-    originalPrice: 1039,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Luxury Drapery",
-    rating: 4.3,
-    reviewCount: 161,
-    inStock: true,
-    colors: [{"name": "Chocolate Brown", "hex": "#5d4037"}],
-    sizes: ["9 Feet", "5 Feet", "6 Feet", "7 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavy Polyester", "fit": "Stainless Steel Silver Grommets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/690328205/5plfv_512.jpg", "https://images.meesho.com/images/products/690328205/app1g_512.jpg", "https://images.meesho.com/images/products/690328205/p4vyx_512.jpg", "https://images.meesho.com/images/products/690328205/atv3z_512.jpg"],
-    features: ["Light Filtering & Room Darkening", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Insulation & Noise Reduction", "Wrinkle-Resistant Washable Fabric"]
+    "id": "meesho-eupcep",
+    "slug": "stylish-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-eupcep",
+    "name": "Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "price": 469,
+    "originalPrice": 938,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.4,
+    "reviewCount": 42,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Cream Botanical Print",
+        "hex": "#f5f5dc"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/898097425/7fsua_512.jpg",
+      "https://images.meesho.com/images/products/898097425/xjggy_512.jpg",
+      "https://images.meesho.com/images/products/898097425/o16ps_512.jpg",
+      "https://images.meesho.com/images/products/898097425/a8kav_512.jpg",
+      "https://images.meesho.com/images/products/898097425/7fsua_512.webp",
+      "https://images.meesho.com/images/products/898097425/xjggy_512.webp",
+      "https://images.meesho.com/images/products/898097425/o16ps_512.webp",
+      "https://images.meesho.com/images/products/898097425/a8kav_512.webp",
+      "https://images.meesho.com/images/products/898097424/wz7fn_512.jpg",
+      "https://images.meesho.com/images/products/898097424/wz7fn_512.webp",
+      "https://images.meesho.com/images/products/898097425/7fsua_512.jpg",
+      "https://images.meesho.com/images/products/898097425/xjggy_512.jpg",
+      "https://images.meesho.com/images/products/898097425/o16ps_512.jpg",
+      "https://images.meesho.com/images/products/898097425/a8kav_512.jpg",
+      "https://images.meesho.com/images/products/898097424/wz7fn_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
   },
   {
-    id: "meesho-hr66fp",
-    slug: "pink-curtain-for-window-door-eyeletgrommet-curtain-for-bedroom-living-room-light-filtering-privacy-curtain-pack-of-1",
-    name: "Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Solid\nSize: 7Feet\nNet Quantity (N): 2\nAdd a soft and elegant touch to your home with this Pink Window Curtain (Pack of 2), designed for bedrooms, living rooms, guest rooms and other indoor spaces. Its attractive pink colour complements modern and contemporary interiors, while the eyelet/grommet top makes it convenient to hang on a compatible curtain rod.\n\nThe curtain is suitable for everyday home décor and helps create a comfortable, private indoor environment while allowing natural light to brighten the room.\n\n✨ Key Features\nElegant Pink Colour – Gives your room a fresh, soft and stylish appearance.\nLight Filtering – Allows natural daylight to enter while helping soften the brightness.\nPrivacy Support – Helps reduce direct outside visibility for a more comfortable space.\nEyelet/Grommet Top – Easy to hang on a compatible curtain rod.\nVersatile Home Décor – Suitable for bedrooms, living rooms, guest rooms, study rooms and home offices.\nEasy Everyday Styling – Works well with neutral walls, wooden furniture and contemporary interiors.\nPack of 2 – Includes two curtain panels.",
-    price: 489,
-    originalPrice: 979,
-    currency: "₹",
-    category: "Window Curtains",
-    badge: "Best Seller",
-    rating: 4.6,
-    reviewCount: 53,
-    inStock: true,
-    colors: [{"name": "Blush Pink", "hex": "#ec4899"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1073562901/bsjqf_512.jpg", "https://images.meesho.com/images/products/1073562901/dqmxk_512.jpg", "https://images.meesho.com/images/products/1073562901/ueowl_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-bcvrz8",
+    "slug": "stylish-purple-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bcvrz8",
+    "name": "Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
+    "price": 479,
+    "originalPrice": 958,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.5,
+    "reviewCount": 132,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Royal Purple",
+        "hex": "#6b21a8"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg",
+      "https://images.meesho.com/images/products/686765924/fhvwh_512.jpg",
+      "https://images.meesho.com/images/products/686765924/bc8tv_512.jpg",
+      "https://images.meesho.com/images/products/686765924/s7og9_512.jpg",
+      "https://images.meesho.com/images/products/686765924/ijjo7_512.webp",
+      "https://images.meesho.com/images/products/686765924/fhvwh_512.webp",
+      "https://images.meesho.com/images/products/686765924/bc8tv_512.webp",
+      "https://images.meesho.com/images/products/686765924/s7og9_512.webp",
+      "https://images.meesho.com/images/products/686765926/exfoq_512.jpg",
+      "https://images.meesho.com/images/products/686765926/exfoq_512.webp",
+      "https://images.meesho.com/images/products/686765924/ijjo7_512.jpg",
+      "https://images.meesho.com/images/products/686765924/fhvwh_512.jpg",
+      "https://images.meesho.com/images/products/686765924/bc8tv_512.jpg",
+      "https://images.meesho.com/images/products/686765924/s7og9_512.jpg",
+      "https://images.meesho.com/images/products/686765926/exfoq_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
   },
   {
-    id: "meesho-ho5hps",
-    slug: "green-floral-leaf-printed-curtain-for-window-door-light-filtering-privacy-curtain-eyelet-polyester-curtain-pack-of-1",
-    name: "Green Floral Leaf Printed Curtain for Window & Door | Light Filtering Privacy Curtain | Eyelet Polyester Curtain | Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Green Floral Leaf Printed Curtain for Window & Door | Light Filtering Privacy Curtain | Eyelet Polyester Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nUpgrade your home décor with this elegant Green Floral Leaf Printed Curtain (Pack of 2), designed for windows and doors. The cream base with deep green leafy print creates a modern, natural look that works well in living rooms, bedrooms, balconies and other home spaces.\n\nKey Features:\n\nPack of 2 Curtains\nGreen & cream floral leaf design\nLight filtering for a soft, comfortable ambience\nHelps provide privacy\nEyelet/grommet top for easy hanging\nSuitable for windows and doors\nEasy-care polyester fabric\nAvailable in 5, 6, 7 & 9 feet height options\n\nAvailable Sizes:\n5 Feet | 6 Feet | 7 Feet | 9 Feet\n\nBest For: Living Room, Bedroom, Window, Door, Home Décor, Balcony & Interior Decoration.",
-    price: 499,
-    originalPrice: 999,
-    currency: "₹",
-    category: "Window Curtains",
-    badge: "Best Seller",
-    rating: 4.8,
-    reviewCount: 75,
-    inStock: true,
-    colors: [{"name": "Green Floral Leaf", "hex": "#059669"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1068492016/31zal_512.jpg", "https://images.meesho.com/images/products/1068492016/xczj5_512.jpg", "https://images.meesho.com/images/products/1068492016/1moo5_512.jpg", "https://images.meesho.com/images/products/1068492016/fomya_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-hoalhs",
+    "slug": "maroon-leaf-print-eyelet-curtain-for-door-window-light-filtering-pack-of-1",
+    "name": "Maroon Leaf Print Eyelet Curtain for Door & Window | Light Filtering | Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Maroon Leaf Print Eyelet Curtain for Door & Window | Light Filtering | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nSize: 7Feet\nNet Quantity: 2\nRefresh your home décor with this elegant Maroon Leaf Print Eyelet Curtain (Pack of 2), designed to complement living rooms, bedrooms, doors and windows. The curtain features a stylish botanical leaf pattern on a rich maroon base, giving your space a warm and contemporary look.\n\nMade from polyester fabric, this semi-transparent curtain allows natural daylight to filter through while adding a comfortable level of visual privacy. The eyelet hanging design makes installation and opening or closing convenient with a compatible curtain rod.\n\nThe printed leaf pattern works well with modern, contemporary and traditional Indian home interiors. Use it for living room windows, bedroom windows, balcony doors or other suitable door and window spaces.\n\n### Key Features\n\n• Maroon leaf and botanical print design\n• Polyester fabric\n• Semi-transparent, light-filtering construction\n• Eyelet hanging style\n• Suitable for door and window use\n• Pack of 2 curtain panels\n• Available in 5 Feet, 6 Feet, 7 Feet and 9 Feet sizes\n• Hand and machine washable\n\n### Ideal For\n\nLiving room curtains, bedroom curtains, window curtains, door curtains, home décor, apartment interiors and everyday home furnishing.\n\n### Product Details\n\nColor: Maroon\nMaterial: Polyester\nPattern: Leaf Print\nHanging Type: Eyelet\nOpacity: Light Filtering\nType: Polyester Semi Transparent\nNet Quantity: 2",
+    "price": 479,
+    "originalPrice": 959,
+    "currency": "₹",
+    "category": "Window Curtains",
+    "badge": "Best Seller",
+    "rating": 4.6,
+    "reviewCount": 97,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Maroon Leaf Print",
+        "hex": "#881337"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Eyelets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/1068730192/cpkmc_512.jpg",
+      "https://images.meesho.com/images/products/1068730192/3kq7a_512.jpg",
+      "https://images.meesho.com/images/products/1068730192/um9mu_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening Privacy",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Noise Shield",
+      "Easy Maintenance & Machine Washable"
+    ]
   },
   {
-    id: "meesho-hob973",
-    slug: "feather-printed-curtain-for-living-room-bedroom-beige-black-eyelet-door-window-curtain-pack-of-1",
-    name: "Feather Printed Curtain for Living Room & Bedroom | Beige & Black Eyelet Door Window Curtain | Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Feather Printed Curtain for Living Room & Bedroom | Beige & Black Eyelet Door Window Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Abstract\nSize: 7Feet\nNet Quantity (N): 2\nGive your home a clean and elegant look with this Beige & Black Feather Printed Curtain (Pack of 2). The curtain features a stylish feather pattern on a light beige/ivory background, making it suitable for modern and contemporary home interiors.\n\nDesigned with metal eyelets/grommets, the curtain is easy to hang on a compatible curtain rod and creates neat, natural folds when installed.\n\nKey Features:\n\nDesign: Feather Printed\nColor: Beige/Ivory with Black & Grey Print\nStyle: Modern & Elegant\nHanging Type: Eyelet / Grommet\nPack: 2 Curtain Panels\nSuitable For: Living Room, Bedroom, Study Room, Dining Area and Door/Window\nUse: Home Décor, Window Curtain, Door Curtain\nPattern: Repeated Feather Print\n\nWhy Choose This Curtain?\nThe neutral beige base with black and grey feather motifs blends easily with a variety of interior décor styles. It can be used to enhance windows or doors while adding a refined decorative touch to your room.\n\nPackage Includes:\n2 × Feather Printed Curtains",
-    price: 529,
-    originalPrice: 1059,
-    currency: "₹",
-    category: "Window Curtains",
-    badge: "Teepul Choice",
-    rating: 4.5,
-    reviewCount: 86,
-    inStock: true,
-    colors: [{"name": "Beige & Black Feather", "hex": "#d7c4b7"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1068760911/gpdcb_512.jpg", "https://images.meesho.com/images/products/1068760911/b3ude_512.jpg", "https://images.meesho.com/images/products/1068760911/gchyh_512.jpg", "https://images.meesho.com/images/products/1068760911/9vd0h_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-hr66fp",
+    "slug": "pink-curtain-for-window-door-eyeletgrommet-curtain-for-bedroom-living-room-light-filtering-privacy-curtain-pack-of-1",
+    "name": "Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Pink Curtain for Window & Door | Eyelet/Grommet Curtain for Bedroom & Living Room | Light Filtering Privacy Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Solid\nSize: 7Feet\nNet Quantity (N): 2\nAdd a soft and elegant touch to your home with this Pink Window Curtain (Pack of 2), designed for bedrooms, living rooms, guest rooms and other indoor spaces. Its attractive pink colour complements modern and contemporary interiors, while the eyelet/grommet top makes it convenient to hang on a compatible curtain rod.\n\nThe curtain is suitable for everyday home décor and helps create a comfortable, private indoor environment while allowing natural light to brighten the room.\n\n✨ Key Features\nElegant Pink Colour – Gives your room a fresh, soft and stylish appearance.\nLight Filtering – Allows natural daylight to enter while helping soften the brightness.\nPrivacy Support – Helps reduce direct outside visibility for a more comfortable space.\nEyelet/Grommet Top – Easy to hang on a compatible curtain rod.\nVersatile Home Décor – Suitable for bedrooms, living rooms, guest rooms, study rooms and home offices.\nEasy Everyday Styling – Works well with neutral walls, wooden furniture and contemporary interiors.\nPack of 2 – Includes two curtain panels.",
+    "price": 489,
+    "originalPrice": 979,
+    "currency": "₹",
+    "category": "Window Curtains",
+    "badge": "Best Seller",
+    "rating": 4.6,
+    "reviewCount": 53,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Blush Pink",
+        "hex": "#ec4899"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Eyelets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/1073562901/bsjqf_512.jpg",
+      "https://images.meesho.com/images/products/1073562901/dqmxk_512.jpg",
+      "https://images.meesho.com/images/products/1073562901/ueowl_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening Privacy",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Noise Shield",
+      "Easy Maintenance & Machine Washable"
+    ]
   },
   {
-    id: "meesho-hoalhs",
-    slug: "maroon-leaf-print-eyelet-curtain-for-door-window-light-filtering-pack-of-1",
-    name: "Maroon Leaf Print Eyelet Curtain for Door & Window | Light Filtering | Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Maroon Leaf Print Eyelet Curtain for Door & Window | Light Filtering | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nSize: 7Feet\nNet Quantity: 2\nRefresh your home décor with this elegant Maroon Leaf Print Eyelet Curtain (Pack of 2), designed to complement living rooms, bedrooms, doors and windows. The curtain features a stylish botanical leaf pattern on a rich maroon base, giving your space a warm and contemporary look.\n\nMade from polyester fabric, this semi-transparent curtain allows natural daylight to filter through while adding a comfortable level of visual privacy. The eyelet hanging design makes installation and opening or closing convenient with a compatible curtain rod.\n\nThe printed leaf pattern works well with modern, contemporary and traditional Indian home interiors. Use it for living room windows, bedroom windows, balcony doors or other suitable door and window spaces.\n\n### Key Features\n\n• Maroon leaf and botanical print design\n• Polyester fabric\n• Semi-transparent, light-filtering construction\n• Eyelet hanging style\n• Suitable for door and window use\n• Pack of 2 curtain panels\n• Available in 5 Feet, 6 Feet, 7 Feet and 9 Feet sizes\n• Hand and machine washable\n\n### Ideal For\n\nLiving room curtains, bedroom curtains, window curtains, door curtains, home décor, apartment interiors and everyday home furnishing.\n\n### Product Details\n\nColor: Maroon\nMaterial: Polyester\nPattern: Leaf Print\nHanging Type: Eyelet\nOpacity: Light Filtering\nType: Polyester Semi Transparent\nNet Quantity: 2",
-    price: 479,
-    originalPrice: 959,
-    currency: "₹",
-    category: "Window Curtains",
-    badge: "Best Seller",
-    rating: 4.6,
-    reviewCount: 97,
-    inStock: true,
-    colors: [{"name": "Maroon Leaf Print", "hex": "#881337"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/1068730192/cpkmc_512.jpg", "https://images.meesho.com/images/products/1068730192/3kq7a_512.jpg", "https://images.meesho.com/images/products/1068730192/um9mu_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-c2ur5l",
+    "slug": "trendy-marble-print-curtains-for-home-pack-of-2",
+    "name": "Trendy Marble Print Curtains for Home (Pack of 2)",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Trendy Marble Print Curtains for Home (Pack of 2)\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: 3D\nSet: Door\nPrint or Pattern Type: Floral\nSize: 7Feet\nNet Quantity (N): 2\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
+    "price": 519,
+    "originalPrice": 1039,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Teepul Choice",
+    "rating": 4.5,
+    "reviewCount": 130,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Blue Marble Print",
+        "hex": "#2563eb"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Eyelets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/730388217/4miar_512.jpg",
+      "https://images.meesho.com/images/products/730388217/pdhgf_512.jpg",
+      "https://images.meesho.com/images/products/730388217/aqakm_512.jpg",
+      "https://images.meesho.com/images/products/730388217/zwaue_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening Privacy",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Noise Shield",
+      "Easy Maintenance & Machine Washable"
+    ]
   },
   {
-    id: "meesho-bcvrz8",
-    slug: "stylish-purple-curtains-for-door-windos-5-6-7-9-feet-pack-of-2",
-    name: "Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Stylish Purple Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
-    price: 539,
-    originalPrice: 1079,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Best Seller",
-    rating: 4.8,
-    reviewCount: 119,
-    inStock: true,
-    colors: [{"name": "Royal Purple", "hex": "#6b21a8"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/686765924/ijjo7_512.jpg", "https://images.meesho.com/images/products/686765924/fhvwh_512.jpg", "https://images.meesho.com/images/products/686765924/bc8tv_512.jpg", "https://images.meesho.com/images/products/686765924/s7og9_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-hob973",
+    "slug": "feather-printed-curtain-for-living-room-bedroom-beige-black-eyelet-door-window-curtain-pack-of-1",
+    "name": "Feather Printed Curtain for Living Room & Bedroom | Beige & Black Eyelet Door Window Curtain | Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Feather Printed Curtain for Living Room & Bedroom | Beige & Black Eyelet Door Window Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Abstract\nSize: 7Feet\nNet Quantity (N): 2\nGive your home a clean and elegant look with this Beige & Black Feather Printed Curtain (Pack of 2). The curtain features a stylish feather pattern on a light beige/ivory background, making it suitable for modern and contemporary home interiors.\n\nDesigned with metal eyelets/grommets, the curtain is easy to hang on a compatible curtain rod and creates neat, natural folds when installed.\n\nKey Features:\n\nDesign: Feather Printed\nColor: Beige/Ivory with Black & Grey Print\nStyle: Modern & Elegant\nHanging Type: Eyelet / Grommet\nPack: 2 Curtain Panels\nSuitable For: Living Room, Bedroom, Study Room, Dining Area and Door/Window\nUse: Home Décor, Window Curtain, Door Curtain\nPattern: Repeated Feather Print\n\nWhy Choose This Curtain?\nThe neutral beige base with black and grey feather motifs blends easily with a variety of interior décor styles. It can be used to enhance windows or doors while adding a refined decorative touch to your room.\n\nPackage Includes:\n2 × Feather Printed Curtains",
+    "price": 529,
+    "originalPrice": 1059,
+    "currency": "₹",
+    "category": "Window Curtains",
+    "badge": "Teepul Choice",
+    "rating": 4.5,
+    "reviewCount": 86,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Beige & Black Feather",
+        "hex": "#d7c4b7"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Eyelets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/1068760911/gpdcb_512.jpg",
+      "https://images.meesho.com/images/products/1068760911/b3ude_512.jpg",
+      "https://images.meesho.com/images/products/1068760911/gchyh_512.jpg",
+      "https://images.meesho.com/images/products/1068760911/9vd0h_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening Privacy",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Noise Shield",
+      "Easy Maintenance & Machine Washable"
+    ]
   },
   {
-    id: "meesho-c2ur5l",
-    slug: "trendy-marble-print-curtains-for-home-pack-of-2",
-    name: "Trendy Marble Print Curtains for Home (Pack of 2)",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Trendy Marble Print Curtains for Home (Pack of 2)\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: 3D\nSet: Door\nPrint or Pattern Type: Floral\nSize: 7Feet\nNet Quantity (N): 2\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
-    price: 519,
-    originalPrice: 1039,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Teepul Choice",
-    rating: 4.5,
-    reviewCount: 130,
-    inStock: true,
-    colors: [{"name": "Blue Marble Print", "hex": "#2563eb"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/730388217/4miar_512.jpg", "https://images.meesho.com/images/products/730388217/pdhgf_512.jpg", "https://images.meesho.com/images/products/730388217/aqakm_512.jpg", "https://images.meesho.com/images/products/730388217/zwaue_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-ho5hps",
+    "slug": "green-floral-leaf-printed-curtain-for-window-door-light-filtering-privacy-curtain-eyelet-polyester-curtain-pack-of-1",
+    "name": "Green Floral Leaf Printed Curtain for Window & Door | Light Filtering Privacy Curtain | Eyelet Polyester Curtain | Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Green Floral Leaf Printed Curtain for Window & Door | Light Filtering Privacy Curtain | Eyelet Polyester Curtain | Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Polyester Semi Transparent\nSet: Door and Window\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nUpgrade your home décor with this elegant Green Floral Leaf Printed Curtain (Pack of 2), designed for windows and doors. The cream base with deep green leafy print creates a modern, natural look that works well in living rooms, bedrooms, balconies and other home spaces.\n\nKey Features:\n\nPack of 2 Curtains\nGreen & cream floral leaf design\nLight filtering for a soft, comfortable ambience\nHelps provide privacy\nEyelet/grommet top for easy hanging\nSuitable for windows and doors\nEasy-care polyester fabric\nAvailable in 5, 6, 7 & 9 feet height options\n\nAvailable Sizes:\n5 Feet | 6 Feet | 7 Feet | 9 Feet\n\nBest For: Living Room, Bedroom, Window, Door, Home Décor, Balcony & Interior Decoration.",
+    "price": 499,
+    "originalPrice": 999,
+    "currency": "₹",
+    "category": "Window Curtains",
+    "badge": "Best Seller",
+    "rating": 4.8,
+    "reviewCount": 75,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Green Floral Leaf",
+        "hex": "#059669"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Eyelets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/1068492016/31zal_512.jpg",
+      "https://images.meesho.com/images/products/1068492016/xczj5_512.jpg",
+      "https://images.meesho.com/images/products/1068492016/1moo5_512.jpg",
+      "https://images.meesho.com/images/products/1068492016/fomya_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening Privacy",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Noise Shield",
+      "Easy Maintenance & Machine Washable"
+    ]
   },
   {
-    id: "meesho-bcvmm6",
-    slug: "stylish-brown-curtains-for-door-windos-5-6-7-9-feet-pack-of-2",
-    name: "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
-    tagline: "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    description: "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Typography\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
-    price: 529,
-    originalPrice: 1059,
-    currency: "₹",
-    category: "Door Curtains",
-    badge: "Best Seller",
-    rating: 4.6,
-    reviewCount: 141,
-    inStock: true,
-    colors: [{"name": "Dark Brown", "hex": "#451a03"}],
-    sizes: ["5 Feet", "6 Feet", "7 Feet", "9 Feet"],
-    fabricSpecs: {"gsm": 280, "material": "100% Premium Heavyweight Polyester", "fit": "Stainless Steel Silver Eyelets", "care": "Hand & Machine Wash Cold"},
-    images: ["https://images.meesho.com/images/products/686758974/getca_512.jpg", "https://images.meesho.com/images/products/686758974/oshac_512.jpg", "https://images.meesho.com/images/products/686758974/qvmn2_512.jpg", "https://images.meesho.com/images/products/686758974/aygfb_512.jpg"],
-    features: ["Light Filtering & Room Darkening Privacy", "Rust-Proof Stainless Steel Eyelet Rings", "Thermal Heat Insulation & Noise Shield", "Easy Maintenance & Machine Washable"]
+    "id": "meesho-bcvmm6",
+    "slug": "stylish-brown-curtains-for-door-windos-5-6-7-9-feet-pack-of-2",
+    "name": "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Typography\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
+    "price": 529,
+    "originalPrice": 1059,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.6,
+    "reviewCount": 141,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Dark Brown",
+        "hex": "#451a03"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Eyelets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/686758974/getca_512.jpg",
+      "https://images.meesho.com/images/products/686758974/oshac_512.jpg",
+      "https://images.meesho.com/images/products/686758974/qvmn2_512.jpg",
+      "https://images.meesho.com/images/products/686758974/aygfb_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening Privacy",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Noise Shield",
+      "Easy Maintenance & Machine Washable"
+    ]
+  },
+  {
+    "id": "meesho-bf04nh",
+    "slug": "stylish-brown-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-bf04nh",
+    "name": "Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Brown Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
+    "price": 519,
+    "originalPrice": 1039,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Luxury Drapery",
+    "rating": 4.3,
+    "reviewCount": 161,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Chocolate Brown",
+        "hex": "#5d4037"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavy Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/690328205/5plfv_512.jpg",
+      "https://images.meesho.com/images/products/690328205/app1g_512.jpg",
+      "https://images.meesho.com/images/products/690328205/p4vyx_512.jpg",
+      "https://images.meesho.com/images/products/690328205/atv3z_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Insulation & Noise Reduction",
+      "Wrinkle-Resistant Washable Fabric"
+    ]
+  },
+  {
+    "id": "meesho-cqurq3",
+    "slug": "luxury-feather-print-eyelet-curtains-for-living-room-bedroom-set-of-2-7ft-9ft-cqurq3",
+    "name": "Luxury Feather Print Eyelet Curtains for Living Room & Bedroom (Set of 2) - 7ft/9ft",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Luxury Feather Print Eyelet Curtains for Living Room & Bedroom (Set of 2) - 7ft/9ft\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: 3d Printed\nSize: 9Feet\nNet Quantity (N): 1\nPremium Fabric: Made from high-quality 150 GSM polyester/satin for a good feel and long-lasting durability.\n\nPerfect Size: Available in 5ft (Window), 7ft (Door), and 9ft (Long Door) to fit every corner of your home.\n\nEasy Installation: Features rust-resistant metallic eyelet rings for smooth sliding and a modern look.\n\nLight & Privacy Control: Room darkening/Blackout technology blocks 80-90% of Sun light while ensuring complete privacy.\n\nEasy Maintenance: 100% machine washable; color-fast fabric that doesn&#x27;t shrink or fade after washing.\n\nbest Design: Modern 3D prints/Botanical patterns that instantly elevate your living room, bedroom, or office decor.\nMain Terms\tCurtains, , Door Curtains, Window Curtains, Pared, Net Curtain\nMaterial\tPolyester, Cotton, Velvet, Net, Satin, Sheer, Jacquard\nFeatures\tBlackout, Room Darkening, Thermal Insulated, Eyelet, Ring , Washable\nStyle/Pattern\t3D Printed, Floral, Solid, Striped, Abstract, Embroidered, Modern\nSizes/Sets\tSet of 2, Pack of 4, 7 Feet, 9 Feet, Long Door, Window Screen",
+    "price": 499,
+    "originalPrice": 998,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Top Seller",
+    "rating": 4.7,
+    "reviewCount": 87,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Beige & Black Feather",
+        "hex": "#d7c4b7"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/770699739/ow9uo_512.jpg",
+      "https://images.meesho.com/images/products/770699739/wdklh_512.jpg",
+      "https://images.meesho.com/images/products/770699739/jgo5w_512.jpg",
+      "https://images.meesho.com/images/products/770699739/wzcpa_512.jpg",
+      "https://images.meesho.com/images/products/770699739/ow9uo_512.webp",
+      "https://images.meesho.com/images/products/770699739/wdklh_512.webp",
+      "https://images.meesho.com/images/products/770699739/jgo5w_512.webp",
+      "https://images.meesho.com/images/products/770699739/wzcpa_512.webp",
+      "https://images.meesho.com/images/products/770699743/zxht4_512.jpg",
+      "https://images.meesho.com/images/products/770699743/zxht4_512.webp",
+      "https://images.meesho.com/images/products/770699739/ow9uo_512.jpg",
+      "https://images.meesho.com/images/products/770699739/wdklh_512.jpg",
+      "https://images.meesho.com/images/products/770699739/jgo5w_512.jpg",
+      "https://images.meesho.com/images/products/770699739/wzcpa_512.jpg",
+      "https://images.meesho.com/images/products/770699743/zxht4_512.jpg"
+    ],
+    "features": [
+      "100% Premium Heavyweight Polyester (Pack of 2)",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Heat Insulation & Glare Reduction",
+      "Easy Maintenance: Machine & Hand Wash Cold"
+    ]
+  },
+  {
+    "id": "meesho-eupceo",
+    "slug": "stylish-curtains-for-door-windos-5-6-7-9-feet-pack-of-2-eupceo",
+    "name": "Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Stylish Curtains for Door & Windos 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "price": 479,
+    "originalPrice": 959,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Top Seller",
+    "rating": 4.2,
+    "reviewCount": 35,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Coffee Brown & Cream",
+        "hex": "#5d4037"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavy Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/898097424/wz7fn_512.jpg",
+      "https://images.meesho.com/images/products/898097424/ihoaz_512.jpg",
+      "https://images.meesho.com/images/products/898097424/g2ks9_512.jpg",
+      "https://images.meesho.com/images/products/898097424/drcoz_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Insulation & Noise Reduction",
+      "Wrinkle-Resistant Washable Fabric"
+    ]
+  },
+  {
+    "id": "meesho-bazczz",
+    "slug": "trending-polyester-7-feet-door-curtains-set-of-2-ghar-ke-parde-home-room-parda-bazczz",
+    "name": "Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft) \n\n BULLET POINTS\n\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\n\n PRODUCT DESCRIPTION\n\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
+    "price": 499,
+    "originalPrice": 999,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.6,
+    "reviewCount": 107,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Maroon Printed",
+        "hex": "#881337"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavy Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/683573903/vnzkz_512.jpg",
+      "https://images.meesho.com/images/products/683573903/um7nh_512.jpg",
+      "https://images.meesho.com/images/products/683573903/qdd0t_512.jpg",
+      "https://images.meesho.com/images/products/683573903/q8yqh_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Insulation & Noise Reduction",
+      "Wrinkle-Resistant Washable Fabric"
+    ]
+  },
+  {
+    "id": "meesho-euou2r",
+    "slug": "trendy-print-curtains-for-home-pack-of-2-euou2r",
+    "name": "Trendy Print Curtains for Home (Pack of 2)",
+    "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
+    "description": "Name: Trendy Print Curtains for Home (Pack of 2)\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door and Window\nPrint or Pattern Type: Floral\nSize: 9Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric room ko look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "price": 489,
+    "originalPrice": 979,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Best Seller",
+    "rating": 4.5,
+    "reviewCount": 89,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Aqua Blue Printed",
+        "hex": "#0891b2"
+      }
+    ],
+    "sizes": [
+      "5 Feet",
+      "6 Feet",
+      "7 Feet",
+      "9 Feet"
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavy Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/898073667/pfe5s_512.jpg",
+      "https://images.meesho.com/images/products/898073667/cqiah_512.jpg",
+      "https://images.meesho.com/images/products/898073667/db7dt_512.jpg",
+      "https://images.meesho.com/images/products/898073667/moxae_512.jpg"
+    ],
+    "features": [
+      "Light Filtering & Room Darkening",
+      "Rust-Proof Stainless Steel Eyelet Rings",
+      "Thermal Insulation & Noise Reduction",
+      "Wrinkle-Resistant Washable Fabric"
+    ]
   }
 ];
 
