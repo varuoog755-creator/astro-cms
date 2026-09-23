@@ -471,11 +471,6 @@
         const savedName = localStorage.getItem('teepul_customer_name') || '';
         if (savedPhone) {
           window.location.href = checkoutUrl + '&phone=' + encodeURIComponent(savedPhone) + (savedName ? '&name=' + encodeURIComponent(savedName) : '');
-        } else if (typeof window.openCustomerAuthModal === 'function') {
-          window.closeCartDrawer?.();
-          window.openCustomerAuthModal(function(customer) {
-            window.location.href = checkoutUrl + '&phone=' + encodeURIComponent(customer.phone) + '&name=' + encodeURIComponent(customer.name || '');
-          });
         } else {
           window.location.href = checkoutUrl;
         }
