@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ request }) => {
 
     return `
     <item>
-      <g:id>${escapeXml(p.id)}</g:id>
+      <g:id>${escapeXml(p.slug)}</g:id>
       <g:title>${escapeXml(p.name)}</g:title>
       <g:description>${escapeXml(p.description)}</g:description>
       <g:link>${escapeXml(productUrl)}</g:link>
@@ -36,7 +36,7 @@ export const GET: APIRoute = async ({ request }) => {
       <g:availability>${availability}</g:availability>
       <g:condition>${condition}</g:condition>
       <g:brand>${escapeXml(brandName)}</g:brand>
-      <g:item_group_id>${escapeXml(p.category)}</g:item_group_id>
+      <g:item_group_id>${escapeXml(p.slug)}</g:item_group_id>
       <g:identifier_exists>no</g:identifier_exists>
     </item>`;
   }).join('');

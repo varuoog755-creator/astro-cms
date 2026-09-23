@@ -824,11 +824,12 @@ const customerReviews = [
       let currentGalleryImages = Array.isArray(productImages) ? [...productImages] : [];
 
       // Meta Pixel ViewContent Event for Catalog Auto-Sync
+      // content_ids MUST use slug (matches catalogue retailer_id & product URL)
       try {
         if (typeof window.fbq === 'function') {
           window.fbq('track', 'ViewContent', {
             content_name: currentProductName,
-            content_ids: [currentProductId],
+            content_ids: [currentProductSlug],
             content_type: 'product',
             value: unitPrice || currentProductPrice,
             currency: 'INR'
@@ -1228,7 +1229,7 @@ const customerReviews = [
           if (typeof window.fbq === 'function') {
             window.fbq('track', 'AddToCart', {
               content_name: currentProductName,
-              content_ids: [currentProductId],
+              content_ids: [currentProductSlug],
               content_type: 'product',
               value: unitPrice * quantity,
               currency: 'INR'
@@ -1257,7 +1258,7 @@ const customerReviews = [
           if (typeof window.fbq === 'function') {
             window.fbq('track', 'InitiateCheckout', {
               content_name: currentProductName,
-              content_ids: [currentProductId],
+              content_ids: [currentProductSlug],
               content_type: 'product',
               value: unitPrice * quantity,
               currency: 'INR',
@@ -1288,7 +1289,7 @@ const customerReviews = [
           if (typeof window.fbq === 'function') {
             window.fbq('trackCustom', 'WhatsAppOrderClick', {
               content_name: currentProductName,
-              content_ids: [currentProductId],
+              content_ids: [currentProductSlug],
               value: unitPrice * quantity,
               currency: 'INR'
             });
