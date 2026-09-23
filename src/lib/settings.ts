@@ -98,7 +98,7 @@ export const DEFAULT_INTEGRATION_SETTINGS: IntegrationSettings = {
 };
 
 export async function getIntegrationSettings(): Promise<IntegrationSettings> {
-  return getOrSetCache('integration_settings', 120, async () => {
+  return getOrSetCache('integration_settings', 600, async () => {
     try {
       const settingsRows = await prisma.setting.findMany({
         where: {

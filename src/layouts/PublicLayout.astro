@@ -12,9 +12,10 @@ import '../styles/global.css';
 interface Props {
   seo?: SeoOptions;
   includeRazorpay?: boolean;
+  hideMobileNav?: boolean;
 }
 
-const { seo = { title: 'Home' }, includeRazorpay = false } = Astro.props;
+const { seo = { title: 'Home' }, includeRazorpay = false, hideMobileNav = false } = Astro.props;
 const meta = generateSeoMetadata(seo);
 
 // Fetch session token
@@ -24,7 +25,7 @@ const sessionToken = Astro.cookies.get('cms_session_token')?.value;
 const [integrationSettings, currentSession, primaryMenu] = await Promise.all([
   getIntegrationSettings(),
   sessionToken ? getSession(sessionToken) : Promise.resolve(null),
-  getOrSetCache('primary_menu', 120, async () => {
+  getOrSetCache('primary_menu', 600, async () => {
     try {
       return await prisma.menu.findFirst({
         where: { isPrimary: true },
@@ -41,11 +42,11 @@ const [integrationSettings, currentSession, primaryMenu] = await Promise.all([
   }),
 ]);
 
-// High-Speed Edge Caching: Serve from Cloudflare edge in ~30ms for anonymous users
+// High-Speed Edge Caching: Serve from Cloudflare/CDN edge in ~30ms for anonymous users
 if (!sessionToken) {
   Astro.response.headers.set(
     'Cache-Control',
-    'public, max-age=30, s-maxage=300, stale-while-revalidate=86400'
+    'public, max-age=60, s-maxage=3600, stale-while-revalidate=604800'
   );
 } else {
   Astro.response.headers.set('Cache-Control', 'private, no-cache, no-store');
@@ -478,40 +479,42 @@ fbq('track', 'PageView');`} />
     )}
 
     <!-- Mobile App-Style Bottom Navigation Bar (80% Mobile Users - Sleek & Compact) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 py-1 px-2 shadow-[0_-3px_15px_rgba(0,0,0,0.06)] flex items-center justify-around" style="padding-bottom: max(0.25rem, env(safe-area-inset-bottom));">
-      <a href="/" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
-        <span class="text-lg">🏠</span>
-        <span class="text-[9px] font-extrabold tracking-tight">Home</span>
-      </a>
+    {!hideMobileNav && (
+      <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 py-1 px-2 shadow-[0_-3px_15px_rgba(0,0,0,0.06)] flex items-center justify-around" style="padding-bottom: max(0.25rem, env(safe-area-inset-bottom));">
+        <a href="/" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
+          <span class="text-lg">🏠</span>
+          <span class="text-[9px] font-extrabold tracking-tight">Home</span>
+        </a>
 
-      <a href="/products" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
-        <span class="text-lg">🛍️</span>
-        <span class="text-[9px] font-extrabold tracking-tight">Shop</span>
-      </a>
+        <a href="/products" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
+          <span class="text-lg">🛍️</span>
+          <span class="text-[9px] font-extrabold tracking-tight">Shop</span>
+        </a>
 
-      <button
-        type="button"
-        onclick="window.openCartDrawer?.()"
-        class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px] relative cursor-pointer"
-        aria-label="Open Shopping Cart"
-      >
-        <div class="relative">
-          <span class="text-lg">🛒</span>
-          <span id="mobile-bottom-cart-badge" class="absolute -top-1 -right-2 bg-amber-800 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-xs">0</span>
-        </div>
-        <span class="text-[9px] font-extrabold tracking-tight">Cart</span>
-      </button>
+        <button
+          type="button"
+          onclick="window.openCartDrawer?.()"
+          class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px] relative cursor-pointer"
+          aria-label="Open Shopping Cart"
+        >
+          <div class="relative">
+            <span class="text-lg">🛒</span>
+            <span id="mobile-bottom-cart-badge" class="absolute -top-1 -right-2 bg-amber-800 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-xs">0</span>
+          </div>
+          <span class="text-[9px] font-extrabold tracking-tight">Cart</span>
+        </button>
 
-      <a
-        href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi Teepul! I am browsing on mobile and need assistance.')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex flex-col items-center justify-center py-0.5 px-2 text-emerald-600 hover:text-emerald-700 transition active:scale-95 min-w-[48px]"
-      >
-        <span class="text-lg">💬</span>
-        <span class="text-[9px] font-extrabold tracking-tight">WhatsApp</span>
-      </a>
-    </nav>
+        <a
+          href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi Teepul! I am browsing on mobile and need assistance.')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex flex-col items-center justify-center py-0.5 px-2 text-emerald-600 hover:text-emerald-700 transition active:scale-95 min-w-[48px]"
+        >
+          <span class="text-lg">💬</span>
+          <span class="text-[9px] font-extrabold tracking-tight">WhatsApp</span>
+        </a>
+      </nav>
+    )}
 
     <!-- Global Cart & Logout Script -->
     <script is:inline>

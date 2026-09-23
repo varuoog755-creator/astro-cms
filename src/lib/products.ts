@@ -1178,7 +1178,7 @@ export const PRODUCTS_CATALOG: Product[] = [
 ];
 
 export async function getStorefrontProducts(): Promise<Product[]> {
-  return getOrSetCache('storefront_products', 60, async () => {
+  return getOrSetCache('storefront_products', 300, async () => {
     try {
       let mappedDb: Product[] = [];
       try {
