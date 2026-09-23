@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ request }) => {
   for (const p of products) {
     const productUrl = `${origin}/products/${p.slug}`;
     const mainImage = p.images.find((img) => img.startsWith('http')) || `${origin}${p.images[0]}`;
-    const availability = p.inStock ? 'in stock' : 'out of stock';
+    const availability = p.inStock ? 'in_stock' : 'out_of_stock';
 
     // Normalize sizes to always have price data
     const sizes = normalizeProductSizes(p.sizes, p.price, p.originalPrice);
@@ -45,22 +45,22 @@ export const GET: APIRoute = async ({ request }) => {
 
         items.push(`
   <item>
-    <id>${escapeXml(variantId)}</id>
-    <title>${escapeXml(`${p.name} - ${color.name} - ${size.name}`)}</title>
-    <description>${escapeXml(p.description || p.name)}</description>
-    <link>${escapeXml(productUrl)}</link>
-    <image_link>${escapeXml(finalImage)}</image_link>
-    <condition>new</condition>
-    <availability>${availability}</availability>
-    <price>${origPrice}.00 INR</price>
-    <sale_price>${salePrice}.00 INR</sale_price>
-    <brand>Teepul</brand>
-    <item_group_id>${escapeXml(p.slug)}</item_group_id>
-    <color>${escapeXml(color.name)}</color>
-    <size>${escapeXml(size.name)}</size>
-    <google_product_category>602</google_product_category>
-    <product_type>Home &amp; Living &gt; Curtains &amp; Window Treatments</product_type>
-    <custom_label_0>${escapeXml(p.category || 'Curtains')}</custom_label_0>
+    <g:id>${escapeXml(variantId)}</g:id>
+    <g:title>${escapeXml(`${p.name} - ${color.name} - ${size.name}`)}</g:title>
+    <g:description>${escapeXml(p.description || p.name)}</g:description>
+    <g:link>${escapeXml(productUrl)}</g:link>
+    <g:image_link>${escapeXml(finalImage)}</g:image_link>
+    <g:condition>new</g:condition>
+    <g:availability>${availability}</g:availability>
+    <g:price>${origPrice}.00 INR</g:price>
+    <g:sale_price>${salePrice}.00 INR</g:sale_price>
+    <g:brand>Teepul</g:brand>
+    <g:item_group_id>${escapeXml(p.slug)}</g:item_group_id>
+    <g:color>${escapeXml(color.name)}</g:color>
+    <g:size>${escapeXml(size.name)}</g:size>
+    <g:google_product_category>602</g:google_product_category>
+    <g:product_type>Home &amp; Living &gt; Curtains &amp; Window Treatments</g:product_type>
+    <g:custom_label_0>${escapeXml(p.category || 'Curtains')}</g:custom_label_0>
   </item>`);
       }
     }
@@ -69,20 +69,20 @@ export const GET: APIRoute = async ({ request }) => {
     const minSize = sizes[0];
     items.push(`
   <item>
-    <id>${escapeXml(p.slug)}</id>
-    <title>${escapeXml(p.name)}</title>
-    <description>${escapeXml(p.description || p.name)}</description>
-    <link>${escapeXml(productUrl)}</link>
-    <image_link>${escapeXml(mainImage.startsWith('http') ? mainImage : `${origin}${mainImage}`)}</image_link>
-    <condition>new</condition>
-    <availability>${availability}</availability>
-    <price>${minSize?.originalPrice || p.originalPrice || p.price}.00 INR</price>
-    <sale_price>${p.price}.00 INR</sale_price>
-    <brand>Teepul</brand>
-    <item_group_id>${escapeXml(p.slug)}</item_group_id>
-    <google_product_category>602</google_product_category>
-    <product_type>Home &amp; Living &gt; Curtains &amp; Window Treatments</product_type>
-    <custom_label_0>${escapeXml(p.category || 'Curtains')}</custom_label_0>
+    <g:id>${escapeXml(p.slug)}</g:id>
+    <g:title>${escapeXml(p.name)}</g:title>
+    <g:description>${escapeXml(p.description || p.name)}</g:description>
+    <g:link>${escapeXml(productUrl)}</g:link>
+    <g:image_link>${escapeXml(mainImage.startsWith('http') ? mainImage : `${origin}${mainImage}`)}</g:image_link>
+    <g:condition>new</g:condition>
+    <g:availability>${availability}</g:availability>
+    <g:price>${minSize?.originalPrice || p.originalPrice || p.price}.00 INR</g:price>
+    <g:sale_price>${p.price}.00 INR</g:sale_price>
+    <g:brand>Teepul</g:brand>
+    <g:item_group_id>${escapeXml(p.slug)}</g:item_group_id>
+    <g:google_product_category>602</g:google_product_category>
+    <g:product_type>Home &amp; Living &gt; Curtains &amp; Window Treatments</g:product_type>
+    <g:custom_label_0>${escapeXml(p.category || 'Curtains')}</g:custom_label_0>
   </item>`);
   }
 
