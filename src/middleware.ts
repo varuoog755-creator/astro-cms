@@ -68,21 +68,32 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     // Edge & browser caching for high-speed delivery
     if (context.request.method === 'GET') {
-      const isPrivatePath =
-        pathname.startsWith('/admin') ||
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/account') ||
-        pathname.startsWith('/checkout') ||
-        pathname.startsWith('/cart');
+      const isStaticAsset =
+        pathname.startsWith('/_astro/') ||
+        /\.(jpg|jpeg|png|webp|svg|gif|ico|woff2|woff|ttf|css|js)$/i.test(pathname);
 
-      if (isPrivatePath || sessionUser) {
-        response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-      } else {
-        // Public storefront pages: Cloudflare edge (s-maxage=600 = 10 mins) + browser (max-age=60)
+      if (isStaticAsset) {
         response.headers.set(
           'Cache-Control',
-          'public, max-age=60, s-maxage=600, stale-while-revalidate=86400'
+          'public, max-age=31536000, immutable'
         );
+      } else {
+        const isPrivatePath =
+          pathname.startsWith('/admin') ||
+          pathname.startsWith('/api') ||
+          pathname.startsWith('/account') ||
+          pathname.startsWith('/checkout') ||
+          pathname.startsWith('/cart');
+
+        if (isPrivatePath || sessionUser) {
+          response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        } else {
+          // Public storefront pages: Cloudflare edge (s-maxage=600 = 10 mins) + browser (max-age=60)
+          response.headers.set(
+            'Cache-Control',
+            'public, max-age=60, s-maxage=600, stale-while-revalidate=86400'
+          );
+        }
       }
     } else {
       response.headers.set('Cache-Control', 'no-store');

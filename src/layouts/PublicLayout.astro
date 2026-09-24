@@ -138,32 +138,64 @@ const menuItems = rawMenuItems
       <script is:inline src="https://checkout.razorpay.com/v1/checkout.js"></script>
     )}
 
-    <!-- Google Analytics 4 (GA4) -->
+    <!-- Google Analytics 4 (GA4) - Deferred for Zero TBT -->
     {integrationSettings.ga_enabled && integrationSettings.ga_measurement_id && (
-      <>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${integrationSettings.ga_measurement_id}`}></script>
-        <script is:inline define:vars={{ gaId: integrationSettings.ga_measurement_id }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', gaId);
-        </script>
-      </>
+      <script is:inline define:vars={{ gaId: integrationSettings.ga_measurement_id }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', gaId);
+
+        function loadGA() {
+          if (window._gaLoaded) return;
+          window._gaLoaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+          document.head.appendChild(s);
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadGA, { timeout: 2000 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadGA, 1000); });
+        }
+      </script>
     )}
 
-    <!-- Meta Pixel Code -->
+    <!-- Meta Pixel Code - Deferred for Zero TBT -->
     {integrationSettings.meta_pixel_enabled && integrationSettings.meta_pixel_id && (
       <>
-        <script is:inline set:html={`!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-${String(integrationSettings.meta_pixel_id).split(',').map((id: string) => id.trim()).filter(Boolean).map((id: string) => `fbq('init', '${id}');`).join('\n')}
-fbq('track', 'PageView');`} />
+        <script is:inline define:vars={{ pixelIds: String(integrationSettings.meta_pixel_id).split(',').map((id: string) => id.trim()).filter(Boolean) }}>
+          window.fbq = window.fbq || function() {
+            window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
+          };
+          if (!window._fbq) window._fbq = window.fbq;
+          window.fbq.push = window.fbq;
+          window.fbq.loaded = true;
+          window.fbq.version = '2.0';
+          window.fbq.queue = window.fbq.queue || [];
+
+          pixelIds.forEach(function(id) {
+            window.fbq('init', id);
+          });
+          window.fbq('track', 'PageView');
+
+          function loadMetaPixel() {
+            if (window._metaPixelScriptLoaded) return;
+            window._metaPixelScriptLoaded = true;
+            var t = document.createElement('script');
+            t.async = true;
+            t.src = 'https://connect.facebook.net/en_US/fbevents.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(t, s);
+          }
+
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadMetaPixel, { timeout: 2000 });
+          } else {
+            window.addEventListener('load', function() { setTimeout(loadMetaPixel, 1000); });
+          }
+        </script>
         {String(integrationSettings.meta_pixel_id).split(',').map((id: string) => id.trim()).filter(Boolean).map((id: string) => (
           <noscript>
             <img height="1" width="1" style="display:none"

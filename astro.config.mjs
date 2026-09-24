@@ -7,6 +7,9 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   site: 'https://teepul.com',
   output: 'server',
+  build: {
+    inlineStylesheets: 'auto',
+  },
   security: {
     checkOrigin: false,
   },
