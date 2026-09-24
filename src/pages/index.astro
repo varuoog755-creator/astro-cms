@@ -133,7 +133,7 @@ const homepageFaqs = [
       <div class="lg:col-span-5 relative">
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-4">
-            <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
+            <div class="rounded-3xl overflow-hidden shadow-sm border border-slate-200 aspect-[4/5] bg-white group">
               <img
                 src={featuredProducts[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0]}
                 alt="Teepul Door Curtains - Premium Thermal Blackout Drapery"
@@ -144,15 +144,15 @@ const homepageFaqs = [
                 height="500"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div class="p-3 bg-white/90 backdrop-blur-md -mt-12 relative text-center">
-                <span class="text-[10px] font-black uppercase text-amber-900 tracking-wider">Thermal Blackout Curtains</span>
+              <div class="p-3 bg-white/95 backdrop-blur-md -mt-12 relative text-center">
+                <span class="text-[10px] font-bold uppercase text-slate-900 tracking-wider">Thermal Blackout Curtains</span>
               </div>
             </div>
-            <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
+            <div class="rounded-3xl overflow-hidden shadow-xs border border-slate-200 aspect-square bg-white group">
               <img
                 src={featuredProducts[2]?.images?.[0] || PRODUCTS_CATALOG[2]?.images?.[0]}
                 alt="Teepul Luxury Printed & Eyelet Curtains"
-                loading="eager"
+                loading="lazy"
                 decoding="async"
                 width="400"
                 height="400"
@@ -162,30 +162,29 @@ const homepageFaqs = [
           </div>
 
           <div class="space-y-4 pt-8">
-            <div class="rounded-3xl overflow-hidden shadow-lg border border-amber-900/10 aspect-square bg-white group">
+            <div class="rounded-3xl overflow-hidden shadow-xs border border-slate-200 aspect-square bg-white group">
               <img
                 src={featuredProducts[3]?.images?.[0] || PRODUCTS_CATALOG[3]?.images?.[0]}
                 alt="Teepul Premium Living Room Curtains"
-                loading="eager"
+                loading="lazy"
                 decoding="async"
                 width="400"
                 height="400"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>
-            <div class="rounded-3xl overflow-hidden shadow-xl border border-amber-900/10 aspect-[4/5] bg-white group">
+            <div class="rounded-3xl overflow-hidden shadow-sm border border-slate-200 aspect-[4/5] bg-white group">
               <img
                 src={featuredProducts[1]?.images?.[0] || PRODUCTS_CATALOG[1]?.images?.[0]}
                 alt="Teepul Window Curtains - Semi-Sheer Light Filtering Polyester"
-                loading="eager"
-                fetchpriority="high"
+                loading="lazy"
                 decoding="async"
                 width="400"
                 height="500"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div class="p-3 bg-white/90 backdrop-blur-md -mt-12 relative text-center">
-                <span class="text-[10px] font-black uppercase text-amber-900 tracking-wider">Light Filtering Polyester</span>
+              <div class="p-3 bg-white/95 backdrop-blur-md -mt-12 relative text-center">
+                <span class="text-[10px] font-bold uppercase text-slate-900 tracking-wider">Light Filtering Polyester</span>
               </div>
             </div>
           </div>
