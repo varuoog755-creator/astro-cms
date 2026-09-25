@@ -84,7 +84,7 @@ const productUgcVideos = [
 const productFaqs = [
   {
     question: "Which size should I choose?",
-    answer: "For standard windows, choose 5 Feet (152 cm) or 6 Feet (183 cm). For standard room doors, choose 7 Feet (213 cm). For high-ceiling balcony doors, select 9 Feet (274 cm). Width for all panels is standard 4 Feet (122 cm / 48 inches)."
+    answer: "For standard windows, choose 5 Feet (152 cm). For standard room doors, choose 7 Feet (213 cm). For high-ceiling balcony doors, select 9 Feet (274 cm). Width for all panels is standard 4 Feet (122 cm / 48 inches)."
   },
   {
     question: "Is this pack of 1 or 2?",
@@ -296,23 +296,41 @@ const productFaqs = [
 
           <!-- [ Select Colour ] -->
           {product.colors && product.colors.length > 0 && (
-            <div class="space-y-2">
+            <div class="space-y-2.5">
               <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                 <span class="uppercase tracking-wider">Select Colour</span>
                 <span id="selected-color-label" class="text-amber-800 font-bold">{product.colors[0]?.name}</span>
               </div>
-              <div class="flex flex-wrap gap-2.5">
-                {product.colors.map((c, idx) => (
-                  <button
-                    type="button"
-                    data-color={c.name}
-                    data-color-index={idx}
-                    class={`color-chip-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
-                  >
-                    <span class="w-3.5 h-3.5 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
-                    <span>{c.name}</span>
-                  </button>
-                ))}
+              <div class="flex flex-wrap gap-2 sm:gap-3">
+                {product.colors.map((c, idx) => {
+                  const colorThumb = (c.images && c.images[0]) || (initialImages && initialImages[idx]) || product.images[0];
+                  return (
+                    <button
+                      type="button"
+                      data-color={c.name}
+                      data-color-index={idx}
+                      class={`color-chip-btn flex items-center gap-2.5 p-1.5 pr-3 rounded-2xl border-2 transition focus:outline-none cursor-pointer text-left ${idx === 0 ? 'active-color border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/70 text-amber-950 font-bold' : 'border-slate-200 hover:border-slate-400 bg-white text-slate-800 font-semibold'}`}
+                    >
+                      <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-slate-200/80 bg-slate-100 flex-shrink-0 shadow-xs">
+                        <img
+                          src={colorThumb}
+                          alt={`${product.name} - ${c.name}`}
+                          width="44"
+                          height="44"
+                          class="w-full h-full object-cover pointer-events-none"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="min-w-0">
+                        <div class="text-xs font-bold truncate leading-tight">{c.name}</div>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span class="w-2.5 h-2.5 rounded-full border border-slate-300 shadow-2xs shrink-0" style={`background-color: ${c.hex}`}></span>
+                          <span class="text-[10px] text-slate-500 font-medium">Photo</span>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -435,7 +453,7 @@ const productFaqs = [
           <span class="text-xl sm:text-2xl">📏</span>
           <div>
             <h3 class="font-extrabold text-xs sm:text-sm text-slate-900">Multiple Sizes</h3>
-            <p class="text-[11px] text-slate-500 hidden sm:block">5ft, 6ft, 7ft &amp; 9ft options</p>
+            <p class="text-[11px] text-slate-500 hidden sm:block">5ft, 7ft &amp; 9ft options</p>
           </div>
         </div>
       </div>
@@ -623,7 +641,7 @@ const productFaqs = [
       </div>
 
       <!-- Visual Window & Door Diagram Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         
         <!-- 5 FT -->
         <div class="p-5 rounded-2xl border-2 border-slate-200 hover:border-amber-500 transition bg-slate-50/50 space-y-3 flex flex-col justify-between">
@@ -643,33 +661,9 @@ const productFaqs = [
               const btn = document.querySelector('.size-btn[data-size*=\'5\']') || document.querySelectorAll('.size-btn')[0];
               if (btn) { btn.click(); document.getElementById('product-hero-section')?.scrollIntoView({ behavior: 'smooth' }); }
             "
-            class="text-xs font-bold text-amber-800 hover:underline text-left pt-2"
+            class="text-xs font-bold text-amber-800 hover:underline text-left pt-2 cursor-pointer"
           >
             Select 5 FT &uarr;
-          </button>
-        </div>
-
-        <!-- 6 FT -->
-        <div class="p-5 rounded-2xl border-2 border-slate-200 hover:border-amber-500 transition bg-slate-50/50 space-y-3 flex flex-col justify-between">
-          <div class="space-y-2">
-            <div class="w-full h-24 bg-white border border-slate-200 rounded-xl flex items-center justify-center p-2 text-center text-slate-400 font-mono text-xs">
-              <div class="border-2 border-dashed border-amber-800/40 w-16 h-22 rounded flex items-center justify-center text-[10px] font-bold text-amber-900">
-                6 FT
-              </div>
-            </div>
-            <div class="text-xs font-black text-amber-800 uppercase tracking-wider">🪟 Large Window</div>
-            <div class="text-xl font-black text-slate-900">6 Feet (183 cm)</div>
-            <p class="text-xs text-slate-600">Perfect for tall living room windows and office study areas.</p>
-          </div>
-          <button
-            type="button"
-            onclick="
-              const btn = document.querySelector('.size-btn[data-size*=\'6\']') || document.querySelectorAll('.size-btn')[1];
-              if (btn) { btn.click(); document.getElementById('product-hero-section')?.scrollIntoView({ behavior: 'smooth' }); }
-            "
-            class="text-xs font-bold text-amber-800 hover:underline text-left pt-2"
-          >
-            Select 6 FT &uarr;
           </button>
         </div>
 
@@ -688,10 +682,10 @@ const productFaqs = [
           <button
             type="button"
             onclick="
-              const btn = document.querySelector('.size-btn[data-size*=\'7\']') || document.querySelectorAll('.size-btn')[2];
+              const btn = document.querySelector('.size-btn[data-size*=\'7\']') || document.querySelectorAll('.size-btn')[1];
               if (btn) { btn.click(); document.getElementById('product-hero-section')?.scrollIntoView({ behavior: 'smooth' }); }
             "
-            class="text-xs font-black text-amber-900 hover:underline text-left pt-2"
+            class="text-xs font-black text-amber-900 hover:underline text-left pt-2 cursor-pointer"
           >
             Select 7 FT &uarr;
           </button>
@@ -712,10 +706,10 @@ const productFaqs = [
           <button
             type="button"
             onclick="
-              const btn = document.querySelector('.size-btn[data-size*=\'9\']') || document.querySelectorAll('.size-btn')[3];
+              const btn = document.querySelector('.size-btn[data-size*=\'9\']') || document.querySelectorAll('.size-btn')[2];
               if (btn) { btn.click(); document.getElementById('product-hero-section')?.scrollIntoView({ behavior: 'smooth' }); }
             "
-            class="text-xs font-bold text-amber-800 hover:underline text-left pt-2"
+            class="text-xs font-bold text-amber-800 hover:underline text-left pt-2 cursor-pointer"
           >
             Select 9 FT &uarr;
           </button>
@@ -754,7 +748,7 @@ const productFaqs = [
 
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
           <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dimensions (Width × Length)</span>
-          <p class="font-extrabold text-sm text-slate-900">4ft (48 in / 122 cm) × 5ft, 6ft, 7ft, 9ft</p>
+          <p class="font-extrabold text-sm text-slate-900">4ft (48 in / 122 cm) × 5ft, 7ft, 9ft</p>
         </div>
 
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
@@ -794,7 +788,7 @@ const productFaqs = [
         </div>
         <div class="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-1">
           <span class="text-xs font-bold text-amber-800">Selected Size</span>
-          <p class="text-xs text-slate-600">Custom tailored to 5ft, 6ft, 7ft, or 9ft.</p>
+          <p class="text-xs text-slate-600">Custom tailored to 5ft, 7ft, or 9ft.</p>
         </div>
         <div class="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-1">
           <span class="text-xs font-bold text-amber-800">Pre-fitted Eyelets</span>
@@ -1263,9 +1257,9 @@ const productFaqs = [
       document.querySelectorAll('.color-chip-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.color-chip-btn').forEach((b) => {
-            b.className = 'color-chip-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition focus:outline-none cursor-pointer border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800';
+            b.className = 'color-chip-btn flex items-center gap-2.5 p-1.5 pr-3 rounded-2xl border-2 transition focus:outline-none cursor-pointer text-left border-slate-200 hover:border-slate-400 bg-white text-slate-800 font-semibold';
           });
-          btn.className = 'color-chip-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition focus:outline-none cursor-pointer border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950';
+          btn.className = 'color-chip-btn flex items-center gap-2.5 p-1.5 pr-3 rounded-2xl border-2 transition focus:outline-none cursor-pointer text-left active-color border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/70 text-amber-950 font-bold';
           selectedColor = btn.getAttribute('data-color') || '';
           const label = document.getElementById('selected-color-label');
           if (label) label.innerText = selectedColor;

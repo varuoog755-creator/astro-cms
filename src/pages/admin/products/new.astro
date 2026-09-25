@@ -98,8 +98,7 @@ if (id) {
 if (!productSizes.length) {
   productSizes = [
     { name: '5 Feet (Window)', price: 459, originalPrice: 899, stock: 50, inStock: true },
-    { name: '6 Feet', price: 499, originalPrice: 999, stock: 50, inStock: true },
-    { name: '7 Feet (Door)', price: 549, originalPrice: 1099, stock: 100, inStock: true },
+        { name: '7 Feet (Door)', price: 549, originalPrice: 1099, stock: 100, inStock: true },
     { name: '9 Feet (Long Door)', price: 579, originalPrice: 1199, stock: 40, inStock: true },
   ];
 }
@@ -161,7 +160,7 @@ if (!productSizes.length) {
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Category *</label>
           <select name="category" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-blue-500">
             <option value="Door Curtains" selected={!product?.category || product?.category === 'Door Curtains'}>Door Curtains (7ft / 9ft)</option>
-            <option value="Window Curtains" selected={product?.category === 'Window Curtains'}>Window Curtains (5ft / 6ft)</option>
+            <option value="Window Curtains" selected={product?.category === 'Window Curtains'}>Window Curtains (5ft)</option>
             <option value="Long Door Curtains" selected={product?.category === 'Long Door Curtains'}>Long Door Curtains (9 Feet)</option>
             <option value="Blackout Curtains" selected={product?.category === 'Blackout Curtains'}>Thermal Blackout Curtains</option>
             <option value="Sheer Curtains" selected={product?.category === 'Sheer Curtains'}>Sheer & Net Curtains</option>
@@ -251,7 +250,7 @@ if (!productSizes.length) {
                 <span>📏</span> Curtain Sizes & Length-wise Pricing (₹)
               </h3>
               <p class="text-[11px] text-slate-500 mt-0.5">
-                Window (5ft, 6ft) aur Door (7ft, 9ft) curtains ke alag-alag selling price set karein. Customer jis size par click karega website wahi price dynamic dikhayegi.
+                Window (5ft) aur Door (7ft, 9ft) curtains ke alag-alag selling price set karein. Customer jis size par click karega website wahi price dynamic dikhayegi.
               </p>
             </div>
             <button
@@ -353,7 +352,7 @@ if (!productSizes.length) {
               id="preset-curtains-btn"
               class="text-blue-600 hover:underline font-semibold bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-xs cursor-pointer"
             >
-              Curtain Standard (5ft: ₹459, 6ft: ₹499, 7ft: ₹549, 9ft: ₹579)
+              Curtain Standard (5ft: ₹459, 7ft: ₹549, 9ft: ₹579)
             </button>
           </div>
         </div>
@@ -543,8 +542,7 @@ if (!productSizes.length) {
       presetBtn?.addEventListener('click', () => {
         const presets = [
           { name: '5 Feet (Window)', price: 459, orig: 899, stock: 50 },
-          { name: '6 Feet', price: 499, orig: 999, stock: 50 },
-          { name: '7 Feet (Door)', price: 549, orig: 1099, stock: 100 },
+                    { name: '7 Feet (Door)', price: 549, orig: 1099, stock: 100 },
           { name: '9 Feet (Long Door)', price: 579, orig: 1199, stock: 40 },
         ];
         tableBody.innerHTML = '';

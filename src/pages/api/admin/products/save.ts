@@ -249,7 +249,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
 
   // 3. Fallback to comma/colon string format e.g. "5 Feet: 499, 7 Feet: 699" or "5 Feet, 7 Feet"
   if (sizesArray.length === 0) {
-    const sizesRaw = formData.get('sizes')?.toString() || '5 Feet, 6 Feet, 7 Feet, 9 Feet';
+    const sizesRaw = formData.get('sizes')?.toString() || '5 Feet, 7 Feet, 9 Feet';
     sizesArray = sizesRaw.split(',').map((s) => {
       const trimmed = s.trim();
       if (trimmed.includes(':')) {

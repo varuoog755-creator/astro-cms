@@ -37,18 +37,15 @@ export interface Product {
 
 export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice: number = 499, baseOriginalPrice?: number): ProductSize[] {
   const p5 = typeof basePrice === 'number' && basePrice > 0 ? basePrice : 499;
-  const p6 = Math.min(559, Math.round((p5 + 30) / 10) * 10 - 1);
-  const p7 = Math.min(569, Math.round((p5 + 60) / 10) * 10 - 1);
+  const p7 = Math.min(569, Math.round((p5 + 50) / 10) * 10 - 1);
   const p9 = Math.min(579, Math.round((p5 + 90) / 10) * 10 - 1);
 
   const orig5 = baseOriginalPrice || (Math.round((p5 * 2) / 10) * 10 - 1);
-  const orig6 = Math.round((p6 * 2) / 10) * 10 - 1;
   const orig7 = Math.round((p7 * 2) / 10) * 10 - 1;
   const orig9 = Math.round((p9 * 2) / 10) * 10 - 1;
 
   const defaultSizes: ProductSize[] = [
     { name: "5 Feet (Window)", price: p5, originalPrice: orig5, stock: 50, inStock: true },
-    { name: "6 Feet", price: p6, originalPrice: orig6, stock: 50, inStock: true },
     { name: "7 Feet (Door)", price: p7, originalPrice: orig7, stock: 50, inStock: true },
     { name: "9 Feet (Long Door)", price: p9, originalPrice: orig9, stock: 50, inStock: true },
   ];
@@ -57,8 +54,16 @@ export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice
     return defaultSizes;
   }
 
-  // Ensure 5ft, 6ft, 7ft, 9ft have distinct psychological prices scaled from basePrice
-  return sizes.map((s) => {
+  const filtered = sizes.filter((s) => {
+    const name = typeof s === 'string' ? s : s.name;
+    return !name.toLowerCase().includes('6');
+  });
+
+  if (filtered.length === 0) {
+    return defaultSizes;
+  }
+
+  return filtered.map((s) => {
     if (typeof s === 'string') {
       const lower = s.toLowerCase();
       let price = p5;
@@ -67,9 +72,6 @@ export function normalizeProductSizes(sizes: (string | ProductSize)[], basePrice
       if (lower.includes('5') || (lower.includes('window') && !lower.includes('door'))) {
         price = p5;
         calculatedOrigPrice = orig5;
-      } else if (lower.includes('6')) {
-        price = p6;
-        calculatedOrigPrice = orig6;
       } else if (lower.includes('7') || (lower.includes('door') && !lower.includes('long') && !lower.includes('9'))) {
         price = p7;
         calculatedOrigPrice = orig7;
@@ -102,7 +104,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     "slug": "premium-polyester-blend-blackout-curtains-for-home-set-of-2",
     "name": "Premium Polyester Blend Blackout Curtains for Home | Set of 2 Panels",
     "tagline": "Pack of 2 | 100% Light Blocking Thermal Insulated Eyelet Curtains",
-    "description": "Name: Premium Polyester Blend Blackout Curtains for Home | Set of 2 Panels\nMaterial: 100% Heavyweight Polyester & Cotton Blend\nOpacity: Blackout & Room Darkening\nSet: Set of 2 Panels\nPrint or Pattern Type: Elegant Solid Texture with Gold Thread Detailing\nNet Quantity (N): 2\nSizes Available: 5 Feet (Window), 6 Feet, 7 Feet (Door), 9 Feet (Long Door)\n\nTransform your home interior with Teepul Premium Polyester Blend Blackout Curtains (Set of 2). Woven with multi-layer dense fabric to block harsh sunlight, UV rays, and outside noise while insulating your room against heat and cold. Pre-fitted with rust-proof stainless steel silver eyelets for smooth movement on standard curtain rods.\n\nKey Highlights:\n✔ Pack of 2 Panels: Complete matching set for windows and doors\n✔ Blackout Room Darkening: Superior glare reduction and total indoor privacy\n✔ Premium Heavyweight Fabric: Elegant drape with wrinkle-resistant finish\n✔ 4 Rich Color Variants: Wine Maroon, Royal Blue, Royal Purple, and Mustard Gold\n✔ 4 Size Options: 5ft, 6ft, 7ft & 9ft available\n✔ Easy Care: 100% machine and hand wash friendly",
+    "description": "Name: Premium Polyester Blend Blackout Curtains for Home | Set of 2 Panels\nMaterial: 100% Heavyweight Polyester & Cotton Blend\nOpacity: Blackout & Room Darkening\nSet: Set of 2 Panels\nPrint or Pattern Type: Elegant Solid Texture with Gold Thread Detailing\nNet Quantity (N): 2\nSizes Available: 5 Feet (Window), 7 Feet (Door), 9 Feet (Long Door)\n\nTransform your home interior with Teepul Premium Polyester Blend Blackout Curtains (Set of 2). Woven with multi-layer dense fabric to block harsh sunlight, UV rays, and outside noise while insulating your room against heat and cold. Pre-fitted with rust-proof stainless steel silver eyelets for smooth movement on standard curtain rods.\n\nKey Highlights:\n✔ Pack of 2 Panels: Complete matching set for windows and doors\n✔ Blackout Room Darkening: Superior glare reduction and total indoor privacy\n✔ Premium Heavyweight Fabric: Elegant drape with wrinkle-resistant finish\n✔ 4 Rich Color Variants: Wine Maroon, Royal Blue, Royal Purple, and Mustard Gold\n✔ 4 Size Options: 5ft, 7ft & 9ft available\n✔ Easy Care: 100% machine and hand wash friendly",
     "price": 455,
     "originalPrice": 910,
     "currency": "₹",
@@ -162,13 +164,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 485,
-        "originalPrice": 970,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 515,
         "originalPrice": 1030,
@@ -205,9 +200,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bcvrza",
     "slug": "stylish-blue-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-bcvrza",
-    "name": "Stylish Blue Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Blue Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Blue Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Window\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
+    "description": "Name: Stylish Blue Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Window\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
     "price": 489,
     "originalPrice": 978,
     "currency": "₹",
@@ -227,13 +222,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 489,
         "originalPrice": 978,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 509,
-        "originalPrice": 1018,
         "stock": 50,
         "inStock": true
       },
@@ -285,9 +273,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bf01yu",
     "slug": "stylish-brown-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-bf01yu",
-    "name": "Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Door 7 Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur  look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern &lt;warning name=&#x27;Holme&#x27;s&#x27;&gt;homes&lt;/warning&gt; \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric room ko look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Door 7 Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur  look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern &lt;warning name=&#x27;Holme&#x27;s&#x27;&gt;homes&lt;/warning&gt; \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric room ko look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
     "price": 459,
     "originalPrice": 918,
     "currency": "₹",
@@ -307,13 +295,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 459,
         "originalPrice": 918,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 479,
-        "originalPrice": 958,
         "stock": 50,
         "inStock": true
       },
@@ -388,13 +369,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 509,
-        "originalPrice": 1018,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 529,
         "originalPrice": 1058,
@@ -442,9 +416,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bf034v",
     "slug": "stylish-brown-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-bf034v",
-    "name": "Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
+    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
     "price": 479,
     "originalPrice": 958,
     "currency": "₹",
@@ -464,13 +438,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 479,
         "originalPrice": 958,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 499,
-        "originalPrice": 998,
         "stock": 50,
         "inStock": true
       },
@@ -519,9 +486,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-eupcep",
     "slug": "stylish-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-eupcep",
-    "name": "Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "description": "Name: Stylish Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
     "price": 469,
     "originalPrice": 938,
     "currency": "₹",
@@ -541,13 +508,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 469,
         "originalPrice": 938,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 489,
-        "originalPrice": 978,
         "stock": 50,
         "inStock": true
       },
@@ -625,13 +585,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 549,
-        "originalPrice": 1099,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet",
         "price": 569,
         "originalPrice": 1139,
@@ -668,9 +621,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bcvrz8",
     "slug": "stylish-purple-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-bcvrz8",
-    "name": "Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET (Pack of 2)",
+    "name": "Stylish Curtains for Door & Windows 5, 7 & 9 FEET (Pack of 2)",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET (Pack of 2)\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
+    "description": "Name: Stylish Curtains for Door & Windows 5, 7 & 9 FEET (Pack of 2)\nMaterial: Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)",
     "price": 479,
     "originalPrice": 958,
     "currency": "₹",
@@ -706,13 +659,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 479,
         "originalPrice": 958,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 499,
-        "originalPrice": 998,
         "stock": 50,
         "inStock": true
       },
@@ -753,9 +699,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bcvmm6",
     "slug": "stylish-brown-curtains-for-door-windows-5-6-7-9-feet-pack-of-2",
-    "name": "Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Typography\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
+    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Typography\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)  \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft)",
     "price": 529,
     "originalPrice": 1059,
     "currency": "₹",
@@ -775,13 +721,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet",
         "price": 529,
         "originalPrice": 1059,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 559,
-        "originalPrice": 1119,
         "stock": 50,
         "inStock": true
       },
@@ -822,9 +761,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-bf04nh",
     "slug": "stylish-brown-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-bf04nh",
-    "name": "Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
+    "description": "Name: Stylish Brown Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Blackout\nLength: Door\nType: Shoe Rack\nSet: Door\nPrint or Pattern Type: Typography\nSize: Long Door 9 Feet\nNet Quantity (N): 2",
     "price": 519,
     "originalPrice": 1039,
     "currency": "₹",
@@ -851,13 +790,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet",
         "price": 519,
         "originalPrice": 1039,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 549,
-        "originalPrice": 1099,
         "stock": 50,
         "inStock": true
       },
@@ -893,7 +825,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     "slug": "trending-polyester-7-feet-door-curtains-set-of-2-ghar-ke-parde-home-room-parda-bazczz",
     "name": "Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft) \n6 Feet (Length Size: 6 ft, Width Size: 4 ft) \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft) \n\n BULLET POINTS\n\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\n\n PRODUCT DESCRIPTION\n\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
+    "description": "Name: Trending Polyester 7 Feet Door Curtains (Set of 2) | Ghar Ke Parde / Home Room Parda\nMaterial: 100% Premium Polyester\nPrint or Pattern Type: Floral\nLength: Door\nNet Quantity (N): 2\nSizes:5 Feet (Length Size: 5 ft, Width Size: 4 ft)  \n7 Feet (Length Size: 7 ft, Width Size: 4 ft) \n9 Feet (Length Size: 9 ft, Width Size: 4 ft) \n\n BULLET POINTS\n\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai\n\n PRODUCT DESCRIPTION\n\nEnhance your home décor with premium quality Tissue Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains",
     "price": 499,
     "originalPrice": 999,
     "currency": "₹",
@@ -920,13 +852,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet",
         "price": 499,
         "originalPrice": 999,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 529,
-        "originalPrice": 1059,
         "stock": 50,
         "inStock": true
       },
@@ -960,9 +885,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-eupceo",
     "slug": "stylish-curtains-for-door-windows-5-6-7-9-feet-pack-of-2-eupceo",
-    "name": "Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2",
+    "name": "Stylish Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2",
     "tagline": "Pack of 2 | Silver Eyelets Light Filtering & Thermal Insulation",
-    "description": "Name: Stylish Curtains for Door & Windows 5, 6, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
+    "description": "Name: Stylish Curtains for Door & Windows 5, 7 & 9 FEET Pack of 2\nMaterial: Polyester\nOpacity: Light Filtering\nLength: Door\nType: Premium Curtain\nSet: Door\nPrint or Pattern Type: Botanical\nSize: 7Feet\nNet Quantity (N): 2\nEnhance your home décor with premium quality Curtains.\nYe curtains soft aur sheer fabric se bane hote hain jo aapke room ko bright aur elegant look dete hain.\nLightweight material hone ki wajah se ye easily hang ho jaate hain aur natural light ko beautifully filter karte hain.\n\nLiving room, bedroom, balcony ya office — har jagah ke liye suitable. Simple design ke saath modern homes \nke liye perfect choice.\ntissue curtains,\nsheer curtains,\n door curtains,\nwindow curtains,\n lightweight curtains,\n home decor curtains\n✔ Premium Tissue Fabric – Soft, smooth aur lightweight fabric jo room ko elegant look deta hai\n✔ Sheer & Light Filtering – Natural light andar aane deta hai aur privacy bhi maintain karta hai\n✔ Multi-Purpose Use – Living room, bedroom, balcony, office, hotel ke liye perfect\n✔ Easy to Wash & Maintain – Hand wash / gentle machine wash friendly\n✔ Perfect Fall & Finish – Curtain rod pe lagane ke baad classy fall aata hai",
     "price": 479,
     "originalPrice": 959,
     "currency": "₹",
@@ -982,13 +907,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet",
         "price": 479,
         "originalPrice": 959,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 509,
-        "originalPrice": 1019,
         "stock": 50,
         "inStock": true
       },
@@ -1047,13 +965,6 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "sizes": [
-      {
-        "name": "6 Feet",
-        "price": 519,
-        "originalPrice": 1039,
-        "stock": 50,
-        "inStock": true
-      },
       {
         "name": "7 Feet",
         "price": 549,
@@ -1120,13 +1031,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 499,
         "originalPrice": 998,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 519,
-        "originalPrice": 1038,
         "stock": 50,
         "inStock": true
       },
@@ -1240,13 +1144,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 489,
-        "originalPrice": 978,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 509,
         "originalPrice": 1018,
@@ -1333,13 +1230,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 499,
-        "originalPrice": 998,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 519,
         "originalPrice": 1038,
@@ -1416,13 +1306,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 489,
-        "originalPrice": 978,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 509,
         "originalPrice": 1018,
@@ -1495,13 +1378,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 509,
-        "originalPrice": 1018,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 529,
         "originalPrice": 1058,
@@ -1569,13 +1445,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 469,
         "originalPrice": 938,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 489,
-        "originalPrice": 978,
         "stock": 50,
         "inStock": true
       },
@@ -1656,13 +1525,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 499,
         "originalPrice": 998,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 519,
-        "originalPrice": 1038,
         "stock": 50,
         "inStock": true
       },
@@ -1751,13 +1613,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 529,
-        "originalPrice": 1058,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 539,
         "originalPrice": 1078,
@@ -1832,13 +1687,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "inStock": true
       },
       {
-        "name": "6 Feet",
-        "price": 499,
-        "originalPrice": 998,
-        "stock": 50,
-        "inStock": true
-      },
-      {
         "name": "7 Feet (Door)",
         "price": 519,
         "originalPrice": 1038,
@@ -1877,7 +1725,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     "slug": "floral-vine-jacquard-privacy-door-window-curtains-pack-of-2-gwpibg",
     "name": "Floral Vine Jacquard Privacy Door & Window Curtains (Pack of 2)",
     "tagline": "Delicate floral vine weave providing natural daylight with 100% exterior privacy.",
-    "description": "Product DetailsName : Semi Transperent  Curtains PACK 1  Size Guide Door Curtain 7 (feet) & Window Curtain 5 (feet)Material : PolyesterOpacity : Light FilteringLength : DoorType : Polyester Semi TransparentSet : DoorPrint or Pattern Type : FloralSize : 7FeetNet Quantity (N) : 1door curtains 7 ftwindows curtainkorean curtainscurtain 7 feetcurtain 7 feet 2 piecepardacurtain set for windowscurtain set new designwindow curtainkitchen door curtains 7 feetcurtain grey colourdoor curtain set of 2kitchen partition curtain setdoor curtains new modelgrey window curtaincurtainnon transparent curtainscurtainscertain windowsgrey colour curtainprinted curtain for windowcurtain setcurtain for window7 fit door curtaincurtains 5 feetcurtain for doorcurtain set with roddoor curtaingrey color curtaincurtain 5 feetcurtain doorcurtains for windowsdoor curtains Country of Origin : IndiaMore Information",
+    "description": "Product DetailsName : Semi Transparent  Curtains PACK 1  Size Guide Door Curtain 7 (feet) & Window Curtain 5 (feet)Material : PolyesterOpacity : Light FilteringLength : DoorType : Polyester Semi TransparentSet : DoorPrint or Pattern Type : FloralSize : 7FeetNet Quantity (N) : 1door curtains 7 ftwindows curtainkorean curtainscurtain 7 feetcurtain 7 feet 2 piecepardacurtain set for windowscurtain set new designwindow curtainkitchen door curtains 7 feetcurtain grey colourdoor curtain set of 2kitchen partition curtain setdoor curtains new modelgrey window curtaincurtainnon transparent curtainscurtainscertain windowsgrey colour curtainprinted curtain for windowcurtain setcurtain for window7 fit door curtaincurtains 5 feetcurtain for doorcurtain set with roddoor curtaingrey color curtaincurtain 5 feetcurtain doorcurtains for windowsdoor curtains Country of Origin : IndiaMore Information",
     "price": 469,
     "originalPrice": 938,
     "currency": "₹",
@@ -1924,13 +1772,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 469,
         "originalPrice": 938,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 489,
-        "originalPrice": 978,
         "stock": 50,
         "inStock": true
       },
@@ -2008,13 +1849,6 @@ export const PRODUCTS_CATALOG: Product[] = [
         "name": "5 Feet (Window)",
         "price": 469,
         "originalPrice": 938,
-        "stock": 50,
-        "inStock": true
-      },
-      {
-        "name": "6 Feet",
-        "price": 489,
-        "originalPrice": 978,
         "stock": 50,
         "inStock": true
       },
