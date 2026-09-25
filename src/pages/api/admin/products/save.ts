@@ -82,7 +82,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const originalPrice = originalPriceStr ? parseFloat(originalPriceStr) : null;
   const category = formData.get('category')?.toString() || 'Door Curtains';
   const badge = formData.get('badge')?.toString() || '';
-  const gsm = 280;
+  const gsm = 150;
   const material = formData.get('material')?.toString() || '100% Premium Polyester';
   const fit = formData.get('fit')?.toString() || 'Stainless Steel Silver Eyelets';
   const care = formData.get('care')?.toString() || 'Hand & Machine Wash Cold';

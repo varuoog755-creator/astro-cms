@@ -184,7 +184,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 320,
+      "gsm": 150,
       "material": "Heavyweight Polyester & Cotton Blend",
       "fit": "Stainless Steel Silver Eyelets",
       "care": "Hand & Machine Wash Cold"
@@ -253,7 +253,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -333,7 +333,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -410,7 +410,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -490,7 +490,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -567,7 +567,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -647,7 +647,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Eyelets",
       "care": "Hand & Machine Wash Cold"
@@ -732,7 +732,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -801,7 +801,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Eyelets",
       "care": "Hand & Machine Wash Cold"
@@ -870,7 +870,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavy Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -939,7 +939,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavy Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1008,7 +1008,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavy Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1077,7 +1077,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavy Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1146,7 +1146,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1262,7 +1262,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1355,7 +1355,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1438,7 +1438,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1517,7 +1517,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1595,7 +1595,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1682,7 +1682,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1773,7 +1773,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1854,7 +1854,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -1950,7 +1950,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -2034,7 +2034,7 @@ export const PRODUCTS_CATALOG: Product[] = [
       }
     ],
     "fabricSpecs": {
-      "gsm": 280,
+      "gsm": 150,
       "material": "100% Premium Heavyweight Polyester",
       "fit": "Stainless Steel Silver Grommets",
       "care": "Hand & Machine Wash Cold"
@@ -2093,7 +2093,7 @@ export async function getStorefrontProducts(): Promise<Product[]> {
                 colors: parseJson(p.colorsJson),
                 sizes: parseJson(p.sizesJson),
                 fabricSpecs: {
-                  gsm: p.gsm || 280,
+                  gsm: p.gsm || 150,
                   material: p.material || '100% Premium Polyester',
                   fit: p.fit || 'Silver Eyelet Grommets',
                   care: p.care || 'Hand & Machine Wash Cold',
