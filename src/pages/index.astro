@@ -64,6 +64,29 @@ const homepageFaqs = [
     answer: "We offer a 7-day hassle-free door return and replacement policy. If your curtains do not match your room decor or you need a different size or shade, you can initiate a doorstep exchange or refund directly through your Teepul account dashboard or WhatsApp support."
   }
 ];
+
+const ugcVideos = [
+  {
+    id: 'jEWwqkjTFB4',
+    title: 'Panipat Factory-Direct Craft',
+    tag: '⚡ Direct Mill Finish',
+  },
+  {
+    id: 'MrC-MY4_S58',
+    title: '85%+ Blackout & Room Darkening',
+    tag: '☀️ Thermal Shield',
+  },
+  {
+    id: 'yyrU1KRlTiY',
+    title: 'Anti-Rust Eyelets & Smooth Glide',
+    tag: '✨ Stainless Rings',
+  },
+  {
+    id: 'uENcf9JCmH8',
+    title: 'Living Room Real Home Aesthetic',
+    tag: '🏡 Real Indian Homes',
+  },
+];
 ---
 
 <PublicLayout
@@ -430,6 +453,56 @@ const homepageFaqs = [
                 <span class="cart-icon transition-transform duration-300 group-hover/btn:scale-125">🛒</span>
                 <span class="btn-text whitespace-nowrap font-bold">Add to Cart</span>
               </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 🎥 REAL HOMES UGC VIDEO SHOWCASE (Muted Autoplay) -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 pb-3 border-b border-slate-200 gap-2">
+      <div>
+        <div class="inline-flex items-center gap-1.5 bg-rose-50 border border-rose-200 text-rose-800 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
+          <span>LIVE UGC & REAL HOMES</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Watch Teepul in Real Indian Homes</h2>
+      </div>
+      <p class="text-xs text-slate-500 font-medium sm:text-right max-w-xs">
+        Factory-direct Panipat curtains unboxing, room blackout test, and smooth eyelet glide.
+      </p>
+    </div>
+
+    <!-- Responsive Grid: 2 columns on mobile, 4 on desktop -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+      {ugcVideos.map((video) => (
+        <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
+          <div class="relative aspect-[9/16] w-full bg-slate-950 overflow-hidden">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&mute=1&loop=1&playlist=${video.id}&playsinline=1&controls=1&rel=0&modestbranding=1`}
+              title={video.title}
+              class="w-full h-full object-cover border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+            
+            <div class="absolute top-2.5 left-2.5 pointer-events-none z-10">
+              <span class="bg-black/75 backdrop-blur-md text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider border border-white/20 shadow">
+                {video.tag}
+              </span>
+            </div>
+          </div>
+
+          <div class="p-3 sm:p-4 bg-white border-t border-slate-100 flex-1 flex flex-col justify-between">
+            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+              {video.title}
+            </h3>
+            <div class="pt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500">
+              <span class="text-emerald-700 font-bold">✓ Verified Clip</span>
+              <span class="text-amber-800 font-bold">🔇 Muted Autoplay</span>
             </div>
           </div>
         </div>
