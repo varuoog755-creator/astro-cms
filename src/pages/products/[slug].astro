@@ -612,70 +612,7 @@ const productFaqs = [
       </div>
     </div>
 
-    <!-- 6️⃣ SEE IT IN YOUR ROOM (📷 Upload Your Room -> AI Room Preview -> [ BUY THIS LOOK ]) -->
-    <div id="ai-room-preview-section" class="bg-gradient-to-br from-amber-900 via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-amber-400/30 space-y-6">
-      <div class="text-center max-w-2xl mx-auto space-y-2">
-        <span class="text-[10px] font-black uppercase text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/30">
-          📷 VISUALIZE BEFORE YOU BUY
-        </span>
-        <h2 class="text-2xl sm:text-4xl font-black text-white">See It in Your Room</h2>
-        <p class="text-xs sm:text-sm text-slate-300">Upload your room photo or switch sample spaces to see how this curtain matches your decor.</p>
-      </div>
-
-      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 p-5 sm:p-8 max-w-3xl mx-auto space-y-6">
-        
-        <!-- Interactive Preview Box -->
-        <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-900 border border-white/20 flex items-center justify-center group">
-          <img
-            id="room-preview-img"
-            src={initialImages[0] || product.images[0]}
-            alt="Room Simulation Preview"
-            class="w-full h-full object-cover transition-opacity duration-300"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none flex flex-col justify-between p-4">
-            <span class="text-[10px] bg-amber-500 text-slate-950 font-black px-2.5 py-1 rounded-full uppercase tracking-wider w-fit">
-              AI Room Simulation Active
-            </span>
-            <div class="text-left text-xs font-bold text-white">
-              <span>Selected: </span><span id="preview-curtain-title" class="text-amber-300">{product.name}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Upload & Sample Controls -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-          <label class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 active:scale-95 text-white font-bold text-xs px-5 py-3 rounded-xl border border-white/30 cursor-pointer transition">
-            <span>📷 Upload Your Room Photo</span>
-            <input
-              type="file"
-              accept="image/*"
-              class="hidden"
-              onchange="
-                const file = this.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    const img = document.getElementById('room-preview-img');
-                    if (img) img.src = e.target.result;
-                  };
-                  reader.readAsDataURL(file);
-                }
-              "
-            />
-          </label>
-
-          <button
-            type="button"
-            onclick="document.getElementById('order-btn')?.click();"
-            class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm px-7 py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <span>🛍️ BUY THIS LOOK</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 7️⃣ SIZE GUIDE (Which Size Should I Choose? + Visual Window Diagram + Find My Size) -->
+    <!-- 6️⃣ SIZE GUIDE (Which Size Should I Choose? + Visual Window Diagram + Find My Size) -->
     <div id="size-guide-section" class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
       <div class="border-b border-slate-100 pb-4 flex items-center justify-between flex-wrap gap-2">
         <div>
@@ -1282,11 +1219,6 @@ const productFaqs = [
           const controlsWrap = document.getElementById('slider-controls-wrap');
           if (controlsWrap) {
             controlsWrap.className = `flex items-center justify-between mt-3 px-1 ${currentGalleryImages.length > 1 ? '' : 'hidden'}`;
-          }
-
-          const previewImg = document.getElementById('room-preview-img');
-          if (previewImg && currentGalleryImages[0]) {
-            previewImg.src = currentGalleryImages[0];
           }
 
           attachGalleryEvents();
