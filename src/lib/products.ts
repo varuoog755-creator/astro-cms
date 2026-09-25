@@ -1174,8 +1174,887 @@ export const PRODUCTS_CATALOG: Product[] = [
       "Thermal Heat Insulation & Glare Reduction",
       "Easy Maintenance: Machine & Hand Wash Cold"
     ]
+  },
+  {
+    "id": "meesho-702h3z",
+    "slug": "ethnic-motif-geometric-blackout-door-window-curtains-pack-of-2-702h3z",
+    "name": "Ethnic Motif Geometric Blackout Door & Window Curtains (Pack of 2)",
+    "tagline": "Heavyweight thermal blackout drape with ethnic motif pattern and anti-rust metal grommets.",
+    "description": "Product DetailsName : Newlook Polyester Door curtains (4 ft X 7 ft) pack of 1Material : PolyesterOpacity : Room DarkeningLength : DoorType : Premium CurtainSet : DoorPrint or Pattern Type : Ethnic MotifsSize : Door 7 FeetNet Quantity (N) : 1Package Contain 1 pc Door curtain with size (4ft X 7 ft), Material : Polyester,Extremely Affordable Prices, You Can Decorate Your Home And Give It A Luxurious Look And Feel. These Curtains Define A Modern Look In Drapery, These Drapes Are Easier To Put Up And Take Down Than The More Traditional Ones. We are manufacturer of home furnishing products like curtains, cushion covers, bedsheets. We pay special attention towards quality assurance. Country of Origin : IndiaMore Information",
+    "price": 469,
+    "originalPrice": 938,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Teepul Choice",
+    "rating": 4.8,
+    "reviewCount": 382,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Navy & Grey",
+        "hex": "#1e293b",
+        "images": [
+          "https://images.meesho.com/images/products/423378719/fp7sq_512.jpg",
+          "https://images.meesho.com/images/products/423378719/noqzi_512.jpg"
+        ]
+      },
+      {
+        "name": "Coffee Brown",
+        "hex": "#5c4033",
+        "images": [
+          "https://images.meesho.com/images/products/423378719/vkxmo_512.jpg",
+          "https://images.meesho.com/images/products/423378719/djhjr_512.jpg"
+        ]
+      },
+      {
+        "name": "Royal Maroon",
+        "hex": "#800000",
+        "images": [
+          "https://images.meesho.com/images/products/423378717/ia6pq_512.jpg",
+          "https://images.meesho.com/images/products/423378718/sucbd_512.jpg"
+        ]
+      },
+      {
+        "name": "Teal Blue",
+        "hex": "#005f73",
+        "images": [
+          "https://images.meesho.com/images/products/423378714/cb87b_512.jpg",
+          "https://images.meesho.com/images/products/423378715/ywqfw_512.jpg"
+        ]
+      },
+      {
+        "name": "Olive Green",
+        "hex": "#3d5a40",
+        "images": [
+          "https://images.meesho.com/images/products/423378719/fp7sq_512.jpg",
+          "https://images.meesho.com/images/products/423378719/noqzi_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 469,
+        "originalPrice": 938,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 489,
+        "originalPrice": 978,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 509,
+        "originalPrice": 1018,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/423378719/fp7sq_512.jpg",
+      "https://images.meesho.com/images/products/423378719/noqzi_512.jpg",
+      "https://images.meesho.com/images/products/423378719/vkxmo_512.jpg",
+      "https://images.meesho.com/images/products/423378719/djhjr_512.jpg",
+      "https://images.meesho.com/images/products/423378717/ia6pq_512.jpg",
+      "https://images.meesho.com/images/products/423378718/sucbd_512.jpg",
+      "https://images.meesho.com/images/products/423378714/cb87b_512.jpg",
+      "https://images.meesho.com/images/products/423378715/ywqfw_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-f88u0z",
+    "slug": "modern-abstract-printed-eyelet-curtains-for-living-room-pack-of-2-f88u0z",
+    "name": "Modern Abstract Printed Eyelet Curtains for Living Room (Pack of 2)",
+    "tagline": "Vibrant geometric printed drape with 90% light diffusion and graceful pleating.",
+    "description": "Product DetailsName : Divine's Polyester Printed Panel Curtains for Living Room Window Door and Long Door, Pack of 2 PcsMaterial : PolyesterPrint or Pattern Type : AbstrastLength : DoorNet Quantity (N) : 2Sizes : 5 Feet (Length Size: 5 ft, Width Size: 4 ft)7 Feet (Length Size : 7 ft, Width Size: 4 ft)9 Feet (Length Size : 9 ft, Width Size: 4 ft) Readymade Curtains Ideal For Living Room Or Bedroom. Vibrant Designing in Rich and Sharp Colors. Made of Superior Fabrics with Expert Workmanship with 8 Eyelets for Easy Hanging.Beautiful for Your Home and for Gifting.This Room transparency curtain can views out up to 90%. Thus illuminates the room.Country of Origin : IndiaMore Information",
+    "price": 479,
+    "originalPrice": 958,
+    "currency": "₹",
+    "category": "Printed Curtains",
+    "badge": "Bestseller",
+    "rating": 4.9,
+    "reviewCount": 420,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Abstract Blue",
+        "hex": "#1d4ed8",
+        "images": [
+          "https://images.meesho.com/images/products/920841731/ftnjt_512.jpg",
+          "https://images.meesho.com/images/products/920841731/rhjlp_512.jpg"
+        ]
+      },
+      {
+        "name": "Abstract Amber",
+        "hex": "#d97706",
+        "images": [
+          "https://images.meesho.com/images/products/920841731/ew4dt_512.jpg",
+          "https://images.meesho.com/images/products/920841731/h62jx_512.jpg"
+        ]
+      },
+      {
+        "name": "Abstract Emerald",
+        "hex": "#047857",
+        "images": [
+          "https://images.meesho.com/images/products/920841732/fjjkx_512.jpg",
+          "https://images.meesho.com/images/products/920841733/yjnbi_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 479,
+        "originalPrice": 958,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 499,
+        "originalPrice": 998,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 519,
+        "originalPrice": 1038,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 539,
+        "originalPrice": 1078,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/920841731/ftnjt_512.jpg",
+      "https://images.meesho.com/images/products/920841731/rhjlp_512.jpg",
+      "https://images.meesho.com/images/products/920841731/ew4dt_512.jpg",
+      "https://images.meesho.com/images/products/920841731/h62jx_512.jpg",
+      "https://images.meesho.com/images/products/920841732/fjjkx_512.jpg",
+      "https://images.meesho.com/images/products/920841733/yjnbi_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-dxja72",
+    "slug": "modern-botanical-leaf-printed-eyelet-window-curtains-pack-of-2-dxja72",
+    "name": "Modern Botanical Leaf Printed Eyelet Window Curtains (Pack of 2)",
+    "tagline": "Refreshing nature-inspired leaf pattern on high-density semi-sheer polyester fabric.",
+    "description": "Product DetailsName : Premium Polyester Printed Window Curtain 5ft | Modern Leaf Design Eyelet Curtains for Living Room Bedroom | Pack of 2Material : PolyesterLength : WindowNet Quantity (N) : 2Sizes : 5 Feet (Length Size: 5 ft, Width Size: 4 ft) Country of Origin : IndiaMore Information",
+    "price": 469,
+    "originalPrice": 938,
+    "currency": "₹",
+    "category": "Window Curtains",
+    "badge": "Trending",
+    "rating": 4.8,
+    "reviewCount": 295,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Sage Green Leaf",
+        "hex": "#4b6f44",
+        "images": [
+          "https://images.meesho.com/images/products/842387294/qxit7_512.jpg",
+          "https://images.meesho.com/images/products/842387294/nklxg_512.jpg"
+        ]
+      },
+      {
+        "name": "Slate Grey Leaf",
+        "hex": "#475569",
+        "images": [
+          "https://images.meesho.com/images/products/842387294/6iipm_512.jpg",
+          "https://images.meesho.com/images/products/842387294/ttmjx_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 469,
+        "originalPrice": 938,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 489,
+        "originalPrice": 978,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 509,
+        "originalPrice": 1018,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/842387294/qxit7_512.jpg",
+      "https://images.meesho.com/images/products/842387294/nklxg_512.jpg",
+      "https://images.meesho.com/images/products/842387294/6iipm_512.jpg",
+      "https://images.meesho.com/images/products/842387294/ttmjx_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-7t30ig",
+    "slug": "crushed-velvet-patchwork-blackout-door-curtains-set-of-2-7t30ig",
+    "name": "Crushed Velvet Patchwork Blackout Door Curtains (Set of 2)",
+    "tagline": "Dual-panel rich crushed velvet patch with thermal insulation and heavy fall.",
+    "description": "Product DetailsName : Some Thing New Presents new long crush patch curtain ( coffe)Material : PolyesterOpacity : Room DarkeningLength : DoorType : BlackoutSet : DoorSize : 7FeetNet Quantity (N) : 2 Country of Origin : IndiaMore Information",
+    "price": 489,
+    "originalPrice": 978,
+    "currency": "₹",
+    "category": "Blackout Curtains",
+    "badge": "Luxury Finish",
+    "rating": 4.9,
+    "reviewCount": 512,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Coffee Bronze",
+        "hex": "#4a3525",
+        "images": [
+          "https://images.meesho.com/images/products/472112728/nndos_512.jpg"
+        ]
+      },
+      {
+        "name": "Dark Slate",
+        "hex": "#334155",
+        "images": [
+          "https://images.meesho.com/images/products/472112728/nndos_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 489,
+        "originalPrice": 978,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 509,
+        "originalPrice": 1018,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 549,
+        "originalPrice": 1098,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/472112728/nndos_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-3998c0",
+    "slug": "3d-striped-jacquard-border-door-curtains-pack-of-2-3998c0",
+    "name": "3D Striped Jacquard Border Door Curtains (Pack of 2)",
+    "tagline": "Textured woven 3D border ptta styling with light-filtering privacy protection.",
+    "description": "Product DetailsName : Some Thing New 3D Long curtain  Ptta 7ft Pack Of 2Material : PolyesterOpacity : Light FilteringLength : DoorType : Polyester Semi TransparentSet : Door and WindowPrint or Pattern Type : ColorblockedSize : Door 7 FeetNet Quantity (N) : 2 Country of Origin : IndiaMore Information",
+    "price": 469,
+    "originalPrice": 938,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Mill Direct",
+    "rating": 4.7,
+    "reviewCount": 218,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Golden Maroon",
+        "hex": "#722f37",
+        "images": [
+          "https://images.meesho.com/images/products/196945776/2qfat_512.jpg",
+          "https://images.meesho.com/images/products/196945776/pxceo_512.jpg"
+        ]
+      },
+      {
+        "name": "Royal Blue Border",
+        "hex": "#1e3a8a",
+        "images": [
+          "https://images.meesho.com/images/products/196945776/2qfat_512.jpg",
+          "https://images.meesho.com/images/products/196945776/pxceo_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 469,
+        "originalPrice": 938,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 489,
+        "originalPrice": 978,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 509,
+        "originalPrice": 1018,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/196945776/2qfat_512.jpg",
+      "https://images.meesho.com/images/products/196945776/pxceo_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-b05bfk",
+    "slug": "multi-foil-velvet-room-darkening-luxury-drapery-pack-of-2-b05bfk",
+    "name": "Multi-Foil Velvet Room Darkening Luxury Drapery (Pack of 2)",
+    "tagline": "Gleaming metallic foil stamped velvet panels for royal palace living rooms.",
+    "description": "Product DetailsName : MANVI CREATIONS MULTI FOIL VELVET ROOM DARKENING ATTRACTIVE CURTAINS ( PARDA) IN LATEST DESIGNS - 1 PCS (SIZES - WINDOW-5FT/DOOR -7FT/LONG DOOR -9FT)  GREYMaterial : VelvetOpacity : Room DarkeningLength : DoorType : Premium CurtainSet : Door and WindowPrint or Pattern Type : AbstrastSize : Long Door 9 FeetNet Quantity (N) : 1 Country of Origin : IndiaMore Information",
+    "price": 499,
+    "originalPrice": 998,
+    "currency": "₹",
+    "category": "Blackout Curtains",
+    "badge": "Luxury Velvet",
+    "rating": 4.9,
+    "reviewCount": 630,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Foil Charcoal Grey",
+        "hex": "#374151",
+        "images": [
+          "https://images.meesho.com/images/products/665376032/9kfo2_512.jpg",
+          "https://images.meesho.com/images/products/665376032/cxse4_512.jpg"
+        ]
+      },
+      {
+        "name": "Foil Champagne Gold",
+        "hex": "#d4af37",
+        "images": [
+          "https://images.meesho.com/images/products/665376032/hxn82_512.jpg",
+          "https://images.meesho.com/images/products/665376032/1i1es_512.jpg"
+        ]
+      },
+      {
+        "name": "Foil Royal Wine",
+        "hex": "#4c1d95",
+        "images": [
+          "https://images.meesho.com/images/products/665376031/csvz1_512.jpg",
+          "https://images.meesho.com/images/products/665376033/d6zgs_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 499,
+        "originalPrice": 998,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 519,
+        "originalPrice": 1038,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 539,
+        "originalPrice": 1078,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 549,
+        "originalPrice": 1098,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/665376032/9kfo2_512.jpg",
+      "https://images.meesho.com/images/products/665376032/cxse4_512.jpg",
+      "https://images.meesho.com/images/products/665376032/hxn82_512.jpg",
+      "https://images.meesho.com/images/products/665376032/1i1es_512.jpg",
+      "https://images.meesho.com/images/products/665376031/csvz1_512.jpg",
+      "https://images.meesho.com/images/products/665376033/d6zgs_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-6vtvis",
+    "slug": "solid-contemporary-eyelet-living-room-drapes-pack-of-4-full-set-6vtvis",
+    "name": "Solid Contemporary Eyelet Living Room Drapes (Pack of 4 Full Set)",
+    "tagline": "Complete 4-panel solid curtain set with pre-fitted stainless steel eyelet grommets.",
+    "description": "Product DetailsName : Balaji Home Furnishings Presents stylish trendy curtains Pack of 4Material : PolyesterOpacity : Room DarkeningLength : WindowType : BlackoutSet : WindowPrint or Pattern Type : SolidSize : Window 5 FeetNet Quantity (N) : 4Give your home a bright and modernistic appeal with these designs. The surreal attention is sure to steal hearts. These contemporary eyelet and valance curtains slide smoothly so when you draw them apart first thing in the morning to welcome the bright sun rays you want to wish good morning to the whole world and when you draw them close in the evening, you create the most special moments of joyous beauty given by the soothing prints. Bring home the elegant curtain that softly filters light in your room so that you get the right amount. Country of Origin : IndiaMore Information",
+    "price": 539,
+    "originalPrice": 1078,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Super Saver Pack",
+    "rating": 4.8,
+    "reviewCount": 440,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Solid Slate Grey",
+        "hex": "#64748b",
+        "images": [
+          "https://images.meesho.com/images/products/416259028/3ce0l_512.jpg",
+          "https://images.meesho.com/images/products/416259028/kmddg_512.jpg"
+        ]
+      },
+      {
+        "name": "Solid Warm Tan",
+        "hex": "#d2b48c",
+        "images": [
+          "https://images.meesho.com/images/products/416259028/urj86_512.jpg",
+          "https://images.meesho.com/images/products/416259028/g9j8y_512.jpg"
+        ]
+      },
+      {
+        "name": "Solid Navy Blue",
+        "hex": "#1e293b",
+        "images": [
+          "https://images.meesho.com/images/products/416259028/3ce0l_512.jpg",
+          "https://images.meesho.com/images/products/416259028/kmddg_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 539,
+        "originalPrice": 1078,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 539,
+        "originalPrice": 1078,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 549,
+        "originalPrice": 1098,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/416259028/3ce0l_512.jpg",
+      "https://images.meesho.com/images/products/416259028/kmddg_512.jpg",
+      "https://images.meesho.com/images/products/416259028/urj86_512.jpg",
+      "https://images.meesho.com/images/products/416259028/g9j8y_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-fh41is",
+    "slug": "artistic-tree-silhouette-semi-transparent-drapes-pack-of-2-fh41is",
+    "name": "Artistic Tree Silhouette Semi-Transparent Drapes (Pack of 2)",
+    "tagline": "Soft sunlight diffusing polycotton panels featuring modern tree branch motifs.",
+    "description": "Product DetailsName : Home Sazawat “Affordable Luxury Brown Tree Print Semi Transparent Curtains | Premium Eyelet Window Drapes for Bedroom & Living Room for daily use home decor Pack of 1 (Door, Long-Door)Material : PolycottonOpacity : Light FilteringLength : DoorType : Polyester Semi TransparentSet : Door and WindowPrint or Pattern Type : Self-DesignSize : 5FeetNet Quantity (N) : 1Home Sazawat : Transform your home with these  and modern tree print curtains, designed to add style, privacy, and  to any room. The rich purple tones combined with artistic tree patterns create a luxurious look that perfectly complements bedrooms, living rooms, offices, and lounges. Country of Origin : IndiaMore Information",
+    "price": 479,
+    "originalPrice": 958,
+    "currency": "₹",
+    "category": "Window Curtains",
+    "badge": "New 2026",
+    "rating": 4.8,
+    "reviewCount": 185,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Warm Brown Tree",
+        "hex": "#5c3a21",
+        "images": [
+          "https://images.meesho.com/images/products/935734708/si1kq_512.jpg",
+          "https://images.meesho.com/images/products/935734708/991fa_512.jpg"
+        ]
+      },
+      {
+        "name": "Smoky Purple Tree",
+        "hex": "#581c87",
+        "images": [
+          "https://images.meesho.com/images/products/935734708/mccz5_512.jpg",
+          "https://images.meesho.com/images/products/935734708/qhpoq_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 479,
+        "originalPrice": 958,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 499,
+        "originalPrice": 998,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 519,
+        "originalPrice": 1038,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 539,
+        "originalPrice": 1078,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/935734708/si1kq_512.jpg",
+      "https://images.meesho.com/images/products/935734708/991fa_512.jpg",
+      "https://images.meesho.com/images/products/935734708/mccz5_512.jpg",
+      "https://images.meesho.com/images/products/935734708/qhpoq_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-gwpibg",
+    "slug": "floral-vine-jacquard-privacy-door-window-curtains-pack-of-2-gwpibg",
+    "name": "Floral Vine Jacquard Privacy Door & Window Curtains (Pack of 2)",
+    "tagline": "Delicate floral vine weave providing natural daylight with 100% exterior privacy.",
+    "description": "Product DetailsName : Semi Transperent  Curtains PACK 1  Size Guide Door Curtain 7 (feet) & Window Curtain 5 (feet)Material : PolyesterOpacity : Light FilteringLength : DoorType : Polyester Semi TransparentSet : DoorPrint or Pattern Type : FloralSize : 7FeetNet Quantity (N) : 1door curtains 7 ftwindows curtainkorean curtainscurtain 7 feetcurtain 7 feet 2 piecepardacurtain set for windowscurtain set new designwindow curtainkitchen door curtains 7 feetcurtain grey colourdoor curtain set of 2kitchen partition curtain setdoor curtains new modelgrey window curtaincurtainnon transparent curtainscurtainscertain windowsgrey colour curtainprinted curtain for windowcurtain setcurtain for window7 fit door curtaincurtains 5 feetcurtain for doorcurtain set with roddoor curtaingrey color curtaincurtain 5 feetcurtain doorcurtains for windowsdoor curtains Country of Origin : IndiaMore Information",
+    "price": 469,
+    "originalPrice": 938,
+    "currency": "₹",
+    "category": "Printed Curtains",
+    "badge": "Top Rated",
+    "rating": 4.9,
+    "reviewCount": 360,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Mist Grey Vine",
+        "hex": "#94a3b8",
+        "images": [
+          "https://images.meesho.com/images/products/1022396668/mwnub_512.jpg",
+          "https://images.meesho.com/images/products/1022396668/opbks_512.jpg"
+        ]
+      },
+      {
+        "name": "Aqua Blue Vine",
+        "hex": "#0284c7",
+        "images": [
+          "https://images.meesho.com/images/products/1022396668/aapor_512.jpg",
+          "https://images.meesho.com/images/products/1022396668/wreom_512.jpg"
+        ]
+      },
+      {
+        "name": "Rose Pink Vine",
+        "hex": "#f43f5e",
+        "images": [
+          "https://images.meesho.com/images/products/1022396669/7rztm_512.jpg",
+          "https://images.meesho.com/images/products/1022396670/npx7g_512.jpg"
+        ]
+      },
+      {
+        "name": "Olive Vine",
+        "hex": "#65a30d",
+        "images": [
+          "https://images.meesho.com/images/products/1022396671/f0uhk_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 469,
+        "originalPrice": 938,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 489,
+        "originalPrice": 978,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 509,
+        "originalPrice": 1018,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/1022396668/mwnub_512.jpg",
+      "https://images.meesho.com/images/products/1022396668/opbks_512.jpg",
+      "https://images.meesho.com/images/products/1022396668/aapor_512.jpg",
+      "https://images.meesho.com/images/products/1022396668/wreom_512.jpg",
+      "https://images.meesho.com/images/products/1022396669/7rztm_512.jpg",
+      "https://images.meesho.com/images/products/1022396670/npx7g_512.jpg",
+      "https://images.meesho.com/images/products/1022396671/f0uhk_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
+  },
+  {
+    "id": "meesho-76a2z4",
+    "slug": "colorblocked-dual-tone-contemporary-living-room-curtains-set-of-2-76a2z4",
+    "name": "Colorblocked Dual-Tone Contemporary Living Room Curtains (Set of 2)",
+    "tagline": "Two-tone contrast border drapery designed to elevate modern apartment interiors.",
+    "description": "Product DetailsName : Polyester Curtains for HomeMaterial : PolyesterOpacity : Light FilteringLength : DoorType : Polyester Semi TransparentSet : DoorPrint or Pattern Type : ColorblockedSize : 7FeetNet Quantity (N) : 2 Country of Origin : IndiaMore Information",
+    "price": 469,
+    "originalPrice": 938,
+    "currency": "₹",
+    "category": "Door Curtains",
+    "badge": "Modern Chic",
+    "rating": 4.8,
+    "reviewCount": 275,
+    "inStock": true,
+    "colors": [
+      {
+        "name": "Mocha & Cream",
+        "hex": "#78350f",
+        "images": [
+          "https://images.meesho.com/images/products/433811344/thftc_512.jpg",
+          "https://images.meesho.com/images/products/433811344/fzmpi_512.jpg"
+        ]
+      },
+      {
+        "name": "Charcoal & Silver",
+        "hex": "#1f2937",
+        "images": [
+          "https://images.meesho.com/images/products/433811344/s1hft_512.jpg",
+          "https://images.meesho.com/images/products/433811344/ml8mf_512.jpg"
+        ]
+      }
+    ],
+    "sizes": [
+      {
+        "name": "5 Feet (Window)",
+        "price": 469,
+        "originalPrice": 938,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "6 Feet",
+        "price": 489,
+        "originalPrice": 978,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "7 Feet (Door)",
+        "price": 509,
+        "originalPrice": 1018,
+        "stock": 50,
+        "inStock": true
+      },
+      {
+        "name": "9 Feet (Long Door)",
+        "price": 529,
+        "originalPrice": 1058,
+        "stock": 50,
+        "inStock": true
+      }
+    ],
+    "fabricSpecs": {
+      "gsm": 280,
+      "material": "100% Premium Heavyweight Polyester",
+      "fit": "Stainless Steel Silver Grommets",
+      "care": "Hand & Machine Wash Cold"
+    },
+    "images": [
+      "https://images.meesho.com/images/products/433811344/thftc_512.jpg",
+      "https://images.meesho.com/images/products/433811344/fzmpi_512.jpg",
+      "https://images.meesho.com/images/products/433811344/s1hft_512.jpg",
+      "https://images.meesho.com/images/products/433811344/ml8mf_512.jpg",
+      "https://images.meesho.com/images/products/433811346/yw7dm_512.jpg"
+    ],
+    "features": [
+      "Panipat Factory-Direct Weave & Finish",
+      "85%+ Glare & Sunlight Control",
+      "Rust-Free Stainless Steel Eyelets",
+      "Pre-Shrunk & Machine Wash Safe"
+    ]
   }
 ];
+
 
 export async function getStorefrontProducts(): Promise<Product[]> {
   return getOrSetCache('storefront_products', 300, async () => {
