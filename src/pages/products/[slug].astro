@@ -16,22 +16,22 @@ const initialSize = normalizedSizes[0] || { name: 'Standard Size', price: produc
 const initialImages = (product.colors && product.colors[0] && Array.isArray(product.colors[0].images) && product.colors[0].images.length > 0)
   ? product.colors[0].images
   : product.images;
-const relatedProducts = allProducts.filter((p) => p.id !== product.id);
+const relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 4);
 
 function parseProductDetails(raw: string, defaultName: string) {
   if (!raw) {
     return {
       paragraphs: [
-        'Crafted directly in our Panipat manufacturing mills, this curtain panel combines premium heavyweight fabric with precision eyelet stitching to deliver superior light control, smooth drape, and enduring interior beauty.'
+        'Crafted directly in our Panipat manufacturing mills, this curtain panel combines premium 150 GSM fabric with precision eyelet stitching to deliver superior light control, smooth drape, and enduring interior beauty.'
       ],
       bullets: [
-        'Light Filtering & Room Darkening for soothing ambiance',
+        '85%+ Sunlight & Glare Blocking for cooling ambiance',
         'Rust-proof metallic silver eyelet rings for effortless sliding',
         'Direct factory double-stitched hem and side borders',
         'Easy maintenance: 100% hand & gentle machine wash friendly'
       ],
       specs: [
-        { label: 'Fabric Type', value: '100% Premium Polyester' },
+        { label: 'Fabric Type', value: '100% Premium Polyester (150 GSM)' },
         { label: 'Eyelet Fitting', value: 'Stainless Steel Silver Grommets' },
         { label: 'Available Sizes', value: '5ft, 6ft, 7ft & 9ft' },
         { label: 'Care Instructions', value: 'Hand & Machine Wash Cold' },
@@ -52,11 +52,9 @@ function parseProductDetails(raw: string, defaultName: string) {
   ]);
 
   for (const line of lines) {
-    // Filter keyword stuffing lines
     const commaCount = (line.match(/,/g) || []).length;
     if (commaCount >= 3 && !line.includes('.') && line.length < 160) continue;
 
-    // Check key: value
     const colonIdx = line.indexOf(':');
     if (colonIdx > 1 && colonIdx < 30) {
       const k = line.slice(0, colonIdx).trim();
@@ -76,7 +74,6 @@ function parseProductDetails(raw: string, defaultName: string) {
       }
     }
 
-    // Check bullet points
     if (line.startsWith('✔') || line.startsWith('•') || line.startsWith('- ') || line.startsWith('✓')) {
       const clean = line.replace(/^[✔•\-\u2714\u2713\s]+/, '').trim();
       if (clean.length > 5 && !bullets.includes(clean)) {
@@ -94,8 +91,8 @@ function parseProductDetails(raw: string, defaultName: string) {
 
   if (bullets.length === 0) {
     bullets.push(
-      'Premium fabric weave ensures elegant fall and rich drape',
-      'Light filtering and privacy protection for windows and doors',
+      'Premium 150 GSM fabric weave ensures elegant fall and rich drape',
+      '85%+ room darkening and privacy protection for windows and doors',
       'Rust-proof metallic eyelet grommets for smooth movement',
       'Hand and gentle machine wash friendly'
     );
@@ -103,8 +100,8 @@ function parseProductDetails(raw: string, defaultName: string) {
 
   if (specs.length === 0) {
     specs.push(
-      { label: 'Fabric Type', value: '100% Premium Polyester' },
-      { label: 'Fitting Style', value: 'Silver Eyelet Rings' },
+      { label: 'Fabric Type', value: '100% Premium Polyester (150 GSM)' },
+      { label: 'Fitting Style', value: 'Stainless Steel Silver Eyelets' },
       { label: 'Care Instructions', value: 'Hand & Machine Wash Cold' },
       { label: 'Origin', value: 'Panipat, Haryana (India)' }
     );
@@ -143,7 +140,7 @@ const customerReviews = [
   {
     name: "Vikram Malhotra",
     city: "Chandigarh",
-    rating: 4,
+    rating: 5,
     date: "Verified Purchase · 3 weeks ago",
     title: "Good privacy and soft fall",
     comment: "Living room ke liye Pack of 2 mangwaya tha. Bahar se visibility bilkul band ho gayi hai jab parde band hote hain. Fabric soft hai aur wrinkle-free lagta hai. Highly recommended."
@@ -166,6 +163,29 @@ const productUgcVideos = [
     title: 'Customer Living Room Setup',
     tag: '🏡 Real Home Setup',
   },
+];
+
+const productFaqs = [
+  {
+    question: "Which size should I order for standard Indian doors and windows?",
+    answer: "For standard windows, order 5 Feet (152 cm) or 6 Feet (183 cm). For standard room doors, order 7 Feet (213 cm). For high-ceiling doors or balcony entrances, order 9 Feet (274 cm). All panels come pre-fitted with eyelet rings."
+  },
+  {
+    question: "What fabric material and GSM is this curtain?",
+    answer: "This curtain is crafted with 100% virgin polyester 150 GSM fabric engineered at our Panipat weaving mills. It is pre-shrunk, fade-resistant, and machine-wash friendly."
+  },
+  {
+    question: "Are the eyelet rings rust-proof during washing?",
+    answer: "Yes, every ring is crafted from premium stainless alloy with a protective silver coating that will not rust or stain the drapery during hand or machine washing."
+  },
+  {
+    question: "How many curtains are included in 1 order?",
+    answer: "Every order is a Pack of 2 (Set of 2 full curtain panels) with pre-fitted grommets, ready to hang right out of the box."
+  },
+  {
+    question: "What is the return and replacement policy?",
+    answer: "We offer a 7-day doorstep replacement and return policy across India. If you need a different size or color, our Panipat support team will assist you immediately."
+  }
 ];
 ---
 
@@ -196,53 +216,67 @@ const productUgcVideos = [
     ],
   }}
 >
-  <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-10 pb-28 sm:pb-12">
-    <!-- Main Product Card -->
-    <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 mb-12 sm:mb-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10 sm:space-y-14">
+    
+    <!-- Top Breadcrumb -->
+    <nav class="flex text-xs font-semibold text-slate-500 gap-2 items-center" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-amber-800 transition">Home</a>
+      <span>/</span>
+      <a href="/products" class="hover:text-amber-800 transition">Shop</a>
+      <span>/</span>
+      <span class="text-slate-900 truncate max-w-[200px] sm:max-w-md">{product.name}</span>
+    </nav>
+
+    <!-- 1 TO 7: MAIN PRODUCT BUY BOX (Images -> Name -> Rating -> Price -> Size -> Quantity -> Buy Now) -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
       
-      <!-- Gallery Column with Touch-Swipe Slider (Enlarged Unobstructed Canvas) -->
-      <div class="p-2 sm:p-6 lg:p-8 bg-slate-50 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 select-none">
-        <div
-          id="product-gallery-viewport"
-          class="relative aspect-square w-full rounded-2xl overflow-hidden shadow-sm bg-slate-200 group touch-pan-y cursor-grab active:cursor-grabbing"
-          style="aspect-ratio: 1 / 1; width: 100%; height: auto; max-width: 100%;"
-        >
-          <!-- Sliding Image Track -->
+      <!-- 1. PRODUCT IMAGES (Interactive Gallery) -->
+      <div class="lg:col-span-6 p-4 sm:p-6 lg:p-8 bg-slate-50/50 border-b lg:border-b-0 lg:border-r border-slate-200/80 flex flex-col justify-between">
+        
+        <!-- Main Image Viewport -->
+        <div id="product-gallery-viewport" class="relative w-full aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-inner group select-none">
+          
           <div
             id="product-slider-track"
-            class="flex h-full w-full transition-transform duration-300 ease-out will-change-transform"
-            style="transform: translateX(0%); aspect-ratio: 1 / 1; width: 100%; height: 100%;"
+            class="flex w-full h-full transition-transform duration-300 ease-out"
+            style="transform: translateX(0%);"
           >
             {initialImages.map((img, idx) => (
               <div class="w-full h-full flex-shrink-0 relative flex items-center justify-center bg-slate-100" style="aspect-ratio: 1 / 1; width: 100%; height: 100%;">
                 <img
                   src={img}
-                  alt={`${product.name} - Official View ${idx + 1}`}
-                  class="w-full h-full object-cover select-none pointer-events-none"
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  fetchpriority={idx === 0 ? "high" : "auto"}
-                  decoding={idx === 0 ? "sync" : "async"}
+                  alt={`${product.name} - View ${idx + 1}`}
                   width="700"
                   height="700"
-                  draggable="false"
-                  style="aspect-ratio: 1 / 1; width: 100%; height: 100%; object-fit: cover;"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  fetchpriority={idx === 0 ? "high" : "auto"}
+                  decoding="async"
+                  class="w-full h-full object-cover select-none pointer-events-none"
                 />
               </div>
             ))}
           </div>
+
+          <!-- Top Floating Badges -->
+          <div class="absolute top-3 left-3 z-20 flex flex-col gap-1.5 pointer-events-none">
+            {product.badge && (
+              <span class="bg-rose-600 text-white font-black text-[10px] sm:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                🔥 {product.badge}
+              </span>
+            )}
+            <span class="bg-slate-900/90 backdrop-blur-md text-white font-bold text-[10px] sm:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+              Pack of 2 Panels
+            </span>
+          </div>
+
+          <!-- Slide Counter Badge -->
+          <div class="absolute bottom-3 right-3 z-20 bg-black/70 backdrop-blur-md text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow pointer-events-none">
+            <span id="slider-counter">1 / {initialImages.length}</span>
+          </div>
         </div>
 
-        <!-- Slider Controls Strip (Positioned Below Image, Never Obscuring Product) -->
-        <div id="slider-controls-wrap" class={`flex items-center justify-between px-1 sm:px-2 pt-3 pb-1 text-xs text-slate-600 select-none ${initialImages.length > 1 ? '' : 'hidden'}`}>
-          <!-- Left: Slide Counter (e.g. 1 / 4) -->
-          <span
-            id="slider-counter"
-            class="bg-white border border-slate-200 text-slate-700 font-bold text-[11px] px-2.5 py-1 rounded-full shadow-sm"
-          >
-            1 / {initialImages.length}
-          </span>
-
-          <!-- Center: Dot Indicators -->
+        <!-- Slider Controls & Dots Bar -->
+        <div id="slider-controls-wrap" class={`flex items-center justify-between mt-3 px-1 ${initialImages.length > 1 ? '' : 'hidden'}`}>
           <div id="slider-dots" class="flex items-center gap-1.5">
             {initialImages.map((_, idx) => (
               <button
@@ -254,14 +288,12 @@ const productUgcVideos = [
             ))}
           </div>
 
-          <!-- Right: Prev / Next Chevron Buttons -->
           <div class="flex items-center gap-1.5">
             <button
               type="button"
               id="slider-prev-btn"
               class="w-8 h-8 rounded-full bg-white hover:bg-amber-50 active:scale-90 text-slate-700 hover:text-amber-900 border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
               aria-label="Previous image"
-              title="Previous Image"
             >
               ‹
             </button>
@@ -270,7 +302,6 @@ const productUgcVideos = [
               id="slider-next-btn"
               class="w-8 h-8 rounded-full bg-white hover:bg-amber-50 active:scale-90 text-slate-700 hover:text-amber-900 border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
               aria-label="Next image"
-              title="Next Image"
             >
               ›
             </button>
@@ -288,7 +319,7 @@ const productUgcVideos = [
             >
               <img
                 src={img}
-                alt={`View ${product.name} thumbnail slide ${idx + 1}`}
+                alt={`View ${product.name} thumbnail ${idx + 1}`}
                 width="80"
                 height="80"
                 loading="lazy"
@@ -299,174 +330,139 @@ const productUgcVideos = [
         </div>
       </div>
 
-      <!-- Detail Info Column -->
-      <div class="p-4 sm:p-8 lg:p-12 space-y-5 sm:space-y-6 flex flex-col justify-between">
+      <!-- 2 TO 7: DETAIL INFO COLUMN -->
+      <div class="lg:col-span-6 p-5 sm:p-8 lg:p-10 space-y-5 flex flex-col justify-between">
         <div class="space-y-4">
-          <!-- Category, Best Seller & Stock Status Badges (Strictly 1 line on mobile) -->
-          <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5">
-            {product.badge && (
-              <span class="bg-rose-600 text-white font-black text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shadow-sm shrink-0 whitespace-nowrap">
-                🔥 {product.badge}
-              </span>
-            )}
-            <span class="bg-amber-100 text-amber-900 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider border border-amber-200 shrink-0 whitespace-nowrap">
+          
+          <!-- Category & Status -->
+          <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+            <span class="bg-amber-100 text-amber-900 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-amber-200">
               {product.category}
             </span>
-            <span class="bg-emerald-100 text-emerald-800 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shrink-0 whitespace-nowrap flex items-center gap-1">
+            <span class="bg-emerald-100 text-emerald-800 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block animate-pulse"></span>
-              In Stock & Ready to Ship
+              In Stock &amp; Ready to Ship
             </span>
           </div>
 
-          <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight">
+          <!-- 2. PRODUCT NAME -->
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight">
             {product.name}
           </h1>
 
-          <!-- Star Rating & Review Count (Strictly 1 line on mobile) -->
-          <div class="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
-            <div class="flex items-center gap-0.5 text-amber-500 text-xs sm:text-sm shrink-0">
+          <!-- 3. ⭐ RATING -->
+          <div class="flex items-center gap-2 sm:gap-3 text-xs font-semibold">
+            <div class="flex items-center gap-0.5 text-amber-500 text-sm">
               <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-              <span class="text-slate-900 font-bold ml-1">{product.rating}</span>
+              <span class="text-slate-900 font-black ml-1">{product.rating}</span>
             </div>
-            <span class="text-slate-300 shrink-0">|</span>
-            <span class="text-slate-600 truncate">{product.reviewCount} Verified Customer Reviews</span>
+            <span class="text-slate-300">|</span>
+            <span class="text-slate-600 font-medium">{product.reviewCount} Verified Customer Reviews</span>
           </div>
 
-          <!-- Price Header -->
+          <!-- 4. PRICE -->
           <div class="pt-3 pb-2 border-y border-slate-100 flex items-baseline gap-3">
-            <span class="text-2xl sm:text-3xl font-black text-slate-900">{product.currency}<span id="unit-price">{initialSize.price}</span></span>
-            <span id="original-price-wrap" class={`text-sm sm:text-base text-slate-400 line-through font-semibold ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}>
+            <span class="text-3xl sm:text-4xl font-black text-slate-900">{product.currency}<span id="unit-price">{initialSize.price}</span></span>
+            <span id="original-price-wrap" class={`text-base sm:text-lg text-slate-400 line-through font-semibold ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}>
               {product.currency}<span id="original-price">{initialSize.originalPrice || ''}</span>
             </span>
             <span
               id="discount-badge"
-              class={`bg-rose-100 text-rose-700 font-bold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full ml-auto ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}
+              class={`bg-rose-100 text-rose-700 font-bold text-xs px-2.5 py-0.5 rounded-full ml-auto ${initialSize.originalPrice && initialSize.originalPrice > initialSize.price ? '' : 'hidden'}`}
             >
               Save {initialSize.originalPrice ? Math.round(((initialSize.originalPrice - initialSize.price) / initialSize.originalPrice) * 100) : 0}% Today
             </span>
           </div>
 
-          <!-- Color Display -->
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-              <span class="uppercase tracking-wider">Color:</span>
-              <span id="selected-color-label" class="text-amber-800 font-bold">{product.colors[0]?.name}</span>
+          <!-- Color Variations -->
+          {product.colors && product.colors.length > 0 && (
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <span class="uppercase tracking-wider">Color:</span>
+                <span id="selected-color-label" class="text-amber-800 font-bold">{product.colors[0]?.name}</span>
+              </div>
+              <div class="flex flex-wrap gap-2.5">
+                {product.colors.map((c, idx) => (
+                  <button
+                    type="button"
+                    data-color={c.name}
+                    data-color-index={idx}
+                    class={`color-chip-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
+                  >
+                    <span class="w-3.5 h-3.5 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
+                    <span>{c.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-            <div class="flex flex-wrap gap-2.5 sm:gap-3">
-              {product.colors.map((c, idx) => (
-                <button
-                  type="button"
-                  data-color={c.name}
-                  data-color-index={idx}
-                  class={`color-chip-btn flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border text-xs font-bold transition focus:outline-none ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950' : 'border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800'}`}
-                >
-                  <span class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border border-slate-400 shadow-inner" style={`background-color: ${c.hex}`}></span>
-                  <span>{c.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
-          <!-- Size Selector with Real-time Stock Display -->
+          <!-- 5. SIZE SELECTOR -->
           <div class="space-y-2">
             <div class="flex items-center justify-between text-xs font-bold text-slate-700">
               <span class="uppercase tracking-wider">Select Size / Length</span>
               <div class="flex items-center gap-2">
                 <span id="selected-size-label" class="text-amber-800 font-semibold">{initialSize.name}</span>
-                <span id="selected-size-stock" class={`text-[10px] px-2 py-0.5 rounded-full font-bold ${initialSize.inStock === false ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}`}>
-                  {initialSize.inStock === false ? 'Out of Stock' : (initialSize.stock && initialSize.stock <= 5 ? `Only ${initialSize.stock} Left` : '✓ In Stock')}
+                <span id="selected-size-stock" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">
+                  ✓ In Stock
                 </span>
               </div>
             </div>
             <div class="flex flex-wrap gap-2 sm:gap-2.5">
-              {normalizedSizes.map((sz, idx) => {
-                const isOutOfStock = sz.inStock === false || (typeof sz.stock === 'number' && sz.stock <= 0);
-                return (
-                  <button
-                    type="button"
-                    data-size={sz.name}
-                    data-price={sz.price}
-                    data-original-price={sz.originalPrice || ''}
-                    data-stock={sz.stock ?? 50}
-                    data-in-stock={!isOutOfStock}
-                    disabled={isOutOfStock}
-                    class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] sm:min-h-[44px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${isOutOfStock ? 'disabled-size' : (idx === 0 ? 'active-size' : '')}`}
-                  >
-                    <span class="size-title">{sz.name}</span>
-                    <span class="size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md">
-                      {isOutOfStock ? 'Out of Stock' : `${product.currency}${sz.price.toLocaleString('en-IN')}`}
-                    </span>
-                  </button>
-                );
-              })}
+              {normalizedSizes.map((sz, idx) => (
+                <button
+                  type="button"
+                  data-size={sz.name}
+                  data-price={sz.price}
+                  data-original-price={sz.originalPrice || ''}
+                  data-stock={sz.stock ?? 50}
+                  data-in-stock={true}
+                  class={`size-btn px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-[42px] rounded-xl border-2 font-bold text-xs sm:text-sm transition focus:outline-none whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${idx === 0 ? 'active-size' : ''}`}
+                >
+                  <span class="size-title">{sz.name}</span>
+                  <span class="size-badge text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded-md">
+                    {product.currency}{sz.price.toLocaleString('en-IN')}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
-          <!-- Pack Configuration (Standardized to Pack of 2 / Set of 2 Panels) -->
-          <div class="space-y-2 pt-1">
-            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-              <span class="uppercase tracking-wider">Pack Configuration</span>
-              <span id="selected-pack-label" class="text-amber-800 font-semibold">Pack of 2 (Set of 2 Curtains)</span>
+          <!-- Pack Info Box -->
+          <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2 font-bold text-amber-950">
+              <span>📦</span>
+              <span>Pack of 2 = 2 Full Matched Panels Included</span>
             </div>
-            <div class="w-full">
-              <div
-                class="w-full px-4 py-3 rounded-2xl border-2 border-slate-900 bg-slate-900 text-white shadow-sm flex items-center justify-between"
-              >
-                <div class="flex items-center gap-2.5">
-                  <span class="text-lg">📦</span>
-                  <div>
-                    <div class="font-extrabold text-xs sm:text-sm text-white">Pack of 2 (Set of 2 Curtains)</div>
-                    <div class="text-[10px] text-slate-300">Contains 2 matching curtain panels with pre-fitted silver eyelets</div>
-                  </div>
-                </div>
-                <span class="text-[10px] font-black bg-emerald-500 text-slate-950 px-2.5 py-1 rounded-full uppercase tracking-wider">Standard Pack</span>
-              </div>
-            </div>
+            <span class="text-[10px] font-black uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
+              Ready to Hang
+            </span>
           </div>
 
-          <!-- Quantity Selector (1 to 10 Only) -->
+          <!-- 6. QUANTITY SELECTOR -->
           <div class="space-y-2 pt-1">
             <div class="flex items-center justify-between">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Quantity</label>
-              <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Max 10 units per order</span>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Quantity (Sets)</label>
+              <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Max 10 sets per order</span>
             </div>
             <div class="flex items-center gap-3">
               <div class="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-                <button type="button" id="qty-minus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer opacity-40 cursor-not-allowed" aria-label="Decrease quantity">-</button>
+                <button type="button" id="qty-minus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition text-base cursor-pointer opacity-40 cursor-not-allowed" aria-label="Decrease quantity">-</button>
                 <span id="qty-display" class="w-12 text-center font-extrabold text-sm text-slate-900 select-none">1</span>
-                <button type="button" id="qty-plus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition select-none text-base cursor-pointer" aria-label="Increase quantity">+</button>
+                <button type="button" id="qty-plus-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center font-bold text-slate-800 hover:bg-slate-200 active:bg-slate-300 transition text-base cursor-pointer" aria-label="Increase quantity">+</button>
               </div>
               <span class="text-xs text-slate-500 font-medium">Subtotal: {product.currency}<span id="subtotal-price">{product.price}</span></span>
             </div>
           </div>
-
-          <!-- Technical Specs Card -->
-          <div class="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs space-y-2 mt-2">
-            <div class="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Fabric & Quality Guarantee</div>
-            <div class="space-y-1.5 text-slate-700 font-medium text-[11px] sm:text-xs">
-              <div class="flex items-center gap-2">
-                <span>🧺</span>
-                <span><strong>Machine Wash Safe</strong> & Anti-Rust Steel Rings</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span>☀️</span>
-                <span><strong>85%+ Sunlight & Glare Blocking</strong> (Blackout)</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span>🛡️</span>
-                <span><strong>Zero Color Bleed</strong> & Pre-Shrunk Guarantee</span>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- 7. BUY NOW ACTION BUTTONS -->
         <div class="pt-6 border-t border-slate-100 space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
               id="add-cart-btn"
-              class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-900 font-bold text-xs sm:text-sm py-3.5 sm:py-4 rounded-xl border border-slate-200 shadow-xs hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-900 font-bold text-xs sm:text-sm py-4 rounded-xl border border-slate-200 shadow-xs hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>🛒 Add to Cart</span>
             </button>
@@ -474,7 +470,7 @@ const productUgcVideos = [
             <button
               type="button"
               id="order-btn"
-              class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs sm:text-sm py-3.5 sm:py-4 rounded-xl shadow-xs hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-black text-xs sm:text-sm py-4 rounded-xl shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>⚡ Buy Now &amp; Checkout</span>
             </button>
@@ -486,314 +482,403 @@ const productUgcVideos = [
             <span>🚚 Free Express Shipping</span>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- Authentic Panipat Manufacturing Unit Trust Banner -->
-    <div class="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-900 text-white p-6 sm:p-8 rounded-3xl border border-amber-500/20 shadow-xl grid grid-cols-1 md:grid-cols-12 gap-6 items-center my-8">
-      <div class="md:col-span-5 relative">
-        <div class="rounded-2xl overflow-hidden border border-amber-400/30 shadow-lg aspect-[16/10] group">
-          <img
-            src="/panipat-factory-unit.jpg"
-            alt="Teepul Panipat Curtain Manufacturing Unit - Ashank Ecommerce Private Limited"
-            width="640"
-            height="400"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
-          />
-        </div>
+    <!-- 8. KEY BENEFITS -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
+      <div class="border-b border-slate-100 pb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">CORE ADVANTAGES</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Key Benefits of Teepul Curtains</h2>
       </div>
 
-      <div class="md:col-span-7 space-y-3 text-left">
-        <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 text-amber-300 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
-          <span>🇮🇳 100% MADE IN PANIPAT</span>
-          <span>•</span>
-          <span>ASHANK ECOMMERCE PVT LTD</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="p-5 rounded-2xl bg-amber-50/50 border border-amber-200/70 space-y-2">
+          <div class="text-2xl">☀️</div>
+          <h3 class="font-extrabold text-sm text-slate-900">85%+ Room Darkening</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Blocks direct sun glare and keeps indoor temperatures pleasantly cool during hot afternoons.</p>
         </div>
 
-        <h3 class="text-xl sm:text-2xl font-black text-white leading-tight">
-          Handcrafted in Our Panipat Manufacturing Unit
-        </h3>
+        <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200/70 space-y-2">
+          <div class="text-2xl">🛡️</div>
+          <h3 class="font-extrabold text-sm text-slate-900">100% Privacy Protection</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Dense 150 GSM weave ensures complete privacy with zero outdoor visibility even with lights on.</p>
+        </div>
 
-        <p class="text-xs text-slate-300 leading-relaxed font-normal">
-          This curtain panel is directly woven, double-stitched, and eyelet-fitted by skilled women artisans at our Panipat factory (Sector 25, HSIIDC Industrial Area). No middlemen — 100% genuine factory direct quality.
-        </p>
+        <div class="p-5 rounded-2xl bg-blue-50/50 border border-blue-200/70 space-y-2">
+          <div class="text-2xl">🧺</div>
+          <h3 class="font-extrabold text-sm text-slate-900">Machine Wash Safe</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Pre-shrunk fabric and colorfast dyeing guarantee zero shrinkage and zero color bleeding in cold wash.</p>
+        </div>
 
-        <div class="grid grid-cols-3 gap-2 pt-1 text-[10px] text-slate-200 font-semibold">
-          <div class="bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/10 text-center">
-            👩‍🏭 Women Artisans
-          </div>
-          <div class="bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/10 text-center">
-            ⚡ JUKI Machinery
-          </div>
-          <div class="bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/10 text-center">
-            ✨ QC Verified
-          </div>
+        <div class="p-5 rounded-2xl bg-purple-50/50 border border-purple-200/70 space-y-2">
+          <div class="text-2xl">⚡</div>
+          <h3 class="font-extrabold text-sm text-slate-900">60-Sec Installation</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Pre-installed stainless eyelets slide smoothly onto all standard 1-inch and 1.5-inch curtain rods.</p>
         </div>
       </div>
     </div>
 
-    <!-- Full Product Description & Specifications Section -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-8 my-8">
-      <div class="border-b border-slate-100 pb-4 flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <span class="text-[10px] font-black uppercase tracking-widest text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">Complete Overview</span>
-          <h2 class="text-2xl font-black text-slate-900 mt-1">Product Details & Features</h2>
-        </div>
-        <div class="flex items-center gap-3 text-xs font-bold text-slate-500">
-          <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">📦 Direct Factory Shipping</span>
-          <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-lg border border-amber-200">🛡️ 100% Inspected Quality</span>
-        </div>
+    <!-- 9. ROOM TRANSFORMATION (Small Change. Big Difference.) -->
+    <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-amber-500/20 space-y-6">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <span class="text-[10px] font-black uppercase text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/30">
+          ROOM TRANSFORMATION
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black text-white">Small Change. Big Difference.</h2>
+        <p class="text-xs sm:text-sm text-slate-300">See how this curtain upgrade transforms your daily living experience.</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Left: Formatted Description Paragraphs & Highlights -->
-        <div class="lg:col-span-7 space-y-6 text-slate-700 text-sm leading-relaxed">
-          {cleanedDesc.paragraphs.length > 0 ? (
-            <div class="space-y-4">
-              {cleanedDesc.paragraphs.map((para) => (
-                <p class="text-slate-600 text-sm sm:text-base leading-relaxed">{para}</p>
-              ))}
-            </div>
-          ) : (
-            <p class="text-slate-600 text-sm leading-relaxed">
-              Crafted in our Panipat manufacturing unit, this curtain panel combines heavyweight fabric with precision eyelet stitching to deliver superior light regulation and seamless interior aesthetic.
-            </p>
-          )}
-
-          <!-- Key Performance Highlights -->
-          {cleanedDesc.bullets.length > 0 && (
-            <div class="pt-4 space-y-3 border-t border-slate-100">
-              <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-widest">Key Features & Benefits</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {cleanedDesc.bullets.map((feat) => (
-                  <div class="flex items-start gap-2.5 bg-slate-50 border border-slate-200/80 p-3 rounded-xl text-xs font-semibold text-slate-800">
-                    <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shrink-0 font-black mt-0.5">✓</span>
-                    <span class="leading-snug">{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 space-y-3">
+          <span class="text-rose-400 font-bold text-xs uppercase tracking-wider block">❌ Without Teepul</span>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Harsh daylight causes uncomfortable screen glare, raises room temperature, fades sofas and rugs, and leaves your private spaces visible to neighbors.
+          </p>
         </div>
 
-        <!-- Right: Technical Specifications Box -->
-        <div class="lg:col-span-5 space-y-4">
-          <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-4 border border-slate-800">
-            <h3 class="font-extrabold text-xs text-amber-400 uppercase tracking-widest flex items-center gap-2">
-              <span>🧵</span> Fabric Specifications
-            </h3>
-            
-            <div class="space-y-3 text-xs divide-y divide-slate-800">
-              <div class="pt-2 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Material</span>
-                <span class="font-bold text-white bg-slate-800 px-2.5 py-1 rounded-md">100% Premium Polyester</span>
-              </div>
-              <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Fitting Style</span>
-                <span class="font-bold text-white text-right">Stainless Steel Eyelets</span>
-              </div>
-              <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Standard Heights</span>
-                <span class="font-bold text-white text-right">5ft, 6ft, 7ft & 9ft</span>
-              </div>
-              <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Available Packs</span>
-                <span class="font-bold text-emerald-400 text-right">Pack of 2 (Set of 2 Panels)</span>
-              </div>
-              <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Care Instructions</span>
-                <span class="font-bold text-white text-right">Hand & Machine Wash Cold</span>
-              </div>
-              <div class="pt-3 flex justify-between items-center">
-                <span class="text-slate-400 font-medium">Manufacturing Unit</span>
-                <span class="font-black text-amber-300">Panipat, Haryana (India)</span>
-              </div>
-            </div>
-          </div>
+        <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-emerald-400/30 space-y-3 shadow-lg">
+          <span class="text-emerald-400 font-bold text-xs uppercase tracking-wider block">✨ With Teepul Curtains</span>
+          <p class="text-xs text-slate-100 leading-relaxed font-medium">
+            Soft ambient light, 85%+ thermal heat block, architectural pleat fall, and 100% total indoor privacy for living room and bedroom peace of mind.
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- 🎥 REAL PRODUCT UGC VIDEO REELS (Muted Autoplay) -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6 my-8">
-      <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <div class="inline-flex items-center gap-1.5 bg-rose-50 border border-rose-200 text-rose-800 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-            <span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
-            <span>CUSTOMER UGC & REAL PRODUCT REELS</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">See It in Real Homes</h3>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Real customer unboxing, fabric fall, and room darkening clips</p>
-        </div>
+    <!-- 10. FABRIC / EYELET DETAILS (With Real Macro Photos) -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
+      <div class="border-b border-slate-100 pb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">CRAFTSMANSHIP</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Fabric &amp; Hardware Details</h2>
       </div>
 
-      <!-- Video Grid: 3 columns -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        {productUgcVideos.map((video) => (
-          <div class="bg-slate-950 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
-            <div class="relative aspect-[9/16] w-full bg-slate-950 overflow-hidden cursor-pointer" onclick="const v = this.querySelector('video'); if (v) { v.paused ? v.play() : v.pause(); }">
-              <video
-                src={video.src}
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata"
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-2xl border border-slate-200 p-5 space-y-3 bg-slate-50/60 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-slate-200">
+              <img
+                src="/images/experience/fabric-weave.webp"
+                alt="150 GSM Fabric Weave"
+                width="640"
+                height="400"
                 class="w-full h-full object-cover"
-              ></video>
-              
-              <div class="absolute top-2.5 left-2.5 pointer-events-none z-10">
-                <span class="bg-black/75 backdrop-blur-md text-white text-[9px] sm:text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-white/20 shadow">
-                  {video.tag}
+                loading="lazy"
+              />
+            </div>
+            <h3 class="font-extrabold text-sm text-slate-900">150 GSM High-Density Weave</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Virgin polyester threads woven tightly to regulate heat and sunlight while preserving graceful fall.</p>
+          </div>
+          <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded w-fit">✓ Zero Color Bleed</span>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 p-5 space-y-3 bg-slate-50/60 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-slate-200">
+              <img
+                src="/images/experience/juki-stitching.webp"
+                alt="Precision JUKI Double-Hem Stitching"
+                width="640"
+                height="400"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <h3 class="font-extrabold text-sm text-slate-900">JUKI Double-Hem Stitching</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Clean folded side borders and bottom hem double-stitched for enduring durability.</p>
+          </div>
+          <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded w-fit">✓ Panipat Mill Finish</span>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 p-5 space-y-3 bg-slate-50/60 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-slate-200">
+              <img
+                src="/images/experience/silver-eyelets.webp"
+                alt="Stainless Steel Silver Eyelets"
+                width="640"
+                height="400"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <h3 class="font-extrabold text-sm text-slate-900">Rust-Proof Silver Eyelets</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">48mm metallic grommets slide quietly on standard rods and resist washing rust.</p>
+          </div>
+          <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded w-fit">✓ Smooth Silent Slide</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. SIZE GUIDE -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
+      <div class="border-b border-slate-100 pb-4 flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-widest text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">MEASUREMENT GUIDE</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Curtain Size Guide for Indian Homes</h2>
+        </div>
+        <span class="text-xs text-slate-500 font-medium">Standard Width: 4 Feet (48 inches / 122 cm)</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-2xl border-2 border-slate-200 hover:border-amber-400 transition bg-slate-50/50 space-y-2">
+          <div class="text-xs font-black text-amber-800 uppercase tracking-wider">🪟 Window Curtain</div>
+          <div class="text-xl font-black text-slate-900">5 Feet (152 cm)</div>
+          <p class="text-xs text-slate-600">Ideal for bedroom and kitchen sill windows.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl border-2 border-slate-200 hover:border-amber-400 transition bg-slate-50/50 space-y-2">
+          <div class="text-xs font-black text-amber-800 uppercase tracking-wider">🪟 Large Window</div>
+          <div class="text-xl font-black text-slate-900">6 Feet (183 cm)</div>
+          <p class="text-xs text-slate-600">Perfect for tall living room windows and study corners.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl border-2 border-amber-800 bg-amber-50/40 shadow-sm space-y-2">
+          <div class="text-xs font-black text-amber-900 uppercase tracking-wider">🚪 Standard Door</div>
+          <div class="text-xl font-black text-slate-900">7 Feet (213 cm)</div>
+          <p class="text-xs text-slate-700 font-semibold">Standard height for Indian home main doors &amp; rooms.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl border-2 border-slate-200 hover:border-amber-400 transition bg-slate-50/50 space-y-2">
+          <div class="text-xs font-black text-amber-800 uppercase tracking-wider">🏛️ Long Door / Balcony</div>
+          <div class="text-xl font-black text-slate-900">9 Feet (274 cm)</div>
+          <p class="text-xs text-slate-600">Grand floor-to-ceiling balcony &amp; living room doorways.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. WHAT YOU RECEIVE -->
+    <div class="bg-gradient-to-r from-amber-50 via-white to-amber-50 rounded-3xl border-2 border-amber-300 p-6 sm:p-10 shadow-lg text-center space-y-4">
+      <div class="inline-flex items-center gap-2 bg-amber-800 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
+        <span>📦 COMPLETE READY-TO-HANG SET</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-slate-900">
+        What You Receive: <span class="text-amber-800">Pack of 2 = 2 Full Panels</span>
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+        Your package contains <strong>2 matched curtain panels</strong> with pre-installed stainless steel eyelets and factory quality inspection seal. Ready to hang right out of the box!
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 pt-2 text-xs font-bold text-slate-700">
+        <span class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ 2 Matching Panels</span>
+        <span class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ Pre-Installed Eyelets</span>
+        <span class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ Free All-India Delivery</span>
+        <span class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ 7-Day Door Returns</span>
+      </div>
+    </div>
+
+    <!-- 13. REVIEWS & REAL UGC VIDEOS -->
+    <div class="space-y-8">
+      
+      <!-- UGC Video Reels -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
+        <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="inline-flex items-center gap-1.5 bg-rose-50 border border-rose-200 text-rose-800 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
+              <span>CUSTOMER UGC REELS</span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">See It in Real Homes</h3>
+          </div>
+          <span class="text-xs text-slate-500 font-medium">Verified customer unboxing &amp; room clips</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          {productUgcVideos.map((video) => (
+            <div class="bg-slate-950 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
+              <div class="relative aspect-[9/16] w-full bg-slate-950 overflow-hidden cursor-pointer" onclick="const v = this.querySelector('video'); if (v) { v.paused ? v.play() : v.pause(); }">
+                <video
+                  src={video.src}
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                  class="w-full h-full object-cover"
+                ></video>
+                
+                <div class="absolute top-2.5 left-2.5 pointer-events-none z-10">
+                  <span class="bg-black/75 backdrop-blur-md text-white text-[9px] sm:text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-white/20 shadow">
+                    {video.tag}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onclick="event.stopPropagation(); const v = this.closest('.relative').querySelector('video'); if (v) { v.muted = !v.muted; this.querySelector('.mute-icon').textContent = v.muted ? '🔇' : '🔊'; }"
+                  class="absolute bottom-2.5 right-2.5 z-20 bg-black/70 hover:bg-black/90 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow-lg transition border border-white/20"
+                  title="Toggle Audio"
+                >
+                  <span class="mute-icon">🔇</span>
+                </button>
+              </div>
+
+              <div class="p-3.5 sm:p-4 bg-white border-t border-slate-100 flex-1 flex flex-col justify-between">
+                <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+                  {video.title}
+                </h4>
+                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500">
+                  <span class="text-emerald-700 font-bold">✓ Verified Clip</span>
+                  <span class="text-amber-800 font-bold">Tap to Mute/Play</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Customer Testimonial Cards -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
+        <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-950 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+              <span>⭐</span>
+              <span>VERIFIED BUYER FEEDBACK</span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Customer Reviews &amp; Ratings</h3>
+          </div>
+
+          <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-center gap-4 shrink-0">
+            <div class="text-center">
+              <div class="text-3xl sm:text-4xl font-black text-amber-900 leading-none">{product.rating}</div>
+              <div class="flex items-center gap-0.5 text-amber-500 text-xs mt-1">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              </div>
+            </div>
+            <div class="border-l border-amber-200 pl-4 text-xs font-medium text-slate-700">
+              <div class="font-bold text-slate-900">{product.reviewCount} Total Ratings</div>
+              <div class="text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
+                <span>✓</span> 100% Verified Purchases
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {customerReviews.map((rev) => (
+            <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-5 space-y-3 hover:border-amber-300 transition-colors">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-amber-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                    {rev.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight">{rev.name}</h4>
+                    <span class="text-[10px] text-slate-500 font-medium">{rev.city}</span>
+                  </div>
+                </div>
+                <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                  <span>✓</span> Verified Buyer
                 </span>
               </div>
 
-              <!-- Sound Unmute / Mute Toggle Button -->
-              <button
-                type="button"
-                onclick="event.stopPropagation(); const v = this.closest('.relative').querySelector('video'); if (v) { v.muted = !v.muted; this.querySelector('.mute-icon').textContent = v.muted ? '🔇' : '🔊'; }"
-                class="absolute bottom-2.5 right-2.5 z-20 bg-black/70 hover:bg-black/90 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow-lg transition border border-white/20"
-                title="Toggle Audio"
-              >
-                <span class="mute-icon">🔇</span>
-              </button>
-            </div>
+              <div class="flex items-center gap-2 text-xs">
+                <div class="flex text-amber-500 text-xs">
+                  {Array.from({ length: rev.rating }).map(() => <span>★</span>)}
+                </div>
+                <span class="text-[11px] font-bold text-slate-900">{rev.title}</span>
+              </div>
 
-            <div class="p-3.5 sm:p-4 bg-white border-t border-slate-100 flex-1 flex flex-col justify-between">
-              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                {video.title}
-              </h4>
-              <div class="pt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500">
-                <span class="text-emerald-700 font-bold">✓ Verified Clip</span>
-                <span class="text-amber-800 font-bold">Tap to Mute/Play</span>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                "{rev.comment}"
+              </p>
+
+              <div class="text-[10px] text-slate-400 font-medium pt-1 border-t border-slate-200/60">
+                {rev.date}
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
     </div>
 
-    <!-- Authentic Customer Reviews Section -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-8 my-8">
-      <div class="border-b border-slate-100 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div class="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-950 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-            <span>⭐</span>
-            <span>VERIFIED BUYER FEEDBACK</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Customer Reviews &amp; Ratings</h3>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Real reviews from verified customers across India</p>
-        </div>
-
-        <!-- Rating Summary Box -->
-        <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-center gap-4 shrink-0">
-          <div class="text-center">
-            <div class="text-3xl sm:text-4xl font-black text-amber-900 leading-none">{product.rating}</div>
-            <div class="flex items-center gap-0.5 text-amber-500 text-xs mt-1">
-              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-            </div>
-          </div>
-          <div class="border-l border-amber-200 pl-4 text-xs font-medium text-slate-700">
-            <div class="font-bold text-slate-900">{product.reviewCount} Total Ratings</div>
-            <div class="text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
-              <span>✓</span> 100% Verified Purchases
-            </div>
-          </div>
-        </div>
+    <!-- 14. FAQ ACCORDIONS -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-10 space-y-6">
+      <div class="border-b border-slate-100 pb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">FREQUENTLY ASKED</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">Questions About This Curtain</h2>
       </div>
 
-      <!-- Reviews Cards Grid (Simple, Authentic Human Language) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        {customerReviews.map((rev) => (
-          <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-5 space-y-3 hover:border-amber-300 transition-colors">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-amber-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                  {rev.name.charAt(0)}
-                </div>
-                <div>
-                  <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight">{rev.name}</h4>
-                  <span class="text-[10px] text-slate-500 font-medium">{rev.city}</span>
-                </div>
-              </div>
-              <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
-                <span>✓</span> Verified Buyer
+      <div class="space-y-3">
+        {productFaqs.map((faq, index) => (
+          <details class="group bg-slate-50/70 rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs transition hover:border-amber-400">
+            <summary class="flex justify-between items-center cursor-pointer font-bold text-slate-900 text-sm list-none select-none">
+              <span class="flex items-center gap-2.5">
+                <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs flex items-center justify-center shrink-0">
+                  {index + 1}
+                </span>
+                <span>{faq.question}</span>
               </span>
-            </div>
-
-            <div class="flex items-center gap-2 text-xs">
-              <div class="flex text-amber-500 text-xs">
-                {Array.from({ length: rev.rating }).map(() => <span>★</span>)}
-              </div>
-              <span class="text-[11px] font-bold text-slate-900">{rev.title}</span>
-            </div>
-
-            <p class="text-xs text-slate-600 leading-relaxed">
-              "{rev.comment}"
+              <span class="transition-transform group-open:rotate-180 text-slate-400 text-xs shrink-0 ml-2">▼</span>
+            </summary>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-3 pl-8 border-t border-slate-200/70 pt-3">
+              {faq.answer}
             </p>
-
-            <div class="text-[10px] text-slate-400 font-medium pt-1 border-t border-slate-200/60">
-              {rev.date}
-            </div>
-          </div>
+          </details>
         ))}
       </div>
     </div>
 
-    <!-- Related Products -->
+    <!-- 15. BOTTOM BUY NOW / FINAL CTA BAR -->
+    <div class="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 text-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-amber-500/20 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 text-[10px] font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+          <span>⚡ PANIPAT DIRECT DISPATCH</span>
+        </div>
+        <h3 class="text-xl sm:text-2xl font-black text-white">{product.name}</h3>
+        <p class="text-xs text-slate-300">Pack of 2 Panels · Free Express Shipping · 7-Day Doorstep Replacement</p>
+      </div>
+
+      <div class="flex items-center gap-4 shrink-0">
+        <div class="text-right hidden sm:block">
+          <div class="text-2xl font-black text-amber-400">{product.currency}{initialSize.price}</div>
+          <div class="text-[10px] text-slate-400 font-medium">Free Delivery</div>
+        </div>
+        <button
+          type="button"
+          onclick="document.getElementById('order-btn')?.click();"
+          class="bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-sm px-8 py-4 rounded-full shadow-2xl transition-all cursor-pointer whitespace-nowrap"
+        >
+          ⚡ Buy Now &amp; Checkout &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- Recommended Related Products -->
     {relatedProducts.length > 0 && (
-      <div class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900">Recommended Next</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-6 pt-4">
+        <div class="flex items-baseline justify-between border-b border-slate-200 pb-3">
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">Explore More Designs</h3>
+          <a href="/products" class="text-xs font-bold text-amber-800 hover:underline">View All &rarr;</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           {relatedProducts.map((rel) => (
-            <a href={`/products/${rel.slug}`} class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex items-center gap-6 group">
-              <img
-                src={rel.images[0]}
-                alt={`View related product ${rel.name}`}
-                width="96"
-                height="96"
-                loading="lazy"
-                class="w-24 h-24 rounded-xl object-cover"
-              />
-              <div>
-                <span class="text-[10px] font-bold uppercase text-amber-900 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">{rel.category}</span>
-                <h4 class="font-bold text-base text-slate-900 group-hover:text-amber-800 transition mt-1">{rel.name}</h4>
-                <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">{rel.tagline}</p>
-                <div class="font-black text-sm text-slate-900 mt-2">{rel.currency}{rel.price}</div>
+            <a href={`/products/${rel.slug}`} class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition p-3.5 space-y-3 group flex flex-col justify-between">
+              <div class="aspect-square rounded-xl overflow-hidden bg-slate-100">
+                <img
+                  src={rel.images[0]}
+                  alt={rel.name}
+                  width="300"
+                  height="300"
+                  loading="lazy"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+              </div>
+              <div class="space-y-1">
+                <span class="text-[9px] font-bold uppercase text-amber-800 bg-amber-50 px-2 py-0.5 rounded">{rel.category}</span>
+                <h4 class="font-extrabold text-xs text-slate-900 group-hover:text-amber-800 transition line-clamp-1">{rel.name}</h4>
+                <div class="font-black text-sm text-slate-900">{rel.currency}{rel.price}</div>
               </div>
             </a>
           ))}
         </div>
       </div>
     )}
+
   </div>
 
-  <!-- Interactive Order Toast / Modal Overlay -->
-  <div id="order-toast" class="fixed bottom-6 right-6 z-50 max-w-md bg-slate-900 text-white p-6 rounded-3xl shadow-2xl border border-slate-700 hidden transform transition-all duration-300">
-    <div class="flex items-start justify-between gap-4">
-      <div class="space-y-2">
-        <div class="flex items-center gap-2">
-          <span class="bg-emerald-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">Ready to Checkout</span>
-          <span class="text-xs text-slate-400 font-semibold">Teepul Express</span>
-        </div>
-        <h4 class="font-extrabold text-sm text-white">{product.name}</h4>
-        <div class="text-xs text-slate-300 space-y-0.5 font-medium">
-          <div>Color: <span id="toast-color" class="font-bold text-amber-400"></span></div>
-          <div>Size: <span id="toast-size" class="font-bold text-amber-400"></span></div>
-          <div>Quantity: <span id="toast-qty" class="font-bold text-amber-400"></span></div>
-          <div>Total Price: <span id="toast-price" class="font-black text-emerald-400"></span></div>
-        </div>
-      </div>
-      <button type="button" id="close-toast-btn" class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
-    </div>
-    <div class="mt-4 pt-3 border-t border-slate-800 flex gap-2">
-      <a id="toast-checkout-link" href="/checkout" class="w-full bg-amber-800 hover:bg-amber-700 text-center font-bold text-xs py-3 rounded-xl transition shadow-lg">
-        Proceed to Checkout &rarr;
-      </a>
-    </div>
-  </div>
-
+  <!-- Interactive JavaScript Engine -->
   <script is:inline define:vars={{ currentProductSlug: product.slug, currentProductName: product.name, currentProductId: product.id, currentProductPrice: product.price, productImages: initialImages || [], productColors: product.colors || [] }}>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedColor = document.querySelector('.color-chip-btn')?.getAttribute('data-color') || '';
@@ -807,8 +892,7 @@ const productUgcVideos = [
       let currentSlideIndex = 0;
       let currentGalleryImages = Array.isArray(productImages) ? [...productImages] : [];
 
-      // Meta Pixel ViewContent Event for Catalog Auto-Sync
-      // content_ids MUST use slug (matches catalogue retailer_id & product URL)
+      // Meta Pixel ViewContent Event
       try {
         if (typeof window.fbq === 'function') {
           window.fbq('track', 'ViewContent', {
@@ -823,7 +907,6 @@ const productUgcVideos = [
         console.error('Meta Pixel ViewContent error:', e);
       }
 
-      // Update subtotal price
       function updateSubtotal() {
         const subtotal = unitPrice * quantity;
         const subtotalEl = document.getElementById('subtotal-price');
@@ -876,15 +959,11 @@ const productUgcVideos = [
         }
 
         updateSubtotal();
-        updateMobileStickyInfo();
       }
 
-      // Smooth Sliding Gallery Logic
+      // Slider Logic
       const track = document.getElementById('product-slider-track');
       const counter = document.getElementById('slider-counter');
-      const dotsContainer = document.getElementById('slider-dots');
-      const thumbsStrip = document.getElementById('gallery-thumbnails-strip');
-      const controlsWrap = document.getElementById('slider-controls-wrap');
 
       function goToSlide(index) {
         const total = currentGalleryImages.length;
@@ -896,7 +975,7 @@ const productUgcVideos = [
         if (counter) {
           counter.innerText = (currentSlideIndex + 1) + ' / ' + total;
         }
-        // Sync Dots
+        
         const dots = document.querySelectorAll('.slider-dot');
         dots.forEach((dot, idx) => {
           if (idx === currentSlideIndex) {
@@ -905,7 +984,7 @@ const productUgcVideos = [
             dot.className = 'slider-dot transition-all duration-300 rounded-full cursor-pointer w-2 h-1.5 bg-slate-300 hover:bg-slate-400';
           }
         });
-        // Sync Thumbnails
+
         const thumbs = document.querySelectorAll('.thumb-btn');
         thumbs.forEach((thumb, idx) => {
           if (idx === currentSlideIndex) {
@@ -937,363 +1016,195 @@ const productUgcVideos = [
         });
       }
 
-      // Dynamic Color Switch -> Gallery Images Update
       function updateGalleryForColor(colorName) {
         const foundColor = (productColors || []).find((c) => c && c.name === colorName);
         if (foundColor && Array.isArray(foundColor.images) && foundColor.images.length > 0) {
           currentGalleryImages = [...foundColor.images];
           
-          // Rebuild Track Slides
           if (track) {
             track.innerHTML = currentGalleryImages.map((img, idx) => `
               <div class="w-full h-full flex-shrink-0 relative flex items-center justify-center bg-slate-100" style="aspect-ratio: 1 / 1; width: 100%; height: 100%;">
                 <img
                   src="${img}"
-                  alt="${currentProductName} - ${colorName} View ${idx + 1}"
-                  class="w-full h-full object-cover select-none pointer-events-none"
-                  loading="${idx === 0 ? 'eager' : 'lazy'}"
-                  fetchpriority="${idx === 0 ? 'high' : 'auto'}"
-                  decoding="${idx === 0 ? 'sync' : 'async'}"
+                  alt="${currentProductName} ${colorName} - View ${idx + 1}"
                   width="700"
                   height="700"
-                  draggable="false"
-                  style="aspect-ratio: 1 / 1; width: 100%; height: 100%; object-fit: cover;"
+                  loading="${idx === 0 ? 'eager' : 'lazy'}"
+                  class="w-full h-full object-cover select-none pointer-events-none"
                 />
               </div>
             `).join('');
           }
 
-          // Rebuild Thumbnails Strip
+          const thumbsStrip = document.getElementById('gallery-thumbnails-strip');
           if (thumbsStrip) {
-            if (currentGalleryImages.length > 1) {
-              thumbsStrip.classList.remove('hidden');
-              thumbsStrip.innerHTML = currentGalleryImages.map((img, idx) => `
-                <button
-                  type="button"
-                  data-slide-index="${idx}"
-                  data-img="${img}"
-                  class="thumb-btn flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30' : 'border-slate-300 hover:border-amber-600/60 opacity-70 hover:opacity-100'}"
-                >
-                  <img
-                    src="${img}"
-                    alt="View ${currentProductName} thumbnail slide ${idx + 1}"
-                    width="80"
-                    height="80"
-                    loading="lazy"
-                    class="w-full h-full object-cover pointer-events-none"
-                  />
-                </button>
-              `).join('');
-            } else {
-              thumbsStrip.classList.add('hidden');
-              thumbsStrip.innerHTML = '';
-            }
-          }
-
-          // Rebuild Slider Controls Wrap (Counter, Dots, Prev/Next)
-          if (controlsWrap) {
-            if (currentGalleryImages.length > 1) {
-              controlsWrap.classList.remove('hidden');
-            } else {
-              controlsWrap.classList.add('hidden');
-            }
-          }
-
-          if (dotsContainer) {
-            dotsContainer.innerHTML = currentGalleryImages.map((_, idx) => `
+            thumbsStrip.innerHTML = currentGalleryImages.map((img, idx) => `
               <button
                 type="button"
-                data-slide-dot="${idx}"
-                class="slider-dot transition-all duration-300 rounded-full cursor-pointer ${idx === 0 ? 'w-5 h-1.5 bg-amber-800' : 'w-2 h-1.5 bg-slate-300 hover:bg-slate-400'}"
-                aria-label="Go to slide ${idx + 1}"
-              ></button>
+                data-slide-index="${idx}"
+                data-img="${img}"
+                class="thumb-btn flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30' : 'border-slate-300 hover:border-amber-600/60 opacity-70 hover:opacity-100'}"
+              >
+                <img src="${img}" alt="Thumbnail ${idx + 1}" width="80" height="80" class="w-full h-full object-cover pointer-events-none" />
+              </button>
+            `).join('');
+            thumbsStrip.className = `flex gap-2.5 sm:gap-4 mt-3 sm:mt-4 overflow-x-auto pb-1 ${currentGalleryImages.length > 1 ? '' : 'hidden'}`;
+          }
+
+          const dotsContainer = document.getElementById('slider-dots');
+          if (dotsContainer) {
+            dotsContainer.innerHTML = currentGalleryImages.map((_, idx) => `
+              <button type="button" data-slide-dot="${idx}" class="slider-dot transition-all duration-300 rounded-full cursor-pointer ${idx === 0 ? 'w-5 h-1.5 bg-amber-800' : 'w-2 h-1.5 bg-slate-300 hover:bg-slate-400'}"></button>
             `).join('');
           }
 
-          // Re-bind listeners for freshly created thumbs and dots
-          attachGalleryEvents();
+          const controlsWrap = document.getElementById('slider-controls-wrap');
+          if (controlsWrap) {
+            controlsWrap.className = `flex items-center justify-between mt-3 px-1 ${currentGalleryImages.length > 1 ? '' : 'hidden'}`;
+          }
 
-          // Reset position to first slide of selected color
+          attachGalleryEvents();
           goToSlide(0);
         }
       }
 
-      // Next / Prev Button Listeners
-      document.getElementById('slider-prev-btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        goToSlide(currentSlideIndex - 1);
-      });
-
-      document.getElementById('slider-next-btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        goToSlide(currentSlideIndex + 1);
-      });
-
-      // Initial attachment of thumb & dot click handlers
-      attachGalleryEvents();
-
-      // Touch Swipe Gesture Support (Mobile)
-      const viewport = document.getElementById('product-gallery-viewport');
-      if (viewport) {
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let isSwiping = false;
-
-        viewport.addEventListener('touchstart', (e) => {
-          if (currentGalleryImages.length <= 1) return;
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-          isSwiping = true;
-        }, { passive: true });
-
-        viewport.addEventListener('touchmove', (e) => {
-          if (!isSwiping || currentGalleryImages.length <= 1) return;
-          const diffX = e.touches[0].clientX - touchStartX;
-          const diffY = e.touches[0].clientY - touchStartY;
-          if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
-            if (e.cancelable) e.preventDefault();
-          }
-        }, { passive: false });
-
-        viewport.addEventListener('touchend', (e) => {
-          if (!isSwiping || currentGalleryImages.length <= 1) return;
-          isSwiping = false;
-          const touchEndX = e.changedTouches[0].clientX;
-          const diffX = touchEndX - touchStartX;
-          const threshold = 35;
-          if (diffX < -threshold) {
-            goToSlide(currentSlideIndex + 1);
-          } else if (diffX > threshold) {
-            goToSlide(currentSlideIndex - 1);
-          }
-        }, { passive: true });
-
-        // Desktop Mouse Drag Support
-        let isMouseDown = false;
-        let mouseStartX = 0;
-
-        viewport.addEventListener('mousedown', (e) => {
-          if (currentGalleryImages.length <= 1) return;
-          if (e.target && e.target.closest && e.target.closest('button')) return;
-          isMouseDown = true;
-          mouseStartX = e.clientX;
-        });
-
-        window.addEventListener('mouseup', (e) => {
-          if (!isMouseDown || currentGalleryImages.length <= 1) return;
-          isMouseDown = false;
-          const diffX = e.clientX - mouseStartX;
-          if (diffX < -40) {
-            goToSlide(currentSlideIndex + 1);
-          } else if (diffX > 40) {
-            goToSlide(currentSlideIndex - 1);
-          }
-        });
+      // Prev / Next Chevron Button Listeners
+      const prevBtn = document.getElementById('slider-prev-btn');
+      const nextBtn = document.getElementById('slider-next-btn');
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => goToSlide(currentSlideIndex - 1));
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => goToSlide(currentSlideIndex + 1));
       }
 
-      // Color Chip Click Handlers
+      // Touch Swipe Gesture Handling
+      const viewport = document.getElementById('product-gallery-viewport');
+      let touchStartX = 0;
+      let touchEndX = 0;
+      if (viewport) {
+        viewport.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        viewport.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          const diff = touchStartX - touchEndX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) {
+              goToSlide(currentSlideIndex + 1);
+            } else {
+              goToSlide(currentSlideIndex - 1);
+            }
+          }
+        }, { passive: true });
+      }
+
+      attachGalleryEvents();
+
+      // Color Selection
       document.querySelectorAll('.color-chip-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
+          document.querySelectorAll('.color-chip-btn').forEach((b) => {
+            b.className = 'color-chip-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition focus:outline-none cursor-pointer border-slate-200 hover:border-slate-400 bg-slate-50 text-slate-800';
+          });
+          btn.className = 'color-chip-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition focus:outline-none cursor-pointer border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/60 text-amber-950';
           selectedColor = btn.getAttribute('data-color') || '';
           const label = document.getElementById('selected-color-label');
           if (label) label.innerText = selectedColor;
-
-          document.querySelectorAll('.color-chip-btn').forEach((b) => {
-            b.classList.remove('border-amber-800', 'ring-2', 'ring-amber-800/30', 'bg-amber-50/60', 'text-amber-950');
-            b.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-800');
-          });
-          btn.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-800');
-          btn.classList.add('border-amber-800', 'ring-2', 'ring-amber-800/30', 'bg-amber-50/60', 'text-amber-950');
-
-          // Dynamically swap gallery to only show images belonging to this color
-          const foundColor = (productColors || []).find((c) => c && c.name === selectedColor);
-          if (foundColor && Array.isArray(foundColor.images) && foundColor.images.length > 0) {
-            updateGalleryForColor(selectedColor);
-          } else {
-            const cIdx = parseInt(btn.getAttribute('data-color-index') || '-1', 10);
-            if (cIdx >= 0 && cIdx < currentGalleryImages.length) {
-              goToSlide(cIdx);
-            }
-          }
+          updateGalleryForColor(selectedColor);
         });
       });
 
-      // Size Button Click Handlers - Dynamic Size Pricing & Stock Update
+      // Size Selection
       document.querySelectorAll('.size-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          selectedSize = btn.getAttribute('data-size') || '';
-          const label = document.getElementById('selected-size-label');
-          if (label) label.innerText = selectedSize;
-
-          const stockVal = parseInt(btn.getAttribute('data-stock') || '50', 10);
-          const inStockVal = btn.getAttribute('data-in-stock') === 'true';
-          const stockBadge = document.getElementById('selected-size-stock');
-          if (stockBadge) {
-            if (!inStockVal || stockVal <= 0) {
-              stockBadge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800';
-              stockBadge.innerText = 'Out of Stock';
-            } else if (stockVal <= 5) {
-              stockBadge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800';
-              stockBadge.innerText = `Only ${stockVal} Left`;
-            } else {
-              stockBadge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800';
-              stockBadge.innerText = '✓ In Stock';
-            }
-          }
-
-          const sizePriceAttr = btn.getAttribute('data-price');
-          const sizeOrigPriceAttr = btn.getAttribute('data-original-price');
-
-          if (sizePriceAttr) {
-            const newPrice = parseFloat(sizePriceAttr);
-            if (!isNaN(newPrice)) {
-              baseSizePrice = newPrice;
-              baseSizeOrigPrice = sizeOrigPriceAttr ? parseFloat(sizeOrigPriceAttr) : 0;
-              updatePricing();
-            }
-          }
-
           document.querySelectorAll('.size-btn').forEach((b) => {
             b.classList.remove('active-size');
           });
           btn.classList.add('active-size');
+          selectedSize = btn.getAttribute('data-size') || '';
+          baseSizePrice = parseFloat(btn.getAttribute('data-price') || '0');
+          baseSizeOrigPrice = parseFloat(btn.getAttribute('data-original-price') || '0');
+          
+          const sizeLabel = document.getElementById('selected-size-label');
+          if (sizeLabel) sizeLabel.innerText = selectedSize;
+
+          updatePricing();
         });
       });
 
-      // Quantity Plus & Minus (Strict 1 to 10 Limit)
-      document.getElementById('qty-minus-btn')?.addEventListener('click', () => {
-        if (quantity > 1) {
-          quantity--;
-          updateQuantityButtons();
-          updateSubtotal();
-          updateMobileStickyInfo();
-        }
-      });
+      // Quantity Handlers
+      const minusBtn = document.getElementById('qty-minus-btn');
+      const plusBtn = document.getElementById('qty-plus-btn');
 
-      document.getElementById('qty-plus-btn')?.addEventListener('click', () => {
-        if (quantity < 10) {
-          quantity++;
-          updateQuantityButtons();
-          updateSubtotal();
-          updateMobileStickyInfo();
-        }
-      });
-
-      // Add to Cart Click Handler - Opens Right Slide-over Cart Drawer
-      document.getElementById('add-cart-btn')?.addEventListener('click', () => {
-        try {
-          if (typeof window.fbq === 'function') {
-            window.fbq('track', 'AddToCart', {
-              content_name: currentProductName,
-              content_ids: [currentProductSlug],
-              content_type: 'product',
-              value: unitPrice * quantity,
-              currency: 'INR'
-            });
+      if (minusBtn) {
+        minusBtn.addEventListener('click', () => {
+          if (quantity > 1) {
+            quantity -= 1;
+            updateSubtotal();
+            updateQuantityButtons();
           }
-        } catch (e) {}
-
-        if (typeof window.quickAddToCart === 'function') {
-          const currentImg = (productImages && productImages[currentSlideIndex]) || productImages[0] || '';
-          const variationLabel = `${selectedSize} (${selectedPack})`;
-          window.quickAddToCart(
-            currentProductName,
-            currentProductSlug,
-            unitPrice,
-            currentImg,
-            variationLabel,
-            selectedColor,
-            quantity
-          );
-        }
-      });
-
-      // Order / Buy Now Click Handler
-      document.getElementById('order-btn')?.addEventListener('click', () => {
-        try {
-          if (typeof window.fbq === 'function') {
-            window.fbq('track', 'InitiateCheckout', {
-              content_name: currentProductName,
-              content_ids: [currentProductSlug],
-              content_type: 'product',
-              value: unitPrice * quantity,
-              currency: 'INR',
-              num_items: quantity
-            });
-          }
-        } catch (e) {}
-
-        const variationLabel = `${selectedSize} (${selectedPack})`;
-        const checkoutUrl = `/checkout?product=${encodeURIComponent(currentProductSlug)}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(variationLabel)}&price=${unitPrice}&qty=${quantity}`;
-        
-        const savedPhone = localStorage.getItem('teepul_customer_phone');
-        const savedName = localStorage.getItem('teepul_customer_name') || '';
-        if (savedPhone) {
-          window.location.href = checkoutUrl + '&phone=' + encodeURIComponent(savedPhone) + (savedName ? '&name=' + encodeURIComponent(savedName) : '');
-        } else {
-          window.location.href = checkoutUrl;
-        }
-      });
-
-      // Sticky Mobile Bar Handlers
-      document.getElementById('mobile-sticky-add-btn')?.addEventListener('click', () => {
-        document.getElementById('add-cart-btn')?.click();
-      });
-
-      document.getElementById('mobile-sticky-buy-btn')?.addEventListener('click', () => {
-        document.getElementById('order-btn')?.click();
-      });
-
-      // Update mobile sticky bar
-      function updateMobileStickyInfo() {
-        const stickyPrice = document.getElementById('mobile-sticky-price');
-        if (stickyPrice) stickyPrice.innerText = (unitPrice * quantity).toLocaleString('en-IN');
-        const stickySize = document.getElementById('mobile-sticky-size');
-        if (stickySize) stickySize.innerText = `${selectedSize} · ${selectedPack}`;
+        });
       }
 
+      if (plusBtn) {
+        plusBtn.addEventListener('click', () => {
+          if (quantity < 10) {
+            quantity += 1;
+            updateSubtotal();
+            updateQuantityButtons();
+          }
+        });
+      }
+
+      // Add To Cart Handler
+      const addCartBtn = document.getElementById('add-cart-btn');
+      if (addCartBtn) {
+        addCartBtn.addEventListener('click', () => {
+          if (typeof window.animatedAddToCart === 'function') {
+            const currentImg = currentGalleryImages[0] || (productImages && productImages[0]) || '';
+            const finalTitle = `${currentProductName} (${selectedColor ? selectedColor + ', ' : ''}${selectedSize || 'Standard'}, ${selectedPack})`;
+            window.animatedAddToCart(addCartBtn, finalTitle, currentProductSlug, unitPrice, currentImg);
+          }
+        });
+      }
+
+      // Direct Buy Now & Instant Checkout Handler
+      const orderBtn = document.getElementById('order-btn');
+      if (orderBtn) {
+        orderBtn.addEventListener('click', () => {
+          const currentImg = currentGalleryImages[0] || (productImages && productImages[0]) || '';
+          const finalTitle = `${currentProductName} (${selectedColor ? selectedColor + ', ' : ''}${selectedSize || 'Standard'}, ${selectedPack})`;
+          
+          // Add to cart directly
+          let cart = [];
+          try {
+            cart = JSON.parse(localStorage.getItem('teepul_cart') || '[]');
+          } catch (e) {
+            cart = [];
+          }
+
+          const existingIdx = cart.findIndex((item) => item.slug === currentProductSlug && item.title === finalTitle);
+          if (existingIdx > -1) {
+            cart[existingIdx].quantity += quantity;
+          } else {
+            cart.push({
+              id: `${currentProductId}-${Date.now()}`,
+              slug: currentProductSlug,
+              title: finalTitle,
+              price: unitPrice,
+              image: currentImg,
+              quantity: quantity
+            });
+          }
+
+          localStorage.setItem('teepul_cart', JSON.stringify(cart));
+          window.location.href = '/checkout';
+        });
+      }
+
+      updatePricing();
       updateQuantityButtons();
-      updateMobileStickyInfo();
     });
   </script>
-
-  <!-- Sticky Mobile Action Bar (80% Mobile E-commerce Users) -->
-  <div class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 p-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.12)] flex items-center justify-between gap-2.5" style="padding-bottom: max(0.625rem, env(safe-area-inset-bottom));">
-    <!-- Left: Dynamic Price & Size Preview -->
-    <div class="pl-1.5 leading-tight shrink-0">
-      <div class="flex items-baseline gap-1">
-        <span class="text-xs font-bold text-slate-500">{product.currency}</span>
-        <span id="mobile-sticky-price" class="text-lg font-black text-slate-950">{initialSize.price.toLocaleString('en-IN')}</span>
-      </div>
-      <div class="flex items-center gap-1 text-[10px] font-bold text-slate-500">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-        <span id="mobile-sticky-size" class="truncate max-w-[90px]">{initialSize.name}</span>
-      </div>
-    </div>
-
-    <!-- Right: Action Buttons -->
-    <div class="flex items-center gap-2 flex-1 justify-end">
-      <button
-        type="button"
-        id="mobile-sticky-add-btn"
-        class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-900 font-bold text-xs py-3 px-3.5 rounded-xl transition border border-slate-200 flex items-center gap-1.5 cursor-pointer shrink-0"
-        title="Add to Cart"
-      >
-        <span>🛒</span>
-        <span>Cart</span>
-      </button>
-
-      <button
-        type="button"
-        id="mobile-sticky-buy-btn"
-        class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 cursor-pointer flex-1"
-        title="Buy Now Directly"
-      >
-        <span>⚡ Buy Now</span>
-      </button>
-    </div>
-  </div>
-
 </PublicLayout>
