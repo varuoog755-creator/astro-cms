@@ -23,47 +23,7 @@ const [posts, allProducts] = await Promise.all([
 ]);
 
 // Top Sellers: Highest rated items (4.7+)
-const topSellers = [...allProducts].sort((a, b) => b.rating - a.rating).slice(0, 4);
-
-// New Arrivals: Latest design launches
-const newArrivals = [...allProducts]
-  .filter(p => p.id.includes('meesho-ho') || p.id.includes('meesho-hr') || p.id.includes('meesho-c2') || p.badge === 'Teepul Choice')
-  .slice(0, 4);
-
-if (newArrivals.length < 4) {
-  const existingIds = new Set(newArrivals.map(p => p.id));
-  allProducts.forEach(p => {
-    if (!existingIds.has(p.id) && newArrivals.length < 4) {
-      newArrivals.push(p);
-    }
-  });
-}
-
-const featuredProducts = allProducts.slice(0, 8);
-
-// AEO (Answer Engine Optimization) & GEO (Generative Engine Optimization) FAQs
-const homepageFaqs = [
-  {
-    question: "What fabrics and materials are used in Teepul curtains?",
-    answer: "Teepul uses 100% premium virgin polyester, woven jacquard, slub semi-sheer linen textures, as well as room-darkening blackout and light-filtering fabrics engineered directly at our Panipat manufacturing mills. They resist fading, maintain graceful drapes, and are easy to maintain with regular machine washing."
-  },
-  {
-    question: "What standard sizes do Teepul curtains come in for Indian homes?",
-    answer: "Teepul offers standard Indian architectural sizes for windows and doors: Window (5 Feet / 152 cm & 6 Feet / 183 cm), Door (7 Feet / 213 cm), and Long Door (9 Feet / 274 cm). All panels come pre-fitted with premium rust-free eyelet grommets for smooth rod sliding."
-  },
-  {
-    question: "How do Teepul blackout and light-filtering curtains control sunlight?",
-    answer: "Teepul offers both room-darkening blackout curtains and gentle light-filtering sheer drapes. Blackout curtains significantly reduce direct sunlight, glare, and room heating for added privacy, while light-filtering curtains soften natural daylight to keep your room bright and airy without being see-through."
-  },
-  {
-    question: "Where is Teepul located and where does it ship?",
-    answer: "Teepul is a brand owned by Ashank Ecommerce Pvt Ltd, headquartered in the historic textile hub of Panipat, Haryana, India. We ship directly from our production mills to every pin code across all 28 states and union territories in India with 2-5 day express delivery."
-  },
-  {
-    question: "What is Teepul's return and refund policy?",
-    answer: "We offer a 7-day hassle-free door return and replacement policy. If your curtains do not match your room decor or you need a different size or shade, you can initiate a doorstep exchange or refund directly through your Teepul account dashboard or WhatsApp support."
-  }
-];
+const topSellers = [...allProducts].sort((a, b) => b.rating - a.rating).slice(0, 8);
 
 const ugcVideos = [
   {
@@ -87,6 +47,58 @@ const ugcVideos = [
     tag: '🏡 Real Indian Homes',
   },
 ];
+
+const customerReviews = [
+  {
+    name: 'Pooja Sharma',
+    city: 'South Delhi',
+    rating: 5,
+    title: 'Completely transformed our living room',
+    comment: 'The 9ft velvet door curtains completely changed the vibe of our living room. 85%+ blackout, heavy fabric fall, and smooth rust-free brass eyelets!',
+  },
+  {
+    name: 'Vikram Sundaram',
+    city: 'Bengaluru',
+    rating: 5,
+    title: 'Accurate sizing & fast Panipat delivery',
+    comment: 'Delivered in 3 days to Bangalore. The eyelet rings glide effortlessly on the rod and the fabric does not wrinkle or bleed color after washing.',
+  },
+  {
+    name: 'Ananya Deshmukh',
+    city: 'Mumbai',
+    rating: 5,
+    title: 'Best value factory-direct curtains',
+    comment: 'Bought 3 sets of Pack of 2 for our bedrooms and balcony. Direct factory price is unmatchable compared to offline retail showrooms.',
+  },
+];
+
+const homepageFaqs = [
+  {
+    category: 'Size Guide',
+    question: 'How do I choose the right curtain size for my windows or doors?',
+    answer: 'Measure your rod to the floor or sill: Window curtains are 5 Feet (152 cm) & 6 Feet (183 cm). Standard Door curtains are 7 Feet (213 cm). Long Door / Balcony curtains are 9 Feet (274 cm). Every panel comes pre-fitted with eyelet grommets designed for standard rods.',
+  },
+  {
+    category: 'Fabric & Quality',
+    question: 'What fabric materials are used in Teepul curtains?',
+    answer: 'Teepul uses 100% premium virgin polyester, dense woven jacquard, and crushed velvet textures directly manufactured in Panipat mills. Fabrics are pre-shrunk, fade-resistant, and provide superior room darkening.',
+  },
+  {
+    category: 'Wash Care',
+    question: 'Are these curtains safe for home washing?',
+    answer: 'Yes. All Teepul curtains are 100% machine wash and hand wash safe in cold water. The eyelet rings are manufactured with anti-rust stainless alloy that will not corrode or stain the fabric.',
+  },
+  {
+    category: 'Delivery',
+    question: 'What is the delivery timeline and shipping cost?',
+    answer: 'We offer 100% Free Express Shipping across India. Orders are dispatched from our Panipat manufacturing unit within 24 hours and delivered in 2 to 5 business days to all pin codes.',
+  },
+  {
+    category: 'Returns & Replacements',
+    question: 'What is Teepul’s return and size exchange policy?',
+    answer: 'We offer a 7-day hassle-free door return and replacement policy. If you need a different size, shade, or pattern, you can initiate a doorstep pickup directly through WhatsApp or your account.',
+  },
+];
 ---
 
 <PublicLayout
@@ -94,42 +106,42 @@ const ugcVideos = [
     title: 'Teepul - Luxury Door Curtains, Window Drapery & Home Decor',
     description: 'Shop luxury door curtains, thermal blackout drapes, linen sheer curtains, and printed eyelet curtains direct from Panipat weaving mills. All-India express delivery with 7-day returns.',
     canonicalUrl: '/',
-    preloadLcpImage: featuredProducts[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0],
-    faqs: homepageFaqs
+    preloadLcpImage: topSellers[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0],
+    faqs: homepageFaqs.map(f => ({ question: f.question, answer: f.answer }))
   }}
 >
-  
-  <!-- Hero Section (Teepul Luxury Minimalist Aesthetic) -->
-  <section class="relative bg-white text-slate-900 overflow-hidden py-14 lg:py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80">
-    <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+  <!-- 1. HERO SECTION -->
+  <section class="relative bg-white text-slate-900 overflow-hidden py-12 lg:py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80">
+    <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
       
       <!-- Hero Copy -->
       <div class="lg:col-span-7 space-y-6 text-left">
-        <div class="inline-flex items-center gap-2 bg-slate-100 border border-slate-200 text-slate-900 text-[11px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-widest">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>PANIPAT MILLS · 2026 COLLECTION</span>
+        <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>PANIPAT MILLS · FACTORY DIRECT VALUE</span>
         </div>
 
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 leading-[1.12]">
-          Architectural Luxury for <span class="text-amber-800">Every Indian Home</span>
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 leading-[1.12]">
+          Room ka look <span class="text-amber-800 underline decoration-amber-300 decoration-wavy">dull lag raha hai?</span>
         </h1>
 
         <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
-          Crafted directly at our Panipat production mills. Heavyweight <strong>Thermal Blackout Curtains</strong> &amp; <strong>Light Filtering Drapery</strong> with stainless eyelet rings for smooth gliding, privacy, and lasting elegance.
+          Upgrade your home with Panipat factory-direct luxury curtains. Heavyweight <strong>85%+ room-darkening drapes</strong>, pre-fitted rust-proof eyelet rings, and elegant fall for every window &amp; door.
         </p>
 
         <div class="flex flex-wrap items-center gap-3 pt-2">
           <a
             href="/products"
-            class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs sm:text-sm px-7 py-3.5 rounded-full shadow-xs hover:-translate-y-0.5 transition-all flex items-center gap-2"
+            class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-black text-xs sm:text-sm px-8 py-4 rounded-full shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
           >
-            <span>🛍️ Explore Shop</span>
+            <span>🛍️ Shop Curtains</span>
             <span>&rarr;</span>
           </a>
 
           <a
             href="/products"
-            class="bg-white hover:bg-slate-50 active:scale-95 text-slate-900 border border-slate-300 font-bold text-xs sm:text-sm px-6 py-3.5 rounded-full shadow-xs hover:-translate-y-0.5 transition-all flex items-center gap-2"
+            class="bg-white hover:bg-slate-50 active:scale-95 text-slate-900 border border-slate-300 font-bold text-xs sm:text-sm px-6 py-4 rounded-full shadow-xs hover:-translate-y-0.5 transition-all flex items-center gap-2"
           >
             <span>✨ View All Designs</span>
           </a>
@@ -138,16 +150,16 @@ const ugcVideos = [
         <!-- Trust Highlights -->
         <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-100 text-xs">
           <div>
-            <div class="text-xl sm:text-2xl font-black text-slate-900">Light Filtering</div>
-            <div class="text-slate-500 text-[11px] mt-0.5">Polyester Fabric Weave</div>
+            <div class="text-xl sm:text-2xl font-black text-slate-900">Pack of 2</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">2 Full Panels Included</div>
           </div>
           <div>
-            <div class="text-xl sm:text-2xl font-black text-amber-800">Thermal Shield</div>
-            <div class="text-slate-500 text-[11px] mt-0.5">Noise &amp; Glare Control</div>
+            <div class="text-xl sm:text-2xl font-black text-amber-800">85%+ Blackout</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Thermal &amp; Glare Shield</div>
           </div>
           <div>
             <div class="text-xl sm:text-2xl font-black text-emerald-700">★ 4.9 Rating</div>
-            <div class="text-slate-500 text-[11px] mt-0.5">Direct Panipat Mill</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">10,000+ Happy Homes</div>
           </div>
         </div>
       </div>
@@ -158,7 +170,7 @@ const ugcVideos = [
           <div class="space-y-4">
             <div class="rounded-3xl overflow-hidden shadow-sm border border-slate-200 aspect-[4/5] bg-white group">
               <img
-                src={featuredProducts[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0]}
+                src={topSellers[0]?.images?.[0] || 'https://images.meesho.com/images/products/423378719/fp7sq_512.jpg'}
                 alt="Teepul Door Curtains - Premium Thermal Blackout Drapery"
                 loading="eager"
                 fetchpriority="high"
@@ -168,12 +180,12 @@ const ugcVideos = [
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div class="p-3 bg-white/95 backdrop-blur-md -mt-12 relative text-center">
-                <span class="text-[10px] font-bold uppercase text-slate-900 tracking-wider">Thermal Blackout Curtains</span>
+                <span class="text-[10px] font-bold uppercase text-slate-900 tracking-wider">Thermal Blackout</span>
               </div>
             </div>
             <div class="rounded-3xl overflow-hidden shadow-xs border border-slate-200 aspect-square bg-white group">
               <img
-                src={featuredProducts[2]?.images?.[0] || PRODUCTS_CATALOG[2]?.images?.[0]}
+                src={topSellers[2]?.images?.[0] || 'https://images.meesho.com/images/products/842387294/qxit7_512.jpg'}
                 alt="Teepul Luxury Printed & Eyelet Curtains"
                 loading="lazy"
                 decoding="async"
@@ -187,7 +199,7 @@ const ugcVideos = [
           <div class="space-y-4 pt-8">
             <div class="rounded-3xl overflow-hidden shadow-xs border border-slate-200 aspect-square bg-white group">
               <img
-                src={featuredProducts[3]?.images?.[0] || PRODUCTS_CATALOG[3]?.images?.[0]}
+                src={topSellers[3]?.images?.[0] || 'https://images.meesho.com/images/products/472112728/nndos_512.jpg'}
                 alt="Teepul Premium Living Room Curtains"
                 loading="lazy"
                 decoding="async"
@@ -198,8 +210,8 @@ const ugcVideos = [
             </div>
             <div class="rounded-3xl overflow-hidden shadow-sm border border-slate-200 aspect-[4/5] bg-white group">
               <img
-                src={featuredProducts[1]?.images?.[0] || PRODUCTS_CATALOG[1]?.images?.[0]}
-                alt="Teepul Window Curtains - Semi-Sheer Light Filtering Polyester"
+                src={topSellers[1]?.images?.[0] || 'https://images.meesho.com/images/products/920841731/ftnjt_512.jpg'}
+                alt="Teepul Window Curtains - Modern Printed Drapes"
                 loading="lazy"
                 decoding="async"
                 width="400"
@@ -207,7 +219,7 @@ const ugcVideos = [
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div class="p-3 bg-white/95 backdrop-blur-md -mt-12 relative text-center">
-                <span class="text-[10px] font-bold uppercase text-slate-900 tracking-wider">Light Filtering Polyester</span>
+                <span class="text-[10px] font-bold uppercase text-slate-900 tracking-wider">Modern Printed</span>
               </div>
             </div>
           </div>
@@ -217,107 +229,149 @@ const ugcVideos = [
     </div>
   </section>
 
-  <!-- 🏭 Authentic Panipat Manufacturing Unit Section (Hero Next Section) -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-    <div class="bg-gradient-to-br from-amber-950 via-slate-900 to-amber-950 text-white rounded-3xl p-6 sm:p-12 shadow-2xl border border-amber-500/20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center overflow-hidden relative">
-      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
-      
-      <!-- Text Description -->
-      <div class="lg:col-span-6 space-y-4 sm:space-y-5 relative z-10 text-left">
-        <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 text-amber-300 text-[10px] sm:text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider">
-          <span>🇮🇳 100% MADE IN INDIA</span>
-          <span>•</span>
-          <span>PANIPAT, HARYANA</span>
+  <!-- 2. BEFORE → AFTER SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 border-b border-slate-100">
+    <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-50 border border-amber-200 px-3.5 py-1 rounded-full">
+        BEFORE → AFTER
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Small Change. Big Difference.</h2>
+      <p class="text-xs sm:text-sm text-slate-600 mt-2">
+        See how simply upgrading to Teepul curtains turns harsh outdoor glare into cozy, magazine-worthy living rooms.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-stretch">
+      <!-- BEFORE CARD -->
+      <div class="bg-rose-50/50 rounded-3xl p-6 sm:p-8 border border-rose-200/80 flex flex-col justify-between space-y-6">
+        <div class="space-y-3">
+          <div class="inline-flex items-center gap-2 bg-rose-600 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+            <span>❌ BEFORE TEEPUL</span>
+          </div>
+          <h3 class="text-xl font-black text-slate-900">Dull, Harsh &amp; Overheated Room</h3>
+          <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-2">
+            <li class="flex items-center gap-2">
+              <span class="text-rose-600 font-bold">✗</span>
+              <span>Harsh afternoon sunlight causing TV glare &amp; room heating</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-rose-600 font-bold">✗</span>
+              <span>Zero daytime privacy from outside neighbors or street</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-rose-600 font-bold">✗</span>
+              <span>Cheap flimsy fabric that shrinks, fades, and wrinkles easily</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-rose-600 font-bold">✗</span>
+              <span>Stuck or squeaky plastic rings that tear fabric loops</span>
+            </li>
+          </ul>
         </div>
 
-        <h2 class="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
-          Direct From Our <span class="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">Panipat Manufacturing Unit</span>
-        </h2>
-
-        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed font-normal">
-          Every Teepul curtain is crafted at our state-of-the-art facility in <strong>Sector-25, HSIIDC Industrial Area, Panipat (Haryana)</strong>. Skilled women artisans utilize precision JUKI sewing machines to hand-fit stainless eyelet rings and double-hem drapery panels.
-        </p>
-
-        <div class="grid grid-cols-2 gap-3 pt-2 text-xs">
-          <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <span class="text-amber-400 font-bold block text-xs sm:text-sm">👩‍🏭 Women Empowerment</span>
-            <span class="text-slate-300 text-[10px] sm:text-[11px]">Skilled women artisans leading production</span>
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <span class="text-amber-400 font-bold block text-xs sm:text-sm">⚡ JUKI Precision</span>
-            <span class="text-slate-300 text-[10px] sm:text-[11px]">High-speed eyelet ring assembly</span>
-          </div>
-        </div>
-
-        <div class="pt-2 flex flex-wrap items-center gap-4">
-          <a href="/about" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-6 py-3.5 rounded-xl shadow-lg transition">
-            Explore Panipat Heritage &rarr;
-          </a>
-          <a href="/products" class="text-amber-300 font-bold text-xs hover:underline">
-            Shop Factory Direct Prices
-          </a>
+        <div class="p-4 bg-white/80 rounded-2xl border border-rose-200 text-xs text-slate-500 italic">
+          "Pehle din me hall me garmi aur dhoop rehti thi, aur room khali lagta tha."
         </div>
       </div>
 
-      <!-- Factory Unit Image Box -->
-      <div class="lg:col-span-6 relative z-10">
-        <div class="rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-amber-400/30 shadow-2xl group aspect-[16/10]">
-          <img
-            src="/panipat-factory-unit.jpg"
-            alt="Teepul Panipat Curtain Manufacturing Unit - Ashank Ecommerce Private Limited"
-            width="640"
-            height="400"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            loading="lazy"
-          />
+      <!-- AFTER CARD -->
+      <div class="bg-emerald-50/60 rounded-3xl p-6 sm:p-8 border border-emerald-300 shadow-lg flex flex-col justify-between space-y-6 relative overflow-hidden">
+        <div class="space-y-3">
+          <div class="inline-flex items-center gap-2 bg-emerald-700 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+            <span>✨ AFTER TEEPUL CURTAINS</span>
+          </div>
+          <h3 class="text-xl font-black text-slate-900">Luxurious, Cool &amp; 100% Private</h3>
+          <ul class="space-y-2.5 text-xs text-slate-800 font-semibold pt-2">
+            <li class="flex items-center gap-2">
+              <span class="text-emerald-700 font-bold">✓</span>
+              <span><strong>85%+ Sunlight Shield:</strong> Keeps room cool and glare-free</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-emerald-700 font-bold">✓</span>
+              <span><strong>Complete Privacy:</strong> Thick woven polyester blocks outside view</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-emerald-700 font-bold">✓</span>
+              <span><strong>Architectural Drape:</strong> Heavyweight fall with flawless pleating</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-emerald-700 font-bold">✓</span>
+              <span><strong>Stainless Eyelets:</strong> Silent, smooth gliding on any standard rod</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-4 bg-white rounded-2xl border border-emerald-200 text-xs text-emerald-950 font-semibold shadow-xs flex items-center justify-between">
+          <span>Instant upgrade in under 2 minutes!</span>
+          <a href="/products" class="text-emerald-800 font-black hover:underline">Shop Now &rarr;</a>
         </div>
       </div>
-
     </div>
   </section>
 
-  <!-- Categories Showcase Bar -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- 3. SHOP BY NEED SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 bg-[#faf8f5] rounded-3xl my-6 border border-amber-900/10">
+    <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-100/80 px-3.5 py-1 rounded-full">
+        COLLECTIONS BY INTENT
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Shop By Need</h2>
+      <p class="text-xs sm:text-sm text-slate-600 mt-2">
+        Find the exact curtain solution tailored to your room type and light requirement.
+      </p>
+    </div>
+
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
-        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🚪</div>
-        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Door Curtains</h3>
-        <p class="text-[10px] text-slate-500 mt-1">7ft & 9ft Velvet Blackout</p>
+      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">🛋️</div>
+          <h3 class="font-extrabold text-sm text-slate-900">Living Room</h3>
+          <p class="text-[11px] text-slate-500 mt-1 leading-snug">7ft &amp; 9ft Statement Drapes for Grand Windows &amp; Doors</p>
+        </div>
+        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Living &rarr;</span>
       </a>
 
-      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
-        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🪟</div>
-        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Window Curtains</h3>
-        <p class="text-[10px] text-slate-500 mt-1">Light Filtering Sheer Linen</p>
+      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">🛏️</div>
+          <h3 class="font-extrabold text-sm text-slate-900">Bedroom Blackout</h3>
+          <p class="text-[11px] text-slate-500 mt-1 leading-snug">85%+ Room Darkening for Deep Sleep &amp; Glare Control</p>
+        </div>
+        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Blackout &rarr;</span>
       </a>
 
-      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
-        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🌙</div>
-        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Blackout Curtains</h3>
-        <p class="text-[10px] text-slate-500 mt-1">Thermal Insulation & Privacy</p>
+      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">🛡️</div>
+          <h3 class="font-extrabold text-sm text-slate-900">Complete Privacy</h3>
+          <p class="text-[11px] text-slate-500 mt-1 leading-snug">Dense Woven Jacquard with 0% Outdoor Visibility</p>
+        </div>
+        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Privacy &rarr;</span>
       </a>
 
-      <a href="/products" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition text-center group">
-        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">🌿</div>
-        <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Printed Curtains</h3>
-        <p class="text-[10px] text-slate-500 mt-1">Floral & Modern 3D Patterns</p>
+      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">☀️</div>
+          <h3 class="font-extrabold text-sm text-slate-900">Light Control</h3>
+          <p class="text-[11px] text-slate-500 mt-1 leading-snug">Soft Semi-Sheer Linen Textures for Gentle Daylight</p>
+        </div>
+        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Sheers &rarr;</span>
       </a>
     </div>
   </section>
 
-  <!-- 🔥 TOP SELLERS SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-t border-slate-100">
-    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-6 sm:mb-10 pb-3 border-b border-slate-200 gap-2">
+  <!-- 4. BESTSELLERS SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 pb-3 border-b border-slate-200 gap-2">
       <div>
         <div class="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
           <span>⭐</span>
           <span>CURATED BESTSELLERS</span>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Top Selling Living Room & Door Curtains</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Bestseller Curtains</h2>
       </div>
       <a href="/products" class="text-xs font-bold text-amber-800 hover:underline flex items-center gap-1">
-        <span>View All Top Sellers</span>
+        <span>View All Designs ({allProducts.length})</span>
         <span>&rarr;</span>
       </a>
     </div>
@@ -328,7 +382,7 @@ const ugcVideos = [
         <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
           <div class="relative aspect-square bg-slate-100 overflow-hidden">
             <img
-              src={product.images?.[0] || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80'}
+              src={product.images?.[0] || 'https://images.meesho.com/images/products/423378719/fp7sq_512.jpg'}
               alt={product.name}
               width="400"
               height="400"
@@ -337,7 +391,7 @@ const ugcVideos = [
             />
             <div class="absolute top-2 left-2 flex flex-col gap-1">
               <span class="bg-rose-600 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow">
-                🔥 TOP SELLER
+                {product.badge || '🔥 BESTSELLER'}
               </span>
             </div>
             {product.originalPrice && (
@@ -388,95 +442,140 @@ const ugcVideos = [
     </div>
   </section>
 
-  <!-- ✨ NEW ARRIVALS SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-amber-50/40 rounded-3xl my-6 border border-amber-900/10">
-    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-6 sm:mb-10 pb-3 border-b border-amber-900/10 gap-2">
-      <div>
-        <div class="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-900 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-          <span>✨</span>
-          <span>NAYE DESIGNS & COLLECTION 2026</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">New Arrival Launches</h2>
-      </div>
-      <a href="/products" class="text-xs font-bold text-amber-800 hover:underline flex items-center gap-1">
-        <span>Explore All New Designs</span>
-        <span>&rarr;</span>
-      </a>
+  <!-- 5. WHY OUR CURTAINS? SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 bg-slate-900 text-white rounded-3xl my-6">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-black uppercase text-amber-400 tracking-widest bg-slate-800 px-3.5 py-1 rounded-full border border-slate-700">
+        THE TEEPUL ADVANTAGE
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-black text-white mt-3">Why Choose Our Curtains?</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-2">
+        Engineered in Panipat weaving mills with premium hardware and flawless finishing.
+      </p>
     </div>
 
-    <!-- Responsive Grid (2 columns on mobile, 4 on desktop) -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-      {newArrivals.map((product) => (
-        <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
-          <div class="relative aspect-square bg-slate-100 overflow-hidden">
-            <img
-              src={product.images?.[0] || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80'}
-              alt={product.name}
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-            <div class="absolute top-2 left-2">
-              <span class="bg-amber-900 text-amber-100 text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow">
-                ✨ NEW 2026
-              </span>
-            </div>
-          </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80 space-y-3">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-2xl flex items-center justify-center">⚡</div>
+        <h3 class="text-base font-bold text-white">Easy to Install</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Pre-fitted grommets slide effortlessly onto all standard 1-inch and 1.5-inch curtain rods in under 60 seconds.
+        </p>
+      </div>
 
-          <div class="p-3 sm:p-5 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
-            <div class="space-y-1.5 sm:space-y-2">
-              <div class="flex items-center justify-between text-[10px] sm:text-xs">
-                <span class="text-amber-900 font-bold uppercase tracking-wider text-[9px] sm:text-[10px] bg-amber-50 px-2 py-0.5 rounded">
-                  {product.category}
-                </span>
-                <div class="flex items-center gap-0.5 text-amber-500 font-bold">
-                  <span>★</span>
-                  <span>{product.rating}</span>
-                </div>
-              </div>
+      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80 space-y-3">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-2xl flex items-center justify-center">📏</div>
+        <h3 class="text-base font-bold text-white">Multiple Sizes</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Available in 4 standard Indian sizes: 5ft (Window), 6ft (Balcony), 7ft (Door), and 9ft (Long Door).
+        </p>
+      </div>
 
-              <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug line-clamp-2">
-                <a href={`/products/${product.slug}`}>{product.name}</a>
-              </h3>
-            </div>
+      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80 space-y-3">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-2xl flex items-center justify-center">🎨</div>
+        <h3 class="text-base font-bold text-white">Multiple Colours</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Over 20+ rich hues including Coffee Brown, Slate Grey, Royal Maroon, Gold, Navy, and Floral prints.
+        </p>
+      </div>
 
-            <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between gap-1">
-              <div>
-                <span class="text-sm sm:text-lg font-black text-slate-900">{product.currency}{product.price.toLocaleString('en-IN')}</span>
-              </div>
-
-              <button
-                type="button"
-                onclick={`window.animatedAddToCart(this, '${product.name.replace(/'/g, "\\'")}', '${product.slug}', ${product.price}, '${product.images?.[0] || ''}')`}
-                class="bg-slate-900 hover:bg-amber-800 text-white font-bold text-[10px] sm:text-xs px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl shadow active:scale-95 transition-all duration-300 shrink-0 flex items-center gap-1 group/btn cursor-pointer whitespace-nowrap"
-                title="Add to Cart"
-              >
-                <span class="cart-icon transition-transform duration-300 group-hover/btn:scale-125">🛒</span>
-                <span class="btn-text whitespace-nowrap font-bold">Add to Cart</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      ))}
+      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80 space-y-3">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-2xl flex items-center justify-center">⚙️</div>
+        <h3 class="text-base font-bold text-white">Pre-fitted Eyelets</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          High-strength rust-free stainless steel grommets precision-attached for silent and smooth gliding.
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- 🎥 REAL HOMES UGC VIDEO SHOWCASE (Muted Autoplay) -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+  <!-- 6. PRODUCT EXPERIENCE (Fabric + Stitching + Eyelet Close-ups) -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-50 border border-amber-200 px-3.5 py-1 rounded-full">
+        CRAFTSMANSHIP &amp; DETAILS
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Product Experience Up Close</h2>
+      <p class="text-xs sm:text-sm text-slate-600 mt-2">
+        Touch, feel, and durability engineered to last for years of machine washing.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div class="aspect-[16/10] rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-4xl">
+          🧵
+        </div>
+        <h3 class="text-lg font-black text-slate-900">Heavyweight Fabric Weave</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          280+ GSM high-density polyester yarn prevents light leakage, blocks thermal heat, and ensures straight, crease-free vertical fall.
+        </p>
+        <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md inline-block">✓ Zero Color Bleed</span>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div class="aspect-[16/10] rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-4xl">
+          ⚡
+        </div>
+        <h3 class="text-lg font-black text-slate-900">Precision JUKI Stitching</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Crafted by skilled women artisans at our Panipat factory with double-folded hem borders that prevent frayed edges.
+        </p>
+        <span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">✓ Double Stitched Hems</span>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div class="aspect-[16/10] rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-4xl">
+          ✨
+        </div>
+        <h3 class="text-lg font-black text-slate-900">Rust-Proof Silver Eyelets</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          48mm internal diameter grommets fit all standard rods and feature anti-rust alloy coating safe for repeated machine washing.
+        </p>
+        <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md inline-block">✓ Smooth Silent Glide</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. WHAT YOU GET SECTION (Pack of 2 = 2 Panels) -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="bg-gradient-to-r from-amber-50 via-white to-amber-50 rounded-3xl border-2 border-amber-300 p-6 sm:p-10 shadow-lg text-center space-y-4">
+      <div class="inline-flex items-center gap-2 bg-amber-800 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
+        <span>📦 COMPLETE READY-TO-HANG SET</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-slate-900">
+        What You Get: <span class="text-amber-800">Pack of 2 = 2 Full Panels</span>
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+        Every order contains <strong>2 matched curtain panels</strong> with pre-installed eyelets, pre-shrunk fabric, and factory inspection seal. Ready to hang right out of the box with zero extra fittings needed!
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 pt-2 text-xs font-bold text-slate-700">
+        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ 2 Matching Panels</span>
+        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ Pre-Installed Eyelets</span>
+        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ Free Door Delivery</span>
+        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ 7-Day Door Returns</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. CUSTOMER REVIEWS & REAL UGC VIDEOS -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
     <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 pb-3 border-b border-slate-200 gap-2">
       <div>
         <div class="inline-flex items-center gap-1.5 bg-rose-50 border border-rose-200 text-rose-800 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
           <span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
-          <span>LIVE UGC & REAL HOMES</span>
+          <span>LIVE UGC &amp; REAL REVIEWS</span>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Watch Teepul in Real Indian Homes</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Loved by 10,000+ Indian Homes</h2>
       </div>
-      <p class="text-xs text-slate-500 font-medium sm:text-right max-w-xs">
-        Factory-direct Panipat curtains unboxing, room blackout test, and smooth eyelet glide.
-      </p>
+      <div class="flex items-center gap-1 text-amber-500 font-bold text-sm">
+        <span>★★★★★</span>
+        <span class="text-slate-900 text-xs font-black ml-1">4.9 / 5.0 Overall Rating</span>
+      </div>
     </div>
 
-    <!-- Responsive Grid: 2 columns on mobile, 4 on desktop -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+    <!-- Video Reels Grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6 mb-10">
       {ugcVideos.map((video) => (
         <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
           <div class="relative aspect-[9/16] w-full bg-slate-950 overflow-hidden cursor-pointer" onclick="const v = this.querySelector('video'); if (v) { v.paused ? v.play() : v.pause(); }">
@@ -512,192 +611,43 @@ const ugcVideos = [
               {video.title}
             </h3>
             <div class="pt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500">
-              <span class="text-emerald-700 font-bold">✓ Verified Reel</span>
+              <span class="text-emerald-700 font-bold">✓ Verified Clip</span>
               <span class="text-amber-800 font-bold">Tap to Mute/Play</span>
             </div>
           </div>
         </div>
       ))}
     </div>
-  </section>
 
-  <!-- Storefront Products Showcase Section -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="flex flex-col sm:flex-row items-baseline justify-between mb-10 pb-4 border-b border-slate-200">
-      <div>
-        <span class="text-xs font-extrabold text-amber-800 uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full border border-amber-200">Featured Teepul Collection</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Luxury Drapery & Decor Products</h2>
-      </div>
-      <a href="/products" class="text-xs font-bold text-amber-800 hover:underline mt-2 sm:mt-0">
-        View Full Shop Catalog ({featuredProducts.length}) &rarr;
-      </a>
-    </div>
-
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-      {featuredProducts.map((product) => (
-        <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
-          <div class="relative aspect-square bg-slate-100 overflow-hidden">
-            <img
-              src={product.images?.[0] || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80'}
-              alt={product.name}
-              width="400"
-              height="400"
-              loading="lazy"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            {product.badge && (
-              <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-slate-900/90 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
-                {product.badge}
-              </span>
-            )}
+    <!-- Review Text Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {customerReviews.map((rev) => (
+        <div class="bg-[#fcfaf7] p-6 rounded-3xl border border-amber-900/10 shadow-xs space-y-3 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
+              ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
+            </div>
+            <h4 class="text-sm font-extrabold text-slate-900">{rev.title}</h4>
+            <p class="text-xs text-slate-600 leading-relaxed italic">"{rev.comment}"</p>
           </div>
-
-          <div class="p-3 sm:p-5 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
-            <div class="space-y-1.5 sm:space-y-2">
-              <div class="flex items-center justify-between text-[10px] sm:text-xs">
-                <span class="text-amber-800 font-bold uppercase tracking-wider text-[9px] sm:text-[10px] bg-amber-50 px-2 py-0.5 rounded-md">
-                  {product.category}
-                </span>
-                <div class="flex items-center gap-1 text-amber-500 font-bold text-xs">
-                  <span>★</span>
-                  <span>{product.rating}</span>
-                </div>
-              </div>
-
-              <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug line-clamp-2">
-                <a href={`/products/${product.slug}`}>{product.name}</a>
-              </h3>
-              
-              <p class="text-[11px] sm:text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.tagline}</p>
-            </div>
-
-            <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between gap-1">
-              <div>
-                <span class="text-sm sm:text-lg font-black text-slate-900">{product.currency}{product.price.toLocaleString('en-IN')}</span>
-                {product.originalPrice && (
-                  <span class="text-[10px] sm:text-xs text-slate-400 line-through font-medium block sm:inline sm:ml-1">{product.currency}{product.originalPrice.toLocaleString('en-IN')}</span>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onclick={`window.animatedAddToCart(this, '${product.name.replace(/'/g, "\\'")}', '${product.slug}', ${product.price}, '${product.images?.[0] || ''}')`}
-                class="bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-[10px] sm:text-xs px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl shadow active:scale-95 transition-all duration-300 shrink-0 flex items-center gap-1 group/btn cursor-pointer whitespace-nowrap"
-                title="Add to Cart"
-              >
-                <span class="cart-icon transition-transform duration-300 group-hover/btn:scale-125">🛒</span>
-                <span class="btn-text whitespace-nowrap font-bold">Add to Cart</span>
-              </button>
-            </div>
+          <div class="pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-900">{rev.name} ({rev.city})</span>
+            <span class="text-emerald-600 font-semibold text-[11px]">✓ Verified Buyer</span>
           </div>
         </div>
       ))}
     </div>
   </section>
 
-  <!-- Customer Verified Reviews Section -->
-  <section class="bg-[#f7f5f0] border-y border-amber-900/10 py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-xl mx-auto mb-12">
-        <span class="text-xs font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100/60 px-3 py-1 rounded-full">CUSTOMER REVIEWS</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 mt-3">Loved by 10,000+ Indian Homes</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
-            ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
-          </div>
-          <p class="text-xs text-slate-600 leading-relaxed italic">
-            "The 9ft Velvet Door Curtains from Teepul completely changed the vibe of our living room. 100% blackout and heavy quality brass eyelets!"
-          </p>
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span class="font-bold text-slate-900">Ananya R. (South Delhi)</span>
-            <span class="text-emerald-600 font-semibold">✓ Verified Buyer</span>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
-            ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
-          </div>
-          <p class="text-xs text-slate-600 leading-relaxed italic">
-            "Sheer linen window drapes diffuses light beautifully during morning sunshine. Delivered in 2 days to Bangalore. Extremely impressed with Teepul!"
-          </p>
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span class="font-bold text-slate-900">Vikram S. (Bengaluru)</span>
-            <span class="text-emerald-600 font-semibold">✓ Verified Buyer</span>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
-            ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
-          </div>
-          <p class="text-xs text-slate-600 leading-relaxed italic">
-            "Ordered the 7ft Blackout curtains and Printed Leaf drapes for our bedroom. Beautiful fabric finish and fast doorstep delivery."
-          </p>
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span class="font-bold text-slate-900">Pooja M. (Mumbai)</span>
-            <span class="text-emerald-600 font-semibold">✓ Verified Buyer</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-  <!-- Panipat Heritage & Direct-from-Mill Entity Assurance (GEO / Brand Authority) -->
-  <section class="bg-amber-950 text-amber-100 py-16 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-      <div class="space-y-4">
-        <span class="text-amber-400 text-xs font-black uppercase tracking-widest">Direct From Panipat Mills</span>
-        <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-          Centuries of Weaving Mastery, Direct to Your Modern Living Room
-        </h2>
-        <p class="text-sm text-amber-200/90 leading-relaxed">
-          Panipat is celebrated across the globe as India's premier historic textile capital. Every Teepul drapery is precision-woven in our family-managed facilities using high-GSM jacquard and heavy polyester yarns. By shipping directly to your doorstep, we eliminate distributors, showroom rents, and retail markups — offering bespoke luxury at honest direct-from-mill value.
-        </p>
-        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-amber-900 text-center">
-          <div class="p-3 bg-amber-900/40 rounded-2xl border border-amber-800/60">
-            <div class="text-xl font-black text-amber-300">100%</div>
-            <div class="text-[10px] uppercase font-bold text-amber-200 mt-1">Pre-Shrunk</div>
-          </div>
-          <div class="p-3 bg-amber-900/40 rounded-2xl border border-amber-800/60">
-            <div class="text-xl font-black text-amber-300">Stainless</div>
-            <div class="text-[10px] uppercase font-bold text-amber-200 mt-1">Metal Eyelets</div>
-          </div>
-          <div class="p-3 bg-amber-900/40 rounded-2xl border border-amber-800/60">
-            <div class="text-xl font-black text-amber-300">7 Days</div>
-            <div class="text-[10px] uppercase font-bold text-amber-200 mt-1">Door Return</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-amber-900/30 border border-amber-800/60 rounded-3xl p-6 sm:p-8 space-y-4 backdrop-blur-sm">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <span>🏛️</span> Ashank Ecommerce Pvt Ltd Entity
-        </h3>
-        <p class="text-xs text-amber-200 leading-relaxed">
-          Teepul is a registered trademark of <strong>Ashank Ecommerce Pvt Ltd</strong>. Operating out of Panipat, Haryana, our production lines blend computerized European rapier looms with artisan hand-finishing for impeccable drapery pleating.
-        </p>
-        <ul class="text-xs text-amber-100 space-y-2 border-t border-amber-800/50 pt-3">
-          <li class="flex items-center gap-2">✓ <strong>Dispatch:</strong> Guaranteed within 24–48 hours across India</li>
-          <li class="flex items-center gap-2">✓ <strong>Payments:</strong> 256-bit encrypted Razorpay & Paytm Gateway</li>
-          <li class="flex items-center gap-2">✓ <strong>Support:</strong> Dedicated WhatsApp & telephonic sizing assistance</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- AEO & Voice Search FAQ Section (Accordion Cards) -->
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="text-xs font-black uppercase text-amber-800 tracking-widest">Got Questions?</span>
-      <h2 class="text-3xl font-black text-slate-900 mt-2">Frequently Asked Questions</h2>
+  <!-- 9. FAQ SECTION (Categorized Accordions) -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 border-t border-slate-200">
+    <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-50 border border-amber-200 px-3.5 py-1 rounded-full">
+        CLEAR ANSWERS
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Frequently Asked Questions</h2>
       <p class="text-xs sm:text-sm text-slate-600 mt-2">
-        Everything you need to know about Teepul curtains, materials, sizes, and Panipat mill-direct delivery.
+        Everything you need to know about sizing, fabric care, wash, delivery, and returns.
       </p>
     </div>
 
@@ -706,14 +656,14 @@ const ugcVideos = [
         <details class="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm transition hover:border-amber-400">
           <summary class="flex justify-between items-center cursor-pointer font-bold text-slate-900 text-sm list-none select-none">
             <span class="flex items-center gap-2.5">
-              <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs flex items-center justify-center shrink-0">
-                {index + 1}
+              <span class="text-[10px] font-black uppercase text-amber-900 bg-amber-100 px-2 py-0.5 rounded shrink-0">
+                {faq.category}
               </span>
-              {faq.question}
+              <span>{faq.question}</span>
             </span>
             <span class="transition-transform group-open:rotate-180 text-slate-400 text-xs shrink-0 ml-2">▼</span>
           </summary>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-3 pl-8 border-t border-slate-100 pt-3">
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-3 pl-2 border-t border-slate-100 pt-3">
             {faq.answer}
           </p>
         </details>
@@ -721,44 +671,31 @@ const ugcVideos = [
     </div>
   </section>
 
-  <!-- Latest Editorial Posts -->
-  {posts && posts.length > 0 && (
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="flex items-baseline justify-between mb-8 pb-4 border-b border-slate-200">
-        <div>
-          <span class="text-xs font-extrabold text-amber-800 uppercase tracking-widest">Home Decor Guide</span>
-          <h2 class="text-2xl font-black text-slate-900 mt-1">Teepul Interior Design Blog</h2>
-        </div>
-        <a href="/blog" class="text-xs font-bold text-amber-800 hover:underline">Read All Guides &rarr;</a>
+  <!-- 10. FINAL CTA SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-12">
+    <div class="bg-gradient-to-br from-amber-950 via-slate-900 to-amber-950 text-white rounded-3xl p-8 sm:p-14 text-center space-y-6 shadow-2xl border border-amber-500/20 relative overflow-hidden">
+      <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
+        <span>🏡 DIRECT PANIPAT FACTORY DISPATCH</span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <article class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div class="space-y-3">
-              <div class="flex items-center gap-2">
-                {post.categories?.map((c: any) => (
-                  <span class="bg-amber-50 text-amber-900 font-extrabold px-2.5 py-0.5 rounded text-[10px]">
-                    {c.category?.name}
-                  </span>
-                ))}
-              </div>
-              <h3 class="font-bold text-base text-slate-900 leading-snug">
-                <a href={`/blog/${post.slug}`} class="hover:text-amber-800 transition">
-                  {post.title}
-                </a>
-              </h3>
-              <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed">{post.excerpt}</p>
-            </div>
+      <h2 class="text-3xl sm:text-5xl font-black text-white max-w-3xl mx-auto leading-tight">
+        Ready to Upgrade Your Room?
+      </h2>
 
-            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span class="font-semibold text-slate-800">By {post.author?.displayName || 'Teepul Editor'}</span>
-              <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString()}</span>
-            </div>
-          </article>
-        ))}
+      <p class="text-slate-300 text-xs sm:text-base max-w-xl mx-auto leading-relaxed">
+        Bring home luxury thermal blackout drapes and sheer curtains at mill-direct prices from ₹469. Free Express Shipping &amp; 7-Day Returns.
+      </p>
+
+      <div class="pt-2">
+        <a
+          href="/products"
+          class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-sm sm:text-base px-9 py-4 rounded-full shadow-2xl hover:-translate-y-1 transition-all"
+        >
+          <span>🛍️ Shop Curtains Now</span>
+          <span>&rarr;</span>
+        </a>
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 
 </PublicLayout>
