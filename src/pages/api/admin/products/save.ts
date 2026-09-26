@@ -131,79 +131,85 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     imagesArray = ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80'];
   }
 
-  // Colors handling: reconcile with existing colors and filter removed images
-  let existingColors: any[] = [];
-  if (existingProduct?.colorsJson) {
-    try {
-      const parsed = JSON.parse(existingProduct.colorsJson);
-      if (Array.isArray(parsed)) existingColors = parsed;
-    } catch (e) {}
-  }
-
+  // Colors & Variant Images handling
+  let finalColorsArray: any[] = [];
   const colorsJsonRaw = formData.get('colors_json')?.toString();
   if (colorsJsonRaw) {
     try {
       const parsed = JSON.parse(colorsJsonRaw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        existingColors = parsed;
-      }
-    } catch (e) {}
-  }
-
-  const colorsRaw = formData.get('colors')?.toString() || '';
-  const colorNames = colorsRaw.split(',').map((c) => c.trim()).filter(Boolean);
-
-  let finalColorsArray: any[] = [];
-  const currentImagesSet = new Set(imagesArray);
-
-  if (existingColors.length > 0) {
-    // Reconcile with existing colors: keep hex, filter removed images
-    finalColorsArray = existingColors.map((c: any) => {
-      let cImages = Array.isArray(c.images) ? c.images : [];
-      // Filter out any image that was removed by the user in imagesArray
-      if (imagesArray.length > 0) {
-        cImages = cImages.filter((img: string) => currentImagesSet.has(img));
-      }
-      return {
-        name: c.name || 'Color',
-        hex: c.hex || '#d4af37',
-        images: cImages.length > 0 ? cImages : (imagesArray.length > 0 ? [...imagesArray] : []),
-      };
-    });
-
-    // If user added new color names in the input, add them
-    const existingNames = new Set(existingColors.map((c: any) => (c.name || '').toLowerCase()));
-    for (const cName of colorNames) {
-      if (!existingNames.has(cName.toLowerCase())) {
-        finalColorsArray.push({
-          name: cName,
-          hex: '#d4af37',
-          images: [...imagesArray],
+        finalColorsArray = parsed.map((c: any) => {
+          let cImages: string[] = [];
+          if (Array.isArray(c.images)) {
+            cImages = c.images.map((img: any) => (typeof img === 'string' ? img.trim() : '')).filter(Boolean);
+          } else if (typeof c.images === 'string') {
+            cImages = c.images.split('\n').map((img: string) => img.trim()).filter(Boolean);
+          }
+          return {
+            name: (c.name || 'Color').toString().trim(),
+            hex: (c.hex || '#d4af37').toString().trim(),
+            images: cImages,
+          };
         });
       }
+    } catch (e) {
+      console.error('Error parsing colors_json:', e);
     }
-  } else if (colorNames.length > 0) {
-    finalColorsArray = colorNames.map((cName) => ({
-      name: cName,
-      hex: '#d4af37',
-      images: [...imagesArray],
-    }));
-  } else {
-    finalColorsArray = [
-      {
-        name: 'Standard',
-        hex: '#d4af37',
-        images: [...imagesArray],
-      },
-    ];
   }
 
-  // Ensure first color has images if imagesArray is populated
-  if (finalColorsArray.length > 0 && imagesArray.length > 0) {
-    if (!finalColorsArray[0].images || finalColorsArray[0].images.length === 0) {
-      finalColorsArray[0].images = [...imagesArray];
+  // If no structured colors_json provided, fallback to comma-separated colors
+  if (finalColorsArray.length === 0) {
+    const colorsRaw = formData.get('colors')?.toString() || '';
+    const colorNames = colorsRaw.split(',').map((c) => c.trim()).filter(Boolean);
+
+    if (existingProduct?.colorsJson) {
+      try {
+        const parsed = JSON.parse(existingProduct.colorsJson);
+        if (Array.isArray(parsed)) finalColorsArray = parsed;
+      } catch (e) {}
+    }
+
+    if (finalColorsArray.length === 0 && colorNames.length > 0) {
+      finalColorsArray = colorNames.map((cName) => ({
+        name: cName,
+        hex: '#d4af37',
+        images: [...imagesArray],
+      }));
+    } else if (finalColorsArray.length === 0) {
+      finalColorsArray = [
+        {
+          name: 'Standard',
+          hex: '#d4af37',
+          images: [...imagesArray],
+        },
+      ];
     }
   }
+
+  // Aggregate all variant images into imagesArray if imagesArray is empty
+  const variantAllImages: string[] = [];
+  finalColorsArray.forEach((c) => {
+    if (Array.isArray(c.images)) {
+      c.images.forEach((img: string) => {
+        if (img && !variantAllImages.includes(img)) variantAllImages.push(img);
+      });
+    }
+  });
+
+  if (imagesArray.length === 0 && variantAllImages.length > 0) {
+    imagesArray = [...variantAllImages];
+  } else if (variantAllImages.length > 0) {
+    // Ensure variant images are also present in imagesArray
+    variantAllImages.forEach((vImg) => {
+      if (!imagesArray.includes(vImg)) imagesArray.push(vImg);
+    });
+  }
+
+  // If a color variant has empty images, give it imagesArray as default
+  finalColorsArray = finalColorsArray.map((c) => ({
+    ...c,
+    images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : [...imagesArray],
+  }));
 
   let sizesArray: { name: string; price: number; originalPrice?: number; stock?: number; inStock?: boolean }[] = [];
 

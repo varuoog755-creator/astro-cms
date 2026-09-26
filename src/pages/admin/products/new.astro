@@ -8,6 +8,7 @@ const error = Astro.url.searchParams.get('error');
 
 let product: any = null;
 let productSizes: { name: string; price: number; originalPrice?: number; stock?: number; inStock?: boolean }[] = [];
+let productColors: { name: string; hex: string; images: string[] }[] = [];
 
 if (id) {
   let existing: any = null;
@@ -69,25 +70,31 @@ if (id) {
     const imagesArr = parseJson(existing.imagesJson);
     const featuresArr = parseJson(existing.featuresJson);
 
+    if (Array.isArray(colorsArr) && colorsArr.length > 0) {
+      productColors = colorsArr.map((c: any) => ({
+        name: typeof c === 'string' ? c : (c.name || 'Color'),
+        hex: typeof c === 'string' ? '#d4af37' : (c.hex || '#d4af37'),
+        images: Array.isArray(c.images) ? c.images.map((img: any) => typeof img === 'string' ? img.trim() : '').filter(Boolean) : []
+      }));
+    }
+
     const allUniqueImages: string[] = [];
     imagesArr.forEach((img: any) => {
       if (typeof img === 'string' && img.trim() && !allUniqueImages.includes(img.trim())) {
         allUniqueImages.push(img.trim());
       }
     });
-    colorsArr.forEach((c: any) => {
-      if (c && Array.isArray(c.images)) {
-        c.images.forEach((img: any) => {
-          if (typeof img === 'string' && img.trim() && !allUniqueImages.includes(img.trim())) {
-            allUniqueImages.push(img.trim());
-          }
-        });
-      }
+    productColors.forEach((c) => {
+      c.images.forEach((img) => {
+        if (img && !allUniqueImages.includes(img)) {
+          allUniqueImages.push(img);
+        }
+      });
     });
 
     product = {
       ...existing,
-      colors: colorsArr.map((c: any) => typeof c === 'string' ? c : c.name).join(', '),
+      colors: productColors.map(c => c.name).join(', '),
       sizes: productSizes.map(s => `${s.name}:${s.price}`).join(', '),
       images: allUniqueImages.join('\n'),
       features: featuresArr.join(', '),
@@ -98,8 +105,16 @@ if (id) {
 if (!productSizes.length) {
   productSizes = [
     { name: '5 Feet (Window)', price: 459, originalPrice: 899, stock: 50, inStock: true },
-        { name: '7 Feet (Door)', price: 549, originalPrice: 1099, stock: 100, inStock: true },
+    { name: '7 Feet (Door)', price: 549, originalPrice: 1099, stock: 100, inStock: true },
     { name: '9 Feet (Long Door)', price: 579, originalPrice: 1199, stock: 40, inStock: true },
+  ];
+}
+
+if (!productColors.length) {
+  productColors = [
+    { name: 'Coffee Brown & Beige', hex: '#4e342e', images: [] },
+    { name: 'Wine Maroon & Cream', hex: '#722f37', images: [] },
+    { name: 'Royal Blue & Silver', hex: '#1e3a8a', images: [] },
   ];
 }
 ---
@@ -111,7 +126,7 @@ if (!productSizes.length) {
         <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
           {product ? `Edit ${product.name}` : 'Add New Product'}
         </h1>
-        <p class="text-sm text-slate-500 mt-1">List new door curtains, window drapes, lights, and home decor items.</p>
+        <p class="text-sm text-slate-500 mt-1">List new door curtains, window drapes, color variants, photos, and size pricing.</p>
       </div>
       <div class="flex items-center gap-2">
         {product && (
@@ -141,7 +156,8 @@ if (!productSizes.length) {
     <form action="/api/admin/products/save" method="POST" class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
       {product && <input type="hidden" name="id" value={product.id} />}
       {product && <input type="hidden" name="slug" value={product.slug} />}
-      {product && <input type="hidden" name="colors_json" id="colors_json_input" value={product.colorsJson || ''} />}
+      <input type="hidden" name="colors_json" id="colors_json_input" value="" />
+      <input type="hidden" name="colors" id="colors_fallback_input" value="" />
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -151,7 +167,7 @@ if (!productSizes.length) {
             name="name"
             required
             value={product?.name || ''}
-            placeholder="e.g. Teepul Royal Velvet Door Curtain"
+            placeholder="e.g. Modern Abstract Wave Printed Eyelet Curtains (Pack of 2)"
             class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -161,6 +177,7 @@ if (!productSizes.length) {
           <select name="category" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-blue-500">
             <option value="Door Curtains" selected={!product?.category || product?.category === 'Door Curtains'}>Door Curtains (7ft / 9ft)</option>
             <option value="Window Curtains" selected={product?.category === 'Window Curtains'}>Window Curtains (5ft)</option>
+            <option value="Printed Curtains" selected={product?.category === 'Printed Curtains'}>Printed & Designer Curtains</option>
             <option value="Long Door Curtains" selected={product?.category === 'Long Door Curtains'}>Long Door Curtains (9 Feet)</option>
             <option value="Blackout Curtains" selected={product?.category === 'Blackout Curtains'}>Thermal Blackout Curtains</option>
             <option value="Sheer Curtains" selected={product?.category === 'Sheer Curtains'}>Sheer & Net Curtains</option>
@@ -188,7 +205,7 @@ if (!productSizes.length) {
             name="price"
             required
             value={product?.price || ''}
-            placeholder="1899"
+            placeholder="479"
             class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -200,7 +217,7 @@ if (!productSizes.length) {
             step="0.01"
             name="originalPrice"
             value={product?.originalPrice || ''}
-            placeholder="2999"
+            placeholder="958"
             class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -231,138 +248,219 @@ if (!productSizes.length) {
         >{product?.description || ''}</textarea>
       </div>
 
-      <div class="space-y-6">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Colors (comma separated)</label>
-          <input
-            type="text"
-            name="colors"
-            value={product?.colors || 'Royal Cream Ivory, Soft Champagne Gold, Warm Beige'}
-            class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-3"
-          />
+      <!-- 🎨 COLOR VARIANTS & VARIANT PHOTOS MANAGER -->
+      <div class="bg-amber-50/50 border border-amber-200/80 rounded-2xl p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/60 pb-3">
+          <div>
+            <h3 class="text-xs font-bold text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🎨</span> Color Variants & Specific Variant Photos
+            </h3>
+            <p class="text-[11px] text-amber-900/80 mt-0.5">
+              Har color variant ka alag Photo Gallery set karein. Customer jis color par click karega website par wahi product photos dynamic switch honge!
+            </p>
+          </div>
+          <button
+            type="button"
+            id="add-color-variant-btn"
+            class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition flex items-center gap-1 self-start sm:self-auto cursor-pointer shadow-xs"
+          >
+            <span>+ Add Color Variant</span>
+          </button>
         </div>
 
-        <!-- Curtain Size & Price Manager -->
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <span>📏</span> Curtain Sizes & Length-wise Pricing (₹)
-              </h3>
-              <p class="text-[11px] text-slate-500 mt-0.5">
-                Window (5ft) aur Door (7ft, 9ft) curtains ke alag-alag selling price set karein. Customer jis size par click karega website wahi price dynamic dikhayegi.
-              </p>
+        <div id="color-variants-container" class="space-y-4">
+          {productColors.map((col, cIdx) => (
+            <div class="color-variant-card bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3" data-index={cIdx}>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <!-- Color Name -->
+                <div class="flex-1">
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Color Name</label>
+                  <input
+                    type="text"
+                    value={col.name}
+                    placeholder="e.g. Wine Maroon & Cream"
+                    required
+                    class="variant-name-input w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 focus:ring-1 focus:ring-amber-500"
+                  />
+                </div>
+
+                <!-- Color Swatch / Hex -->
+                <div class="w-full sm:w-48">
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Color Swatch (Hex)</label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={col.hex.startsWith('#') ? col.hex : '#d4af37'}
+                      class="variant-color-picker w-9 h-9 p-0.5 border border-slate-300 rounded-lg cursor-pointer bg-white"
+                    />
+                    <input
+                      type="text"
+                      value={col.hex}
+                      placeholder="#722f37"
+                      class="variant-hex-input w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-mono text-slate-800 focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+
+                <!-- Delete Variant Button -->
+                <div class="sm:pt-4">
+                  <button
+                    type="button"
+                    class="remove-color-variant-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200 text-xs font-bold transition cursor-pointer flex items-center gap-1"
+                    title="Delete this color variant"
+                  >
+                    <span>🗑️</span> Remove
+                  </button>
+                </div>
+              </div>
+
+              <!-- Variant Specific Photos -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-bold text-slate-600 uppercase">
+                    Photos for this Color (one URL per line)
+                  </label>
+                  <span class="variant-photo-count text-[9px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">
+                    {col.images.length} Photo{col.images.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <textarea
+                  rows="2"
+                  placeholder="https://images.meesho.com/images/products/.../photo_512.jpg"
+                  class="variant-images-textarea w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-[11px] font-mono focus:ring-1 focus:ring-amber-500 leading-relaxed"
+                >{col.images.join('\n')}</textarea>
+
+                <!-- Live Thumbnails for this Variant -->
+                <div class="variant-thumbnails-grid flex flex-wrap gap-2 mt-2 pt-2 border-t border-slate-100 items-center">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
             </div>
-            <button
-              type="button"
-              id="add-size-row-btn"
-              class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 self-start sm:self-auto cursor-pointer"
-            >
-              <span>+ Add Size Option</span>
-            </button>
-          </div>
-
-          <input type="hidden" name="sizes_json" id="sizes_json_input" value="" />
-          <input type="hidden" name="sizes" id="sizes_fallback_input" value="" />
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr class="border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                  <th class="py-2 px-3">Size / Length (e.g. 5 Feet)</th>
-                  <th class="py-2 px-3">Selling Price (₹)</th>
-                  <th class="py-2 px-3">MRP / Cut Price (₹)</th>
-                  <th class="py-2 px-3">Stock Units & Status</th>
-                  <th class="py-2 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody id="sizes-table-body" class="divide-y divide-slate-100">
-                {productSizes.map((sz) => (
-                  <tr class="size-row">
-                    <td class="py-2 px-2">
-                      <input
-                        type="text"
-                        name="size_name"
-                        value={sz.name}
-                        placeholder="e.g. 7 Feet (Door)"
-                        required
-                        class="size-name-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-semibold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
-                      />
-                    </td>
-                    <td class="py-2 px-2">
-                      <input
-                        type="number"
-                        name="size_price"
-                        value={sz.price}
-                        step="0.01"
-                        placeholder="599"
-                        required
-                        class="size-price-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
-                      />
-                    </td>
-                    <td class="py-2 px-2">
-                      <input
-                        type="number"
-                        name="size_original_price"
-                        value={sz.originalPrice || ''}
-                        step="0.01"
-                        placeholder="999"
-                        class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500"
-                      />
-                    </td>
-                    <td class="py-2 px-2">
-                      <div class="flex items-center gap-1.5">
-                        <input
-                          type="number"
-                          name="size_stock"
-                          value={sz.stock !== undefined ? sz.stock : 50}
-                          min="0"
-                          placeholder="Qty"
-                          title="Stock Quantity in Units"
-                          class="size-stock-input w-16 bg-white border border-slate-300 rounded-lg px-2.5 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
-                        />
-                        <select
-                          name="size_in_stock"
-                          class="size-instock-select bg-white border border-slate-300 rounded-lg px-2 py-2 text-[11px] font-bold text-slate-700 focus:ring-1 focus:ring-blue-500 cursor-pointer"
-                        >
-                          <option value="true" selected={sz.inStock !== false}>✓ In Stock</option>
-                          <option value="false" selected={sz.inStock === false}>✕ Out of Stock</option>
-                        </select>
-                      </div>
-                    </td>
-                    <td class="py-2 px-2 text-right">
-                      <button
-                        type="button"
-                        class="remove-size-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-1.5 rounded-md transition font-bold cursor-pointer"
-                        title="Delete Size"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="flex items-center gap-2 pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
-            <span class="font-bold">Quick Presets:</span>
-            <button
-              type="button"
-              id="preset-curtains-btn"
-              class="text-blue-600 hover:underline font-semibold bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-xs cursor-pointer"
-            >
-              Curtain Standard (5ft: ₹459, 7ft: ₹549, 9ft: ₹579)
-            </button>
-          </div>
+          ))}
         </div>
       </div>
 
+      <!-- Curtain Size & Price Manager -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <span>📏</span> Curtain Sizes & Length-wise Pricing (₹)
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-0.5">
+              Window (5ft) aur Door (7ft, 9ft) curtains ke alag-alag selling price set karein. Customer jis size par click karega website wahi price dynamic dikhayegi.
+            </p>
+          </div>
+          <button
+            type="button"
+            id="add-size-row-btn"
+            class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+          >
+            <span>+ Add Size Option</span>
+          </button>
+        </div>
+
+        <input type="hidden" name="sizes_json" id="sizes_json_input" value="" />
+        <input type="hidden" name="sizes" id="sizes_fallback_input" value="" />
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+                <th class="py-2 px-3">Size / Length (e.g. 5 Feet)</th>
+                <th class="py-2 px-3">Selling Price (₹)</th>
+                <th class="py-2 px-3">MRP / Cut Price (₹)</th>
+                <th class="py-2 px-3">Stock Units & Status</th>
+                <th class="py-2 px-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="sizes-table-body" class="divide-y divide-slate-100">
+              {productSizes.map((sz) => (
+                <tr class="size-row">
+                  <td class="py-2 px-2">
+                    <input
+                      type="text"
+                      name="size_name"
+                      value={sz.name}
+                      placeholder="e.g. 7 Feet (Door)"
+                      required
+                      class="size-name-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-semibold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+                    />
+                  </td>
+                  <td class="py-2 px-2">
+                    <input
+                      type="number"
+                      name="size_price"
+                      value={sz.price}
+                      step="0.01"
+                      placeholder="599"
+                      required
+                      class="size-price-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+                    />
+                  </td>
+                  <td class="py-2 px-2">
+                    <input
+                      type="number"
+                      name="size_original_price"
+                      value={sz.originalPrice || ''}
+                      step="0.01"
+                      placeholder="999"
+                      class="size-origprice-input w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-600 text-xs focus:ring-1 focus:ring-blue-500"
+                    />
+                  </td>
+                  <td class="py-2 px-2">
+                    <div class="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        name="size_stock"
+                        value={sz.stock !== undefined ? sz.stock : 50}
+                        min="0"
+                        placeholder="Qty"
+                        title="Stock Quantity in Units"
+                        class="size-stock-input w-16 bg-white border border-slate-300 rounded-lg px-2.5 py-2 font-bold text-slate-900 text-xs focus:ring-1 focus:ring-blue-500"
+                      />
+                      <select
+                        name="size_in_stock"
+                        class="size-instock-select bg-white border border-slate-300 rounded-lg px-2 py-2 text-[11px] font-bold text-slate-700 focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                      >
+                        <option value="true" selected={sz.inStock !== false}>✓ In Stock</option>
+                        <option value="false" selected={sz.inStock === false}>✕ Out of Stock</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td class="py-2 px-2 text-right">
+                    <button
+                      type="button"
+                      class="remove-size-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-1.5 rounded-md transition font-bold cursor-pointer"
+                      title="Delete Size"
+                    >
+                      ✕
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
+          <span class="font-bold">Quick Presets:</span>
+          <button
+            type="button"
+            id="preset-curtains-btn"
+            class="text-blue-600 hover:underline font-semibold bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-xs cursor-pointer"
+          >
+            Curtain Standard (5ft: ₹459, 7ft: ₹549, 9ft: ₹579)
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Photo Gallery -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Product Photos (one URL per line)</label>
-            <p class="text-[11px] text-slate-500 mt-0.5">Delete any URL line below or click &times; on the photo preview to remove it from the product gallery.</p>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">All Product Photos (General Gallery)</label>
+            <p class="text-[11px] text-slate-500 mt-0.5">Automatically synced with color variants above, or paste general photos here.</p>
           </div>
           <span id="photo-count-badge" class="text-[10px] font-black bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full border border-slate-200">
             0 Photos
@@ -372,7 +470,7 @@ if (!productSizes.length) {
         <textarea
           id="product-images-textarea"
           name="images"
-          rows="5"
+          rows="4"
           placeholder="https://images.unsplash.com/photo-1513694203232-719a280e022f"
           class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono focus:ring-2 focus:ring-blue-500 leading-relaxed"
         >{product?.images || ''}</textarea>
@@ -418,6 +516,194 @@ if (!productSizes.length) {
 
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
+      // 1. Color Variants Manager
+      const colorContainer = document.getElementById('color-variants-container');
+      const addColorBtn = document.getElementById('add-color-variant-btn');
+      const colorsJsonInput = document.getElementById('colors_json_input');
+      const colorsFallbackInput = document.getElementById('colors_fallback_input');
+      const mainImagesTextarea = document.getElementById('product-images-textarea');
+
+      function syncColors() {
+        const cards = document.querySelectorAll('.color-variant-card');
+        const colorList = [];
+        const fallbackList = [];
+        const allVariantImages = [];
+
+        cards.forEach((card) => {
+          const nameInput = card.querySelector('.variant-name-input');
+          const hexInput = card.querySelector('.variant-hex-input');
+          const pickerInput = card.querySelector('.variant-color-picker');
+          const imagesTextarea = card.querySelector('.variant-images-textarea');
+          const countBadge = card.querySelector('.variant-photo-count');
+          const thumbsGrid = card.querySelector('.variant-thumbnails-grid');
+
+          const name = nameInput ? nameInput.value.trim() : '';
+          const hex = hexInput ? hexInput.value.trim() : (pickerInput ? pickerInput.value : '#d4af37');
+          const rawImages = imagesTextarea ? imagesTextarea.value.split('\n').map(l => l.trim()).filter(Boolean) : [];
+
+          if (countBadge) {
+            countBadge.innerText = `${rawImages.length} Photo${rawImages.length === 1 ? '' : 's'}`;
+          }
+
+          // Render live thumbnails for this variant
+          if (thumbsGrid) {
+            thumbsGrid.innerHTML = '';
+            if (rawImages.length === 0) {
+              thumbsGrid.innerHTML = '<span class="text-[10px] text-slate-400 italic">No photos for this color. Paste image URLs above.</span>';
+            } else {
+              rawImages.forEach((imgUrl, imgIdx) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'relative group w-14 h-14 rounded-lg overflow-hidden border border-slate-300 bg-white flex-shrink-0 shadow-2xs';
+
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.className = 'w-full h-full object-cover';
+                img.onerror = () => {
+                  img.style.display = 'none';
+                  thumb.className += ' flex items-center justify-center text-[8px] text-rose-500 font-bold p-0.5 text-center';
+                  thumb.innerText = 'Broken URL';
+                };
+
+                const delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.className = 'absolute top-0.5 right-0.5 w-4 h-4 bg-rose-600 hover:bg-rose-700 text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-xs cursor-pointer';
+                delBtn.innerHTML = '&times;';
+                delBtn.title = 'Delete photo from this variant';
+                delBtn.onclick = (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  rawImages.splice(imgIdx, 1);
+                  if (imagesTextarea) imagesTextarea.value = rawImages.join('\n');
+                  syncColors();
+                };
+
+                thumb.appendChild(img);
+                thumb.appendChild(delBtn);
+                thumbsGrid.appendChild(thumb);
+              });
+            }
+          }
+
+          if (name) {
+            colorList.push({ name, hex: hex || '#d4af37', images: rawImages });
+            fallbackList.push(name);
+            rawImages.forEach(img => {
+              if (img && !allVariantImages.includes(img)) allVariantImages.push(img);
+            });
+          }
+        });
+
+        if (colorsJsonInput) colorsJsonInput.value = JSON.stringify(colorList);
+        if (colorsFallbackInput) colorsFallbackInput.value = fallbackList.join(', ');
+
+        // Sync main images textarea if needed
+        if (mainImagesTextarea && allVariantImages.length > 0) {
+          const currentMain = mainImagesTextarea.value.split('\n').map(l => l.trim()).filter(Boolean);
+          allVariantImages.forEach(img => {
+            if (!currentMain.includes(img)) currentMain.push(img);
+          });
+          mainImagesTextarea.value = currentMain.join('\n');
+          renderPhotoPreviews();
+        }
+      }
+
+      function attachColorCardListeners(card) {
+        const nameInput = card.querySelector('.variant-name-input');
+        const hexInput = card.querySelector('.variant-hex-input');
+        const pickerInput = card.querySelector('.variant-color-picker');
+        const imagesTextarea = card.querySelector('.variant-images-textarea');
+        const removeBtn = card.querySelector('.remove-color-variant-btn');
+
+        if (pickerInput && hexInput) {
+          pickerInput.addEventListener('input', () => {
+            hexInput.value = pickerInput.value;
+            syncColors();
+          });
+          hexInput.addEventListener('input', () => {
+            if (hexInput.value.startsWith('#') && hexInput.value.length === 7) {
+              pickerInput.value = hexInput.value;
+            }
+            syncColors();
+          });
+        }
+
+        nameInput?.addEventListener('input', syncColors);
+        imagesTextarea?.addEventListener('input', syncColors);
+
+        if (removeBtn) {
+          removeBtn.addEventListener('click', () => {
+            if (document.querySelectorAll('.color-variant-card').length > 1) {
+              card.remove();
+              syncColors();
+            } else {
+              alert('Product must have at least 1 color variant.');
+            }
+          });
+        }
+      }
+
+      document.querySelectorAll('.color-variant-card').forEach(attachColorCardListeners);
+
+      addColorBtn?.addEventListener('click', () => {
+        const div = document.createElement('div');
+        div.className = 'color-variant-card bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3';
+        div.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex-1">
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Color Name</label>
+              <input
+                type="text"
+                value="New Color"
+                placeholder="e.g. Royal Maroon & Cream"
+                required
+                class="variant-name-input w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 focus:ring-1 focus:ring-amber-500"
+              />
+            </div>
+            <div class="w-full sm:w-48">
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Color Swatch (Hex)</label>
+              <div class="flex items-center gap-2">
+                <input
+                  type="color"
+                  value="#722f37"
+                  class="variant-color-picker w-9 h-9 p-0.5 border border-slate-300 rounded-lg cursor-pointer bg-white"
+                />
+                <input
+                  type="text"
+                  value="#722f37"
+                  placeholder="#722f37"
+                  class="variant-hex-input w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-mono text-slate-800 focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
+            </div>
+            <div class="sm:pt-4">
+              <button
+                type="button"
+                class="remove-color-variant-btn text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200 text-xs font-bold transition cursor-pointer flex items-center gap-1"
+                title="Delete this color variant"
+              >
+                <span>🗑️</span> Remove
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[10px] font-bold text-slate-600 uppercase">Photos for this Color (one URL per line)</label>
+              <span class="variant-photo-count text-[9px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">0 Photos</span>
+            </div>
+            <textarea
+              rows="2"
+              placeholder="https://images.meesho.com/images/products/.../photo_512.jpg"
+              class="variant-images-textarea w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-[11px] font-mono focus:ring-1 focus:ring-amber-500 leading-relaxed"
+            ></textarea>
+            <div class="variant-thumbnails-grid flex flex-wrap gap-2 mt-2 pt-2 border-t border-slate-100 items-center"></div>
+          </div>
+        `;
+        colorContainer.appendChild(div);
+        attachColorCardListeners(div);
+        syncColors();
+      });
+
+      // 2. Size Manager
       const tableBody = document.getElementById('sizes-table-body');
       const addBtn = document.getElementById('add-size-row-btn');
       const presetBtn = document.getElementById('preset-curtains-btn');
@@ -542,7 +828,7 @@ if (!productSizes.length) {
       presetBtn?.addEventListener('click', () => {
         const presets = [
           { name: '5 Feet (Window)', price: 459, orig: 899, stock: 50 },
-                    { name: '7 Feet (Door)', price: 549, orig: 1099, stock: 100 },
+          { name: '7 Feet (Door)', price: 549, orig: 1099, stock: 100 },
           { name: '9 Feet (Long Door)', price: 579, orig: 1199, stock: 40 },
         ];
         tableBody.innerHTML = '';
@@ -580,6 +866,7 @@ if (!productSizes.length) {
 
       form?.addEventListener('submit', () => {
         syncSizes();
+        syncColors();
       });
 
       async function executeDelete(btn) {
@@ -625,14 +912,13 @@ if (!productSizes.length) {
         topDeleteBtn.addEventListener('click', () => executeDelete(topDeleteBtn));
       }
 
-      // Visual Photo Previews & 1-Click Remove Logic
-      const imagesTextarea = document.getElementById('product-images-textarea');
+      // Visual Photo Previews & 1-Click Remove Logic for General Gallery
       const previewContainer = document.getElementById('image-thumbnails-preview');
       const photoBadge = document.getElementById('photo-count-badge');
 
       function renderPhotoPreviews() {
-        if (!imagesTextarea || !previewContainer) return;
-        const lines = imagesTextarea.value.split('\n').map(l => l.trim()).filter(Boolean);
+        if (!mainImagesTextarea || !previewContainer) return;
+        const lines = mainImagesTextarea.value.split('\n').map(l => l.trim()).filter(Boolean);
         if (photoBadge) photoBadge.innerText = `${lines.length} Photo${lines.length === 1 ? '' : 's'}`;
         previewContainer.innerHTML = '';
         if (lines.length === 0) {
@@ -663,7 +949,7 @@ if (!productSizes.length) {
             e.preventDefault();
             e.stopPropagation();
             lines.splice(idx, 1);
-            imagesTextarea.value = lines.join('\n');
+            mainImagesTextarea.value = lines.join('\n');
             renderPhotoPreviews();
           };
 
@@ -678,12 +964,13 @@ if (!productSizes.length) {
         });
       }
 
-      if (imagesTextarea) {
-        imagesTextarea.addEventListener('input', renderPhotoPreviews);
+      if (mainImagesTextarea) {
+        mainImagesTextarea.addEventListener('input', renderPhotoPreviews);
         renderPhotoPreviews();
       }
 
       syncSizes();
+      syncColors();
     });
   </script>
 </AdminLayout>
