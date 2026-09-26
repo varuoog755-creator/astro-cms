@@ -1184,9 +1184,9 @@ export const PRODUCTS_CATALOG: Product[] = [
   {
     "id": "meesho-f88u0z",
     "slug": "modern-abstract-printed-eyelet-curtains-for-living-room-pack-of-2-f88u0z",
-    "name": "Modern Abstract Printed Eyelet Curtains for Living Room (Pack of 2)",
-    "tagline": "Vibrant geometric printed drape with 90% light diffusion and graceful pleating.",
-    "description": "Product DetailsName : Divine's Polyester Printed Panel Curtains for Living Room Window Door and Long Door, Pack of 2 PcsMaterial : PolyesterPrint or Pattern Type : AbstrastLength : DoorNet Quantity (N) : 2Sizes : 5 Feet (Length Size: 5 ft, Width Size: 4 ft)7 Feet (Length Size : 7 ft, Width Size: 4 ft)9 Feet (Length Size : 9 ft, Width Size: 4 ft) Readymade Curtains Ideal For Living Room Or Bedroom. Vibrant Designing in Rich and Sharp Colors. Made of Superior Fabrics with Expert Workmanship with 8 Eyelets for Easy Hanging.Beautiful for Your Home and for Gifting.This Room transparency curtain can views out up to 90%. Thus illuminates the room.Country of Origin : IndiaMore Information",
+    "name": "Modern Abstract Wave Printed Eyelet Curtains for Living Room (Pack of 2)",
+    "tagline": "Geometric wave drape with superior light filtering, anti-rust grommets & graceful pleating.",
+    "description": "Product Details\nName: Divine's Polyester Printed Panel Curtains for Living Room Window, Door and Long Door (Pack of 2 Pcs)\nMaterial: 100% Heavyweight Polyester\nPrint or Pattern Type: Modern Abstract Geometric Wave\nSet: Pack of 2 Panels\nSizes: 5 Feet (Window: 5 ft x 4 ft), 7 Feet (Door: 7 ft x 4 ft), 9 Feet (Long Door: 9 ft x 4 ft)\n\nReadymade curtains ideal for living room or bedroom. Vibrant designing in rich and sharp colors. Made of superior fabrics with expert workmanship with 8 pre-fitted eyelets for easy hanging. Beautiful for your home and gifting. Translucency filters direct sunlight and illuminates the room naturally while ensuring complete privacy.\nCountry of Origin: India (Panipat Mill Direct)",
     "price": 479,
     "originalPrice": 958,
     "currency": "₹",
@@ -1197,26 +1197,25 @@ export const PRODUCTS_CATALOG: Product[] = [
     "inStock": true,
     "colors": [
       {
-        "name": "Abstract Blue",
-        "hex": "#1d4ed8",
+        "name": "Coffee Brown & Beige",
+        "hex": "#4e342e",
         "images": [
           "https://images.meesho.com/images/products/920841731/ftnjt_512.jpg",
-          "https://images.meesho.com/images/products/920841731/rhjlp_512.jpg"
+          "https://images.meesho.com/images/products/920841731/rhjlp_512.jpg",
+          "https://images.meesho.com/images/products/920841731/ew4dt_512.jpg"
         ]
       },
       {
-        "name": "Abstract Amber",
-        "hex": "#d97706",
+        "name": "Wine Maroon & Cream",
+        "hex": "#722f37",
         "images": [
-          "https://images.meesho.com/images/products/920841731/ew4dt_512.jpg",
-          "https://images.meesho.com/images/products/920841731/h62jx_512.jpg"
+          "https://images.meesho.com/images/products/920841732/fjjkx_512.jpg"
         ]
       },
       {
-        "name": "Abstract Emerald",
-        "hex": "#047857",
+        "name": "Royal Blue & Silver",
+        "hex": "#1e3a8a",
         "images": [
-          "https://images.meesho.com/images/products/920841732/fjjkx_512.jpg",
           "https://images.meesho.com/images/products/920841733/yjnbi_512.jpg"
         ]
       }
@@ -1252,11 +1251,10 @@ export const PRODUCTS_CATALOG: Product[] = [
     },
     "images": [
       "https://images.meesho.com/images/products/920841731/ftnjt_512.jpg",
-      "https://images.meesho.com/images/products/920841731/rhjlp_512.jpg",
-      "https://images.meesho.com/images/products/920841731/ew4dt_512.jpg",
-      "https://images.meesho.com/images/products/920841731/h62jx_512.jpg",
       "https://images.meesho.com/images/products/920841732/fjjkx_512.jpg",
-      "https://images.meesho.com/images/products/920841733/yjnbi_512.jpg"
+      "https://images.meesho.com/images/products/920841733/yjnbi_512.jpg",
+      "https://images.meesho.com/images/products/920841731/rhjlp_512.jpg",
+      "https://images.meesho.com/images/products/920841731/ew4dt_512.jpg"
     ],
     "features": [
       "Panipat Factory-Direct Weave & Finish",
