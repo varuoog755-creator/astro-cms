@@ -25,6 +25,16 @@
         <span>Panipat Direct · 150 GSM Drapes</span>
       </div>
 
+      <!-- Live Interactive Color Switcher -->
+      <div class="hidden sm:flex items-center gap-1.5 bg-white/90 backdrop-blur-md border border-slate-200 px-3 py-1.5 rounded-full shadow-xs">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-1">Color:</span>
+        <button type="button" class="color-swatch-btn w-5 h-5 rounded-full bg-[#934330] border-2 border-white shadow-xs hover:scale-110 active:scale-95 transition ring-2 ring-amber-800" data-color="#934330" title="Terracotta Rust"></button>
+        <button type="button" class="color-swatch-btn w-5 h-5 rounded-full bg-[#3D5A40] border-2 border-white shadow-xs hover:scale-110 active:scale-95 transition ring-1 ring-slate-300" data-color="#3D5A40" title="Olive Sage"></button>
+        <button type="button" class="color-swatch-btn w-5 h-5 rounded-full bg-[#1E3A5F] border-2 border-white shadow-xs hover:scale-110 active:scale-95 transition ring-1 ring-slate-300" data-color="#1E3A5F" title="Royal Navy"></button>
+        <button type="button" class="color-swatch-btn w-5 h-5 rounded-full bg-[#D2B79B] border-2 border-white shadow-xs hover:scale-110 active:scale-95 transition ring-1 ring-slate-300" data-color="#D2B79B" title="Warm Champagne"></button>
+        <button type="button" class="color-swatch-btn w-5 h-5 rounded-full bg-[#3A3D42] border-2 border-white shadow-xs hover:scale-110 active:scale-95 transition ring-1 ring-slate-300" data-color="#3A3D42" title="Charcoal Slate"></button>
+      </div>
+
       <!-- Play / Replay Animation Pill -->
       <button
         type="button"
@@ -38,7 +48,11 @@
     </div>
 
     <!-- Center-Left Clean Copy & CTA -->
-    <div class="max-w-xl text-left space-y-4 pt-12 sm:pt-16 pointer-events-auto">
+    <div class="max-w-xl text-left space-y-4 pt-10 sm:pt-14 pointer-events-auto">
+      <div class="inline-block bg-white/70 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-200/60 text-xs font-bold text-amber-900 shadow-2xs">
+        🏷️ Factory Direct Starting at ₹499/Pair
+      </div>
+
       <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
         Room ka look <span class="text-amber-800 underline decoration-amber-300 decoration-wavy decoration-2">dull lag raha hai?</span>
       </h1>
@@ -72,9 +86,17 @@
       </div>
     </div>
 
-    <!-- Bottom Minimalist Prompt -->
-    <div class="flex items-center justify-between text-[11px] text-slate-500 font-semibold pointer-events-auto">
-      <span>👆 Click or Drag anywhere to open &amp; close</span>
+    <!-- Bottom Minimalist Prompt & Mobile Swatches -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 font-semibold pointer-events-auto">
+      <div class="flex sm:hidden items-center gap-2 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200 shadow-2xs">
+        <span class="text-[10px] font-bold text-slate-500">Color:</span>
+        <button type="button" class="color-swatch-btn w-4 h-4 rounded-full bg-[#934330] ring-2 ring-amber-800" data-color="#934330"></button>
+        <button type="button" class="color-swatch-btn w-4 h-4 rounded-full bg-[#3D5A40]" data-color="#3D5A40"></button>
+        <button type="button" class="color-swatch-btn w-4 h-4 rounded-full bg-[#1E3A5F]" data-color="#1E3A5F"></button>
+        <button type="button" class="color-swatch-btn w-4 h-4 rounded-full bg-[#D2B79B]" data-color="#D2B79B"></button>
+        <button type="button" class="color-swatch-btn w-4 h-4 rounded-full bg-[#3A3D42]" data-color="#3A3D42"></button>
+      </div>
+      <span>👆 Click or Drag curtains to open &amp; close</span>
       <span class="hidden sm:inline-block">5ft · 7ft · 9ft Standard Sizes</span>
     </div>
 
@@ -98,8 +120,9 @@
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xfaf8f5);
 
+      const isMobile = window.innerWidth < 640;
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
-      camera.position.set(0.6, 0.1, 5.2);
+      camera.position.set(isMobile ? 0 : 0.6, 0.1, isMobile ? 6.2 : 5.2);
 
       const renderer = new THREE.WebGLRenderer({
         canvas,
@@ -207,6 +230,9 @@
       const eyeletRingGeo = new THREE.TorusGeometry(0.062, 0.011, 16, 24);
       const eyeletRingMat = new THREE.MeshStandardMaterial({ color: 0xd6b265, roughness: 0.25, metalness: 0.85 });
 
+      let currentColor = new THREE.Color(0x934330);
+      let targetColor = new THREE.Color(0x934330);
+
       function createCurtainPanel(side: 'left' | 'right') {
         const width = 3.6;
         const height = 5.0;
@@ -232,8 +258,8 @@
         // Elegant Warm Terracotta/Caramel PBR Material
         const mat = new THREE.MeshStandardMaterial({
           map: fabricTex,
-          color: 0x934330, // Rich warm terracotta
-          roughness: 0.88,
+          color: currentColor.clone(),
+          roughness: 0.82,
           metalness: 0.02,
           side: THREE.DoubleSide
         });
@@ -262,6 +288,24 @@
       const rightCurtain = createCurtainPanel('right');
       scene.add(leftCurtain.mesh);
       scene.add(rightCurtain.mesh);
+
+      // Color Swatch Click Handlers
+      const swatchButtons = document.querySelectorAll('.color-swatch-btn');
+      swatchButtons.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const hex = btn.getAttribute('data-color');
+          if (hex) {
+            targetColor = new THREE.Color(hex);
+            swatchButtons.forEach(b => {
+              b.classList.remove('ring-2', 'ring-amber-800');
+              b.classList.add('ring-1', 'ring-slate-300');
+            });
+            btn.classList.remove('ring-1', 'ring-slate-300');
+            btn.classList.add('ring-2', 'ring-amber-800');
+          }
+        });
+      });
 
       // 6. Smooth Video-Like Cinematic Motion
       let openProgress = 0.0;
@@ -312,9 +356,32 @@
 
       // Resize Handler
       window.addEventListener('resize', () => {
+        const mob = window.innerWidth < 640;
         camera.aspect = window.innerWidth / window.innerHeight;
+        camera.position.z = mob ? 6.2 : 5.2;
+        camera.position.x = mob ? 0 : 0.6;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Touch Drag for Mobile
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          startMouseX = e.touches[0].clientX;
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+          const diffX = Math.abs(e.touches[0].clientX - startMouseX);
+          const factor = diffX / (window.innerWidth * 0.4);
+          targetProgress = Math.max(0.05, Math.min(0.92, targetProgress > 0.5 ? 0.85 - factor : 0.05 + factor));
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        isDragging = false;
       });
 
       // 7. 60 FPS Render Loop
@@ -326,15 +393,21 @@
         const delta = clock.getDelta();
         const elapsed = clock.getElapsedTime();
 
-        // Smooth video-like easing
+        // Smooth video-like easing for open/close
         openProgress += (targetProgress - openProgress) * 0.04;
+
+        // Smooth color transition
+        currentColor.lerp(targetColor, 0.08);
+        (leftCurtain.mesh.material as THREE.MeshStandardMaterial).color.copy(currentColor);
+        (rightCurtain.mesh.material as THREE.MeshStandardMaterial).color.copy(currentColor);
 
         // Camera Parallax & Zoom
         mouse.x += (mouse.targetX - mouse.x) * 0.05;
         mouse.y += (mouse.targetY - mouse.y) * 0.05;
-        camera.position.x = 0.6 + mouse.x * 0.3;
-        camera.position.y = 0.1 + mouse.y * 0.15;
-        camera.lookAt(0.2, 0.1, 0);
+        const mob = window.innerWidth < 640;
+        camera.position.x = (mob ? 0 : 0.6) + mouse.x * 0.25;
+        camera.position.y = 0.1 + mouse.y * 0.12;
+        camera.lookAt(mob ? 0 : 0.2, 0.1, 0);
 
         // Update Cloth Physics and Eyelet Rings
         [leftCurtain, rightCurtain].forEach((c) => {
