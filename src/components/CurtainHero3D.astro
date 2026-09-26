@@ -1,89 +1,92 @@
 ---
 ---
 
-<section id="curtain-3d-hero" class="relative w-full h-[85vh] min-h-[600px] max-h-[900px] bg-slate-950 text-white overflow-hidden flex items-center justify-center select-none">
+<section id="curtain-3d-hero" class="relative w-full h-[82vh] min-h-[580px] max-h-[850px] bg-[#FAF8F5] text-slate-900 overflow-hidden flex items-center justify-center select-none border-b border-slate-200/80">
   
   <!-- 1. 3D WebGL Canvas Layer -->
   <div id="three-canvas-container" class="absolute inset-0 z-0 w-full h-full">
     <canvas id="curtain-webgl-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
   </div>
 
-  <!-- Fallback Background for Non-WebGL / Pre-load -->
+  <!-- Fallback Background for Pre-load / Mobile -->
   <div
     id="hero-fallback-bg"
     class="absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000 opacity-0 pointer-events-none"
-    style="background-image: url('/images/3d/window-view.webp');"
+    style="background-image: url('/images/3d/daylight-window.webp');"
   ></div>
 
-  <!-- Subtle Lighting Vignettes (Leaves center clear for 3D focal point) -->
-  <div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/50 pointer-events-none"></div>
-  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/60 via-transparent to-slate-950/60 pointer-events-none"></div>
+  <!-- Soft Ambient Light Vignette for Readability (No dark overlay) -->
+  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-[#FAF8F5]/90 via-[#FAF8F5]/30 to-transparent pointer-events-none"></div>
+  <div class="absolute inset-0 z-[1] bg-gradient-to-t from-[#FAF8F5]/90 via-transparent to-white/40 pointer-events-none"></div>
 
-  <!-- 2. Minimalist Conversion UI (Clean & Non-Intrusive) -->
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex flex-col justify-between py-8 sm:py-12 pointer-events-none">
+  <!-- 2. Minimalist Conversion UI Overlay -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex flex-col justify-between py-6 sm:py-10 pointer-events-none">
     
-    <!-- Top Header Pill -->
+    <!-- Top Minimalist Pill & Interactive Video-Style Controls -->
     <div class="flex items-center justify-between pointer-events-auto">
-      <div class="inline-flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-xl">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Teepul 3D Experience · Panipat Mills</span>
+      <div class="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md border border-slate-200 text-amber-900 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Panipat Direct · 150 GSM Drapes</span>
       </div>
 
-      <!-- Interactive Curtain Toggle Button -->
+      <!-- Play / Replay Animation Pill -->
       <button
         type="button"
         id="toggle-curtain-btn"
-        class="bg-black/60 hover:bg-black/80 active:scale-95 backdrop-blur-md text-white font-bold text-xs px-4 py-2 rounded-full border border-white/20 shadow-lg transition flex items-center gap-2 cursor-pointer"
-        title="Click to Open/Close Curtains"
+        class="bg-white/90 hover:bg-white active:scale-95 backdrop-blur-md text-slate-800 font-bold text-xs px-4 py-2 rounded-full border border-slate-200 shadow-sm transition flex items-center gap-2 cursor-pointer hover:border-amber-400"
+        title="Click to Open or Close Curtains"
       >
         <span id="curtain-btn-icon">✨</span>
         <span id="curtain-btn-text">Open / Close</span>
       </button>
     </div>
 
-    <!-- Bottom Center Call to Action -->
-    <div class="max-w-2xl mx-auto text-center space-y-4 pt-20 pointer-events-auto">
-      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-2xl">
-        Touch &amp; Feel <span class="bg-gradient-to-r from-amber-300 via-amber-100 to-amber-400 bg-clip-text text-transparent">Luxury Fall</span>
+    <!-- Center-Left Clean Copy & CTA -->
+    <div class="max-w-xl text-left space-y-4 pt-12 sm:pt-16 pointer-events-auto">
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
+        Room ka look <span class="text-amber-800 underline decoration-amber-300 decoration-wavy decoration-2">dull lag raha hai?</span>
       </h1>
-      <p class="text-xs sm:text-sm text-slate-200 font-medium max-w-md mx-auto drop-shadow-md">
-        150 GSM heavyweight room-darkening fabric with pre-fitted smooth glide eyelets.
+      
+      <p class="text-xs sm:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
+        Upgrade to Panipat factory-direct luxury curtains. Heavyweight <strong>85%+ room-darkening fabric</strong>, pre-fitted anti-rust grommets, and flawless drape fall.
       </p>
 
-      <div class="flex items-center justify-center gap-3 pt-2">
+      <!-- Clean Action Buttons -->
+      <div class="flex flex-wrap items-center gap-3 pt-2">
         <a
           href="/products"
-          class="bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm px-8 py-4 rounded-full shadow-2xl hover:shadow-amber-500/30 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          class="bg-amber-800 hover:bg-amber-900 active:scale-95 text-white font-black text-xs sm:text-sm px-8 py-4 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2 group"
         >
           <span>🛍️ Shop Curtains</span>
-          <span>&rarr;</span>
+          <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
         </a>
         <a
           href="#bestsellers"
-          class="bg-white/15 hover:bg-white/25 active:scale-95 backdrop-blur-md text-white border border-white/25 font-bold text-xs sm:text-sm px-6 py-4 rounded-full transition-all"
+          class="bg-white hover:bg-slate-50 active:scale-95 text-slate-900 border border-slate-300 font-bold text-xs sm:text-sm px-6 py-4 rounded-full shadow-xs hover:-translate-y-0.5 transition-all"
         >
           <span>Explore Catalog</span>
         </a>
       </div>
 
-      <!-- Trust Bar -->
-      <div class="flex items-center justify-center gap-6 pt-3 text-[11px] text-slate-300 font-semibold drop-shadow">
-        <span>✓ Pack of 2 Panels</span>
-        <span>✓ 85%+ Blackout</span>
-        <span>✓ 5ft · 7ft · 9ft</span>
+      <!-- Trust Badges -->
+      <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-3 text-[11px] text-slate-600 font-semibold border-t border-slate-200/70">
+        <span class="flex items-center gap-1.5"><strong class="text-slate-900 font-black">Pack of 2</strong> Included</span>
+        <span class="flex items-center gap-1.5"><strong class="text-amber-800 font-black">85%+</strong> Blackout</span>
+        <span class="flex items-center gap-1.5"><strong class="text-emerald-700 font-black">★ 4.9</strong> (10k+ Homes)</span>
       </div>
     </div>
 
-    <!-- Bottom Hint -->
-    <div class="text-center text-[11px] text-slate-400 font-semibold pointer-events-auto">
-      <span>👆 Drag or Click anywhere on curtains to open &amp; close</span>
+    <!-- Bottom Minimalist Prompt -->
+    <div class="flex items-center justify-between text-[11px] text-slate-500 font-semibold pointer-events-auto">
+      <span>👆 Click or Drag anywhere to open &amp; close</span>
+      <span class="hidden sm:inline-block">5ft · 7ft · 9ft Standard Sizes</span>
     </div>
 
   </div>
 
 </section>
 
-<!-- 3D Three.js Engine -->
+<!-- 3D Three.js Client Engine -->
 <script>
   import * as THREE from 'three';
 
@@ -95,16 +98,17 @@
     if (!canvas || !container) return;
 
     try {
-      // 1. Scene & Camera Setup
+      // 1. Scene & Camera Setup (Bright Daylight Interior)
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x0a0f1d, 0.04);
+      scene.background = new THREE.Color(0xfaf8f5);
+      scene.fog = new THREE.FogExp2(0xfaf8f5, 0.035);
 
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
-      camera.position.set(0, 0, 5.2);
+      camera.position.set(0.6, 0.1, 5.2);
 
       const renderer = new THREE.WebGLRenderer({
         canvas,
-        alpha: true,
+        alpha: false,
         antialias: true,
         powerPreference: 'high-performance'
       });
@@ -113,90 +117,100 @@
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.15;
+      renderer.toneMappingExposure = 1.05;
 
       const textureLoader = new THREE.TextureLoader();
 
-      // 2. Textures Loading
+      // 2. Texture Assets
       const fabricTex = textureLoader.load('/images/3d/fabric-texture.webp');
       fabricTex.wrapS = THREE.RepeatWrapping;
       fabricTex.wrapT = THREE.RepeatWrapping;
       fabricTex.repeat.set(4, 6);
 
-      const windowTex = textureLoader.load('/images/3d/window-view.webp');
-      const floorTex = textureLoader.load('/images/3d/floor-wood.webp');
+      const windowTex = textureLoader.load('/images/3d/daylight-window.webp');
+      const floorTex = textureLoader.load('/images/3d/light-oak-floor.webp');
       floorTex.wrapS = THREE.RepeatWrapping;
       floorTex.wrapT = THREE.RepeatWrapping;
-      floorTex.repeat.set(4, 4);
+      floorTex.repeat.set(3, 3);
 
-      // 3. Realistic Lighting
-      const ambientLight = new THREE.AmbientLight(0xfffaed, 0.9);
+      // 3. Bright Natural Daylight Lighting
+      const ambientLight = new THREE.AmbientLight(0xfffbf2, 1.4);
       scene.add(ambientLight);
 
-      // Warm Daylight streaming through window
-      const sunLight = new THREE.DirectionalLight(0xfff3d6, 3.2);
-      sunLight.position.set(2.5, 3.5, -2);
+      // Main Sunbeam streaming through window
+      const sunLight = new THREE.DirectionalLight(0xfff5e4, 2.6);
+      sunLight.position.set(2.8, 3.8, -2.0);
       sunLight.castShadow = true;
       sunLight.shadow.mapSize.set(1024, 1024);
-      sunLight.shadow.bias = -0.0003;
+      sunLight.shadow.bias = -0.0002;
       scene.add(sunLight);
 
-      // Front Camera Fill Light
-      const fillLight = new THREE.DirectionalLight(0xe2e8f0, 0.8);
-      fillLight.position.set(-2, 1.5, 4);
-      scene.add(fillLight);
+      // Soft Daylight Bounce
+      const bounceLight = new THREE.DirectionalLight(0xe8f0fe, 0.9);
+      bounceLight.position.set(-2.5, 2.0, 3.5);
+      scene.add(bounceLight);
 
-      // 4. Room Environment (Window, Walls, Rod, Floor)
+      // 4. Bright Architectural Room Backdrop
       const roomGroup = new THREE.Group();
 
-      // Golden Brass Rod
+      // Champagne Brushed Gold Rod
       const rodMat = new THREE.MeshStandardMaterial({
-        color: 0xcca041,
-        roughness: 0.22,
-        metalness: 0.88
+        color: 0xd6b265,
+        roughness: 0.28,
+        metalness: 0.85
       });
-      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 7.8, 32), rodMat);
+      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.036, 7.6, 32), rodMat);
       rod.rotation.z = Math.PI / 2;
       rod.position.set(0, 2.5, 0);
       rod.castShadow = true;
       roomGroup.add(rod);
 
       // Rod Finials
-      const finialGeo = new THREE.SphereGeometry(0.09, 24, 24);
+      const finialGeo = new THREE.SphereGeometry(0.085, 24, 24);
       const finialL = new THREE.Mesh(finialGeo, rodMat);
-      finialL.position.set(-3.95, 2.5, 0);
+      finialL.position.set(-3.85, 2.5, 0);
       const finialR = new THREE.Mesh(finialGeo, rodMat);
-      finialR.position.set(3.95, 2.5, 0);
+      finialR.position.set(3.85, 2.5, 0);
       roomGroup.add(finialL, finialR);
 
-      // High-Res Window Backdrop
+      // Daylight Window View Outside
       const winGeo = new THREE.PlaneGeometry(7.2, 5.2);
       const winMat = new THREE.MeshBasicMaterial({ map: windowTex });
       const win = new THREE.Mesh(winGeo, winMat);
       win.position.set(0, 0.1, -0.3);
       roomGroup.add(win);
 
-      // Window Frame & Mullions
-      const trimMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
-      const mullionV = new THREE.Mesh(new THREE.BoxGeometry(0.08, 5.2, 0.06), trimMat);
+      // Sleek Window Frame
+      const frameMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
+      const mullionV = new THREE.Mesh(new THREE.BoxGeometry(0.06, 5.2, 0.05), frameMat);
       mullionV.position.set(0, 0.1, -0.22);
-      const mullionH = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.08, 0.06), trimMat);
+      const mullionH = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.06, 0.05), frameMat);
       mullionH.position.set(0, 0.1, -0.22);
       roomGroup.add(mullionV, mullionH);
 
-      // Floor
-      const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.5, metalness: 0.1 });
+      // Light Blonde Oak Flooring
+      const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.6, metalness: 0.05 });
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), floorMat);
       floor.rotation.x = -Math.PI / 2;
       floor.position.set(0, -2.5, 1.5);
       floor.receiveShadow = true;
       roomGroup.add(floor);
 
+      // Left & Right Warm Cream Walls
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xf5f2eb, roughness: 0.95 });
+      const wallL = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), wallMat);
+      wallL.rotation.y = Math.PI / 2;
+      wallL.position.set(-4.2, 0.5, 1);
+      const wallR = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), wallMat);
+      wallR.rotation.y = -Math.PI / 2;
+      wallR.position.set(4.2, 0.5, 1);
+      roomGroup.add(wallL, wallR);
+
       scene.add(roomGroup);
 
       // 5. Parametric High-Density Pleated Curtains
-      const eyeletRingGeo = new THREE.TorusGeometry(0.065, 0.012, 16, 24);
-      const eyeletRingMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.2, metalness: 0.95 });
+      const eyeletRingGeo = new THREE.TorusGeometry(0.062, 0.011, 16, 24);
+      const eyeletRingMat = new THREE.MeshStandardMaterial({ color: 0xd6b265, roughness: 0.25, metalness: 0.85 });
 
       function createCurtainPanel(side: 'left' | 'right') {
         const width = 3.6;
@@ -208,10 +222,10 @@
         const pos = geo.attributes.position;
         const orig = new Float32Array(pos.count * 3);
 
-        // Apply deep S-curve architectural pleats
+        // Apply deep S-fold pleat curves
         for (let i = 0; i < pos.count; i++) {
           const u = (pos.getX(i) + width / 2) / width;
-          const pleatZ = Math.sin(u * Math.PI * 16) * 0.18;
+          const pleatZ = Math.sin(u * Math.PI * 16) * 0.17;
           pos.setZ(i, pos.getZ(i) + pleatZ);
 
           orig[i * 3] = pos.getX(i);
@@ -220,11 +234,11 @@
         }
         geo.computeVertexNormals();
 
-        // Velvet Terracotta PBR Fabric Material
+        // Elegant Warm Terracotta/Caramel PBR Material
         const mat = new THREE.MeshStandardMaterial({
           map: fabricTex,
-          color: 0x853020,
-          roughness: 0.92,
+          color: 0x934330, // Rich warm terracotta
+          roughness: 0.88,
           metalness: 0.02,
           side: THREE.DoubleSide
         });
@@ -234,7 +248,7 @@
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        // Create 8 sliding Eyelet rings
+        // Sliding Eyelet rings on rod
         const rings: THREE.Mesh[] = [];
         const ringCount = 8;
         for (let r = 0; r < ringCount; r++) {
@@ -254,31 +268,28 @@
       scene.add(leftCurtain.mesh);
       scene.add(rightCurtain.mesh);
 
-      // 6. Interactive State & Animation
-      let openProgress = 0.0; // 0 = Closed together, 1 = Fully open
-      let targetProgress = 0.78; // Start closed, glide open on load
+      // 6. Smooth Video-Like Cinematic Motion
+      let openProgress = 0.0;
+      let targetProgress = 0.80; // Starts closed, opens gracefully
       let isDragging = false;
       let startMouseX = 0;
-      let startProgress = 0;
 
-      // Opening trigger on load with slight delay
       setTimeout(() => {
         targetProgress = 0.82;
-      }, 400);
+      }, 350);
 
-      // Toggle Button Handler
+      // Interactive Toggle Button
       if (toggleBtn) {
         toggleBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          targetProgress = targetProgress > 0.4 ? 0.05 : 0.85;
+          targetProgress = targetProgress > 0.4 ? 0.06 : 0.84;
         });
       }
 
-      // Drag / Click anywhere to open / close curtains
+      // Drag / Tap Controls
       canvas.addEventListener('pointerdown', (e) => {
         isDragging = true;
         startMouseX = e.clientX;
-        startProgress = openProgress;
       });
 
       window.addEventListener('pointermove', (e) => {
@@ -290,9 +301,7 @@
       });
 
       window.addEventListener('pointerup', () => {
-        if (isDragging) {
-          isDragging = false;
-        }
+        isDragging = false;
       });
 
       canvas.addEventListener('click', () => {
@@ -322,18 +331,15 @@
         const delta = clock.getDelta();
         const elapsed = clock.getElapsedTime();
 
-        // Smooth curtain opening interpolation
-        openProgress += (targetProgress - openProgress) * 0.045;
+        // Smooth video-like easing
+        openProgress += (targetProgress - openProgress) * 0.04;
 
-        // Camera Parallax
+        // Camera Parallax & Zoom
         mouse.x += (mouse.targetX - mouse.x) * 0.05;
         mouse.y += (mouse.targetY - mouse.y) * 0.05;
-        camera.position.x = mouse.x * 0.3;
-        camera.position.y = mouse.y * 0.15;
-        camera.lookAt(0, 0.1, 0);
-
-        // Adjust sunlight intensity as curtains open
-        sunLight.intensity = 1.0 + openProgress * 2.4;
+        camera.position.x = 0.6 + mouse.x * 0.3;
+        camera.position.y = 0.1 + mouse.y * 0.15;
+        camera.lookAt(0.2, 0.1, 0);
 
         // Update Cloth Physics and Eyelet Rings
         [leftCurtain, rightCurtain].forEach((c) => {
@@ -350,9 +356,9 @@
             const normY = (origY + 2.5) / 5.0;
             const hangWeight = Math.sin((1 - normY) * Math.PI * 0.5);
 
-            // Realistic breeze flutter
-            const breeze = Math.sin(elapsed * 2.0 + origY * 1.3 + origX * 2.0) * 0.04 * hangWeight;
-            const ripple = Math.cos(elapsed * 2.8 + origX * 3.5) * 0.02 * hangWeight;
+            // Gentle natural wave
+            const breeze = Math.sin(elapsed * 1.8 + origY * 1.2 + origX * 2.0) * 0.035 * hangWeight;
+            const ripple = Math.cos(elapsed * 2.5 + origX * 3.2) * 0.015 * hangWeight;
 
             let targetX = origX * compression;
             if (c.side === 'left') {
@@ -369,13 +375,13 @@
           pos.needsUpdate = true;
           c.geo.computeVertexNormals();
 
-          // Slide Eyelet Rings along Rod
+          // Move eyelet rings smoothly on rod
           const baseLeft = c.side === 'left' ? -1.8 + gatherOffset - (c.width * compression * 0.5) : 1.8 + gatherOffset - (c.width * compression * 0.5);
           const stepX = (c.width * compression) / (c.ringCount - 1);
 
           c.rings.forEach((ring, rIdx) => {
             ring.position.x = baseLeft + rIdx * stepX;
-            ring.position.z = Math.sin((rIdx / c.ringCount) * Math.PI * 8) * 0.05;
+            ring.position.z = Math.sin((rIdx / c.ringCount) * Math.PI * 8) * 0.04;
           });
         });
 
