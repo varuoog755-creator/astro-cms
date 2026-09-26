@@ -1,0 +1,364 @@
+---
+interface Props {
+  topSellerImages?: string[];
+}
+
+const { topSellerImages = [] } = Astro.props;
+---
+
+<section id="curtain-3d-hero" class="relative w-full min-h-[640px] lg:min-h-[740px] bg-slate-950 text-white overflow-hidden flex items-center border-b border-slate-800 select-none">
+  
+  <!-- 1. 3D WebGL Canvas Container -->
+  <div id="three-canvas-container" class="absolute inset-0 z-0 w-full h-full pointer-events-none opacity-0 transition-opacity duration-1000">
+    <canvas id="curtain-webgl-canvas" class="w-full h-full block"></canvas>
+  </div>
+
+  <!-- Fallback Background for Mobile & Pre-hydration -->
+  <div
+    id="hero-fallback-bg"
+    class="absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000 opacity-100"
+    style="background-image: radial-gradient(circle at 65% 45%, rgba(138,59,40,0.35) 0%, rgba(15,23,42,0.95) 75%), url('/images/size-guide/size-7ft-door.webp');"
+  ></div>
+
+  <!-- Soft Vignette & Gradient Overlays for High Legibility -->
+  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent pointer-events-none"></div>
+  <div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-transparent to-black/40 pointer-events-none"></div>
+
+  <!-- 2. Hero Content Overlay -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+    
+    <!-- Left Column: Copy & CTAs -->
+    <div class="lg:col-span-7 space-y-6 text-left">
+      
+      <!-- Top Badge -->
+      <div class="inline-flex items-center gap-2 bg-amber-500/20 backdrop-blur-md border border-amber-500/40 text-amber-300 text-[11px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span>PANIPAT WEAVING MILLS · DIRECT FACTORY VALUE</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
+        Room ka look <span class="bg-gradient-to-r from-amber-300 via-amber-200 to-amber-400 bg-clip-text text-transparent underline decoration-amber-400 decoration-wavy decoration-2">dull lag raha hai?</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-medium">
+        Upgrade your home with Panipat direct luxury curtains. Heavyweight <strong>85%+ room-darkening 150 GSM weave</strong>, pre-fitted anti-rust eyelet rings, and smooth architectural fall.
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center gap-3.5 pt-1">
+        <a
+          href="/products"
+          class="bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm px-8 py-4 rounded-full shadow-2xl hover:shadow-amber-500/20 hover:-translate-y-0.5 transition-all flex items-center gap-2 group"
+        >
+          <span>🛍️ Shop Curtains</span>
+          <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+        </a>
+
+        <a
+          href="#bestsellers"
+          class="bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md text-white border border-white/20 font-bold text-xs sm:text-sm px-6 py-4 rounded-full hover:-translate-y-0.5 transition-all flex items-center gap-2"
+        >
+          <span>✨ Explore Collection</span>
+        </a>
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 text-xs">
+        <div>
+          <div class="text-lg sm:text-2xl font-black text-white">Pack of 2</div>
+          <div class="text-slate-400 text-[10px] sm:text-[11px] mt-0.5 font-medium">2 Full Panels Included</div>
+        </div>
+        <div>
+          <div class="text-lg sm:text-2xl font-black text-amber-400">85%+ Blackout</div>
+          <div class="text-slate-400 text-[10px] sm:text-[11px] mt-0.5 font-medium">Thermal &amp; Sun Shield</div>
+        </div>
+        <div>
+          <div class="text-lg sm:text-2xl font-black text-emerald-400">★ 4.9 Rating</div>
+          <div class="text-slate-400 text-[10px] sm:text-[11px] mt-0.5 font-medium">10,000+ Happy Homes</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Interactive 3D Status / Features Pill -->
+    <div class="lg:col-span-5 hidden lg:flex flex-col items-end justify-between h-full space-y-4">
+      <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/80 rounded-2xl p-4 space-y-2 shadow-2xl max-w-xs text-right">
+        <div class="flex items-center justify-end gap-1.5 text-[11px] font-bold text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Live 3D Fabric Simulation</span>
+        </div>
+        <p class="text-[11px] text-slate-300 leading-snug">
+          Move your cursor to experience the realistic drape fall, lighting bounce, and silent glide.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Scroll Cue -->
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 hidden sm:flex items-center gap-2 text-[11px] font-bold text-slate-400 opacity-80 hover:opacity-100 transition">
+    <div class="w-4 h-6 rounded-full border border-slate-500 flex items-start justify-center p-0.5">
+      <div class="w-1 h-1.5 rounded-full bg-amber-400 animate-bounce"></div>
+    </div>
+    <span>Scroll to explore sizes &amp; catalog</span>
+  </div>
+
+</section>
+
+<!-- 3D Three.js Client Engine -->
+<script>
+  import * as THREE from 'three';
+
+  function init3DCurtainHero() {
+    const canvas = document.getElementById('curtain-webgl-canvas') as HTMLCanvasElement;
+    const container = document.getElementById('three-canvas-container');
+    const fallback = document.getElementById('hero-fallback-bg');
+    if (!canvas || !container) return;
+
+    // Check device performance & screen size
+    const isMobile = window.innerWidth < 768;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (isMobile || prefersReducedMotion) {
+      // Use optimized high-res backdrop on mobile
+      if (fallback) fallback.style.opacity = '1';
+      return;
+    }
+
+    try {
+      // 1. Scene & Renderer Setup
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x0f172a, 0.05);
+
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
+      camera.position.set(0.6, 0.1, 5.4);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      // 2. Cinematic Lighting
+      const ambientLight = new THREE.AmbientLight(0xfff7ee, 0.8);
+      scene.add(ambientLight);
+
+      // Warm Sunlight streaming through window
+      const sunLight = new THREE.DirectionalLight(0xfff1db, 2.4);
+      sunLight.position.set(3, 3.5, -1.8);
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 1024;
+      sunLight.shadow.mapSize.height = 1024;
+      sunLight.shadow.bias = -0.0002;
+      scene.add(sunLight);
+
+      // Front Soft Fill Light
+      const fillLight = new THREE.DirectionalLight(0xdbeafe, 0.6);
+      fillLight.position.set(-3, 2, 4);
+      scene.add(fillLight);
+
+      // 3. Indian Living Room Environment
+      const roomGroup = new THREE.Group();
+
+      // Brass Curtain Rod
+      const rodGeo = new THREE.CylinderGeometry(0.035, 0.035, 7.5, 32);
+      const brassMat = new THREE.MeshStandardMaterial({
+        color: 0xd4af37,
+        roughness: 0.25,
+        metalness: 0.85
+      });
+      const rod = new THREE.Mesh(rodGeo, brassMat);
+      rod.rotation.z = Math.PI / 2;
+      rod.position.set(0, 2.7, 0);
+      rod.castShadow = true;
+      roomGroup.add(rod);
+
+      // Brass Finials
+      const finialGeo = new THREE.SphereGeometry(0.08, 24, 24);
+      const finialL = new THREE.Mesh(finialGeo, brassMat);
+      finialL.position.set(-3.78, 2.7, 0);
+      const finialR = new THREE.Mesh(finialGeo, brassMat);
+      finialR.position.set(3.78, 2.7, 0);
+      roomGroup.add(finialL, finialR);
+
+      // Back Window Portal
+      const winGeo = new THREE.PlaneGeometry(6.6, 5.2);
+      const winMat = new THREE.MeshBasicMaterial({ color: 0xeff6ff, transparent: true, opacity: 0.35 });
+      const win = new THREE.Mesh(winGeo, winMat);
+      win.position.set(0, 0.2, -0.2);
+      roomGroup.add(win);
+
+      // Window Trim
+      const trimMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9 });
+      const mullionV = new THREE.Mesh(new THREE.BoxGeometry(0.06, 5.2, 0.04), trimMat);
+      mullionV.position.set(0, 0.2, -0.15);
+      const mullionH = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.06, 0.04), trimMat);
+      mullionH.position.set(0, 0.2, -0.15);
+      roomGroup.add(mullionV, mullionH);
+
+      // Hardwood Floor
+      const floorGeo = new THREE.PlaneGeometry(12, 8);
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x543d2b, roughness: 0.4, metalness: 0.1 });
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.set(0, -2.4, 1.5);
+      floor.receiveShadow = true;
+      roomGroup.add(floor);
+
+      scene.add(roomGroup);
+
+      // 4. Procedural Pleated Curtain Panels
+      function createPleatedCurtain(side: 'left' | 'right') {
+        const width = 3.2;
+        const height = 5.0;
+        const segX = 54;
+        const segY = 54;
+        const geo = new THREE.PlaneGeometry(width, height, segX, segY);
+        const pos = geo.attributes.position;
+        const orig = new Float32Array(pos.count * 3);
+
+        // Apply natural S-fold pleat curves
+        for (let i = 0; i < pos.count; i++) {
+          const u = (pos.getX(i) + width / 2) / width;
+          const pleatZ = Math.sin(u * Math.PI * 14) * 0.16;
+          pos.setZ(i, pos.getZ(i) + pleatZ);
+
+          orig[i * 3] = pos.getX(i);
+          orig[i * 3 + 1] = pos.getY(i);
+          orig[i * 3 + 2] = pos.getZ(i);
+        }
+        geo.computeVertexNormals();
+
+        // Warm Terracotta / Wine Velvet PBR Material
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0x8a3b28,
+          roughness: 0.88,
+          metalness: 0.04,
+          side: THREE.DoubleSide
+        });
+
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(side === 'left' ? -1.65 : 1.65, 0.2, 0);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        return { mesh, geo, orig, side, width, height };
+      }
+
+      const leftCurtain = createPleatedCurtain('left');
+      const rightCurtain = createPleatedCurtain('right');
+      scene.add(leftCurtain.mesh);
+      scene.add(rightCurtain.mesh);
+
+      // 5. Animation & Dynamic Controls
+      let openProgress = 0.0;
+      let targetOpenProgress = 0.82;
+      const startTime = performance.now();
+
+      // Mouse Parallax Damping
+      const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+      window.addEventListener('mousemove', (e) => {
+        mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+      }, { passive: true });
+
+      // Scroll Forward Dolly Zoom
+      let scrollDolly = 0;
+      window.addEventListener('scroll', () => {
+        const factor = Math.min(window.scrollY / window.innerHeight, 1);
+        scrollDolly = factor * 1.3;
+      }, { passive: true });
+
+      // Resize Handler
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Show 3D Canvas smoothly
+      container.style.opacity = '1';
+      if (fallback) fallback.style.opacity = '0';
+
+      // 6. 60 FPS Render Loop
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+        const elapsed = clock.getElapsedTime();
+
+        // Opening easing on load
+        if (openProgress < targetOpenProgress) {
+          openProgress += (targetOpenProgress - openProgress) * 0.035;
+        }
+
+        // Camera Parallax & Zoom
+        mouse.x += (mouse.targetX - mouse.x) * 0.05;
+        mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+        camera.position.x = 0.6 + mouse.x * 0.35;
+        camera.position.y = 0.1 + mouse.y * 0.2;
+        camera.position.z = 5.4 - scrollDolly;
+        camera.lookAt(0.3, 0.1, 0);
+
+        // Update Cloth Physics & Kinematics
+        [leftCurtain, rightCurtain].forEach((c) => {
+          const pos = c.geo.attributes.position;
+          const orig = c.orig;
+          const compression = THREE.MathUtils.lerp(1.0, 0.32, openProgress);
+          const gatherOffset = c.side === 'left' ? -1.55 * openProgress : 1.55 * openProgress;
+
+          for (let i = 0; i < pos.count; i++) {
+            const origX = orig[i * 3];
+            const origY = orig[i * 3 + 1];
+            const origZ = orig[i * 3 + 2];
+
+            const normY = (origY + 2.5) / 5.0;
+            const hangWeight = Math.sin((1 - normY) * Math.PI * 0.5);
+
+            // Breeze wave
+            const wave = Math.sin(elapsed * 1.8 + origY * 1.1 + origX * 2.2) * 0.035 * hangWeight;
+            const flutter = Math.cos(elapsed * 2.4 + origX * 3.0) * 0.015 * hangWeight;
+
+            let targetX = origX * compression;
+            if (c.side === 'left') {
+              targetX = (origX + c.width / 2) * compression - c.width / 2 + gatherOffset;
+            } else {
+              targetX = (origX - c.width / 2) * compression + c.width / 2 + gatherOffset;
+            }
+
+            pos.setX(i, targetX);
+            pos.setY(i, origY);
+            pos.setZ(i, origZ + wave + flutter);
+          }
+
+          pos.needsUpdate = true;
+          c.geo.computeVertexNormals();
+        });
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    } catch (err) {
+      console.warn('WebGL 3D fallback active:', err);
+      if (fallback) fallback.style.opacity = '1';
+    }
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init3DCurtainHero);
+  } else {
+    init3DCurtainHero();
+  }
+</script>
