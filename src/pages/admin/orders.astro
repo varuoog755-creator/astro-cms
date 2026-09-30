@@ -141,10 +141,13 @@ function getItemProductInfo(item: any) {
         <!-- Status & Search Inputs -->
         <div class="flex flex-wrap items-center gap-2.5">
           <select id="status-filter" class="bg-slate-100 text-xs font-bold text-slate-800 rounded-2xl px-3 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500">
-            <option value="all">Fulfillment: All Statuses</option>
+            <option value="active" selected>Active Orders (Hide Cancelled)</option>
+            <option value="all">All Orders (Including Cancelled)</option>
             <option value="PROCESSING">PROCESSING</option>
             <option value="SHIPPED">SHIPPED</option>
             <option value="DELIVERED">DELIVERED</option>
+            <option value="CANCELLED">CANCELLED</option>
+            <option value="ARCHIVED">ARCHIVED</option>
           </select>
 
           <input
@@ -239,7 +242,7 @@ function getItemProductInfo(item: any) {
                     </span>
                   </div>
 
-                  <div class="flex items-center gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
                     <span class="font-black text-base text-slate-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl">
                       Total: ₹{o.totalAmount?.toLocaleString('en-IN')}
                     </span>
@@ -259,15 +262,42 @@ function getItemProductInfo(item: any) {
                         ? '🚚 COD PENDING'
                         : '⚠️ PAYMENT PENDING'}
                     </span>
-                    <span class={`font-black px-3 py-1 rounded-full text-[10px] uppercase ${
-                      o.orderStatus === 'DELIVERED'
-                        ? 'bg-emerald-600 text-white'
-                        : o.orderStatus === 'SHIPPED'
-                        ? 'bg-amber-800 text-white'
-                        : 'bg-blue-600 text-white'
-                    }`}>
-                      {o.orderStatus}
-                    </span>
+
+                    <!-- Order Status Selector -->
+                    <select
+                      class="order-status-select bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-[10px] uppercase px-2.5 py-1.5 rounded-xl border border-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-xs"
+                      data-order-id={o.id}
+                      aria-label="Update Order Status"
+                    >
+                      <option value="PROCESSING" selected={o.orderStatus === 'PROCESSING'}>🔵 PROCESSING</option>
+                      <option value="SHIPPED" selected={o.orderStatus === 'SHIPPED'}>🚚 SHIPPED</option>
+                      <option value="DELIVERED" selected={o.orderStatus === 'DELIVERED'}>✅ DELIVERED</option>
+                      <option value="CANCELLED" selected={o.orderStatus === 'CANCELLED'}>🚫 CANCELLED</option>
+                      <option value="ARCHIVED" selected={o.orderStatus === 'ARCHIVED'}>🗑️ ARCHIVED</option>
+                    </select>
+
+                    <!-- Quick Delete / Cancel Button -->
+                    {o.orderStatus !== 'CANCELLED' && o.orderStatus !== 'ARCHIVED' ? (
+                      <button
+                        type="button"
+                        class="archive-order-btn bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-900 border border-rose-200 text-[10px] font-black px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                        data-order-id={o.id}
+                        data-order-number={o.orderNumber}
+                        title="Delete / Cancel this order (move to archive)"
+                      >
+                        <span>🗑️ Delete</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        class="restore-order-btn bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-900 border border-emerald-200 text-[10px] font-black px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                        data-order-id={o.id}
+                        data-order-number={o.orderNumber}
+                        title="Restore this order back to active processing"
+                      >
+                        <span>🔄 Restore</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -408,7 +438,7 @@ function getItemProductInfo(item: any) {
 
       let currentPaymentFilter = 'all';
       let currentDateFilter = 'all';
-      let currentStatusFilter = 'all';
+      let currentStatusFilter = 'active';
       let currentQuery = '';
 
       function applyFilters() {
@@ -448,9 +478,15 @@ function getItemProductInfo(item: any) {
           else if (currentDateFilter === '7days' && rowTime >= sevenDaysAgo) passDate = true;
           else if (currentDateFilter === 'month' && rowTime >= monthStart) passDate = true;
 
-          // 3. Status filter condition
+          // 3. Status filter condition (Hide CANCELLED/ARCHIVED by default on 'active')
           let passStatus = false;
-          if (currentStatusFilter === 'all' || rowStatus === currentStatusFilter) passStatus = true;
+          if (currentStatusFilter === 'active') {
+            passStatus = rowStatus !== 'CANCELLED' && rowStatus !== 'ARCHIVED';
+          } else if (currentStatusFilter === 'all') {
+            passStatus = true;
+          } else if (rowStatus === currentStatusFilter) {
+            passStatus = true;
+          }
 
           // 4. Search query condition
           let passSearch = false;
@@ -466,6 +502,122 @@ function getItemProductInfo(item: any) {
 
         if (visibleCountEl) visibleCountEl.innerText = String(visibleCount);
       }
+
+      // Order Status Select Change Handler
+      document.querySelectorAll('.order-status-select').forEach((sel) => {
+        sel.addEventListener('change', async () => {
+          const orderId = sel.getAttribute('data-order-id');
+          const newStatus = sel.value;
+          if (!orderId) return;
+
+          try {
+            sel.disabled = true;
+            const res = await fetch('/api/admin/orders/update-status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId, orderStatus: newStatus }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              const row = sel.closest('.order-card-row');
+              if (row) {
+                row.setAttribute('data-status', newStatus);
+              }
+              applyFilters();
+            } else {
+              alert('Error updating status: ' + (data.error || 'Failed'));
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Failed to update order status');
+          } finally {
+            sel.disabled = false;
+          }
+        });
+      });
+
+      // Quick Delete / Cancel Order Handler
+      document.querySelectorAll('.archive-order-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const orderId = btn.getAttribute('data-order-id');
+          const orderNumber = btn.getAttribute('data-order-number');
+          if (!orderId) return;
+
+          if (!confirm(`Are you sure you want to delete / cancel order #${orderNumber}? It will be hidden from active orders.`)) {
+            return;
+          }
+
+          try {
+            btn.disabled = true;
+            btn.innerText = '⌛ Deleting...';
+            const res = await fetch('/api/admin/orders/update-status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId, orderStatus: 'CANCELLED' }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              const row = btn.closest('.order-card-row');
+              if (row) {
+                row.setAttribute('data-status', 'CANCELLED');
+                const sel = row.querySelector('.order-status-select');
+                if (sel) sel.value = 'CANCELLED';
+              }
+              applyFilters();
+            } else {
+              alert('Error: ' + (data.error || 'Failed'));
+              btn.disabled = false;
+              btn.innerText = '🗑️ Delete';
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Failed to delete order');
+            btn.disabled = false;
+            btn.innerText = '🗑️ Delete';
+          }
+        });
+      });
+
+      // Quick Restore Order Handler
+      document.querySelectorAll('.restore-order-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const orderId = btn.getAttribute('data-order-id');
+          const orderNumber = btn.getAttribute('data-order-number');
+          if (!orderId) return;
+
+          try {
+            btn.disabled = true;
+            btn.innerText = '⌛ Restoring...';
+            const res = await fetch('/api/admin/orders/update-status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId, orderStatus: 'PROCESSING' }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              const row = btn.closest('.order-card-row');
+              if (row) {
+                row.setAttribute('data-status', 'PROCESSING');
+                const sel = row.querySelector('.order-status-select');
+                if (sel) sel.value = 'PROCESSING';
+              }
+              applyFilters();
+            } else {
+              alert('Error: ' + (data.error || 'Failed'));
+              btn.disabled = false;
+              btn.innerText = '🔄 Restore';
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Failed to restore order');
+            btn.disabled = false;
+            btn.innerText = '🔄 Restore';
+          }
+        });
+      });
+
+      // Initial Filter Run on Load
+      applyFilters();
 
       paymentBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
