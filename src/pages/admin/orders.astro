@@ -1,11 +1,14 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import prisma from '../../lib/db';
+import { PRODUCTS_CATALOG } from '../../lib/products';
 
 const orders = await prisma.order.findMany({
   orderBy: { createdAt: 'desc' },
   include: { items: true },
 });
+
+const dbProducts = await prisma.product.findMany();
 
 const totalRevenue = orders
   .filter((o) => o.paymentStatus === 'PAID')
@@ -15,29 +18,56 @@ const paidOrdersCount = orders.filter((o) => o.paymentStatus === 'PAID').length;
 const pendingPaymentCount = orders.filter((o) => o.paymentStatus === 'PENDING').length;
 const codOrdersCount = orders.filter((o) => o.paymentStatus === 'COD_PENDING' || o.paymentMethod === 'COD').length;
 const pendingOrdersCount = pendingPaymentCount + codOrdersCount;
-const bookedEKartCount = orders.filter((o) => o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber)).length;
 
-// Helper to calculate estimated EKart shipping rate
-function getEkartRate(pincode: string) {
-  if (!pincode) return 70;
-  const firstDigit = pincode[0];
-  if (firstDigit === '1' || firstDigit === '2') return 55; // North India / NCR
-  if (firstDigit === '4' || firstDigit === '5') return 75; // West / South
-  return 85; // Rest of India
+// Helper to look up product data and variant thumbnail for each order item
+function getItemProductInfo(item: any) {
+  const prod = dbProducts.find((p) => p.id === item.productId || p.slug === item.productId) ||
+               PRODUCTS_CATALOG.find((p) => p.id === item.productId || p.slug === item.productId) ||
+               dbProducts.find((p) => p.name.toLowerCase().trim() === item.productTitle?.toLowerCase().trim()) ||
+               PRODUCTS_CATALOG.find((p) => p.name.toLowerCase().trim() === item.productTitle?.toLowerCase().trim());
+
+  let colors: any[] = [];
+  let images: string[] = [];
+
+  if (prod) {
+    if (Array.isArray((prod as any).colors)) {
+      colors = (prod as any).colors;
+    } else if (typeof (prod as any).colorsJson === 'string') {
+      try { colors = JSON.parse((prod as any).colorsJson || '[]'); } catch {}
+    }
+
+    if (Array.isArray((prod as any).images)) {
+      images = (prod as any).images;
+    } else if (typeof (prod as any).imagesJson === 'string') {
+      try { images = JSON.parse((prod as any).imagesJson || '[]'); } catch {}
+    }
+  }
+
+  const matchedColor = colors.find((c: any) => c?.name?.toLowerCase().trim() === item.color?.toLowerCase().trim());
+  const variantImage = (matchedColor?.images && matchedColor.images[0]) || images[0] || '/uploads/grey-eyelet-curtain-front.webp';
+  const colorHex = matchedColor?.hex || '#722f37';
+  const slug = prod?.slug || item.productId;
+
+  return {
+    slug,
+    variantImage,
+    colorHex,
+    productName: prod?.name || item.productTitle,
+  };
 }
 ---
 
-<AdminLayout title="Teepul Orders & EKart Courier Booking" activeNav="orders">
+<AdminLayout title="Teepul Customer Orders & Fulfillment" activeNav="orders">
   <div class="space-y-6">
 
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
       <div>
         <div class="inline-flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-2">
-          <span>📦 LIVE CURTAIN FULFILLMENT</span>
+          <span>📦 LIVE STORE ORDERS</span>
         </div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Customer Orders & EKart Logistics</h1>
-        <p class="text-sm text-slate-500 mt-1">Permanent order records, day-by-day filters, curtain specifications & EKart courier booking.</p>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Customer Orders & Specifications</h1>
+        <p class="text-sm text-slate-500 mt-1">Permanent customer orders with photos, color swatches, sizes, and direct product links.</p>
       </div>
 
       <div class="flex items-center gap-3">
@@ -70,15 +100,15 @@ function getEkartRate(pincode: string) {
       </div>
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Orders</span>
-        <div class="text-2xl font-black text-amber-500 mt-1">{pendingOrdersCount}</div>
-        <span class="text-[10px] text-slate-500 mt-1 block">Awaiting Confirmation</span>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cash on Delivery (COD)</span>
+        <div class="text-2xl font-black text-sky-600 mt-1">{codOrdersCount}</div>
+        <span class="text-[10px] text-sky-700 font-bold mt-1 block">🚚 COD Orders</span>
       </div>
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">EKart Pickups Booked</span>
-        <div class="text-2xl font-black text-emerald-600 mt-1">{bookedEKartCount}</div>
-        <span class="text-[10px] text-emerald-600 font-bold mt-1 block">🚚 EKart Courier Active</span>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paid / Confirmed</span>
+        <div class="text-2xl font-black text-emerald-600 mt-1">{paidOrdersCount}</div>
+        <span class="text-[10px] text-emerald-600 font-bold mt-1 block">✓ Online Paid</span>
       </div>
     </div>
 
@@ -112,8 +142,8 @@ function getEkartRate(pincode: string) {
         <div class="flex flex-wrap items-center gap-2.5">
           <select id="status-filter" class="bg-slate-100 text-xs font-bold text-slate-800 rounded-2xl px-3 py-2 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500">
             <option value="all">Fulfillment: All Statuses</option>
-            <option value="PROCESSING">PROCESSING (Unbooked)</option>
-            <option value="SHIPPED">SHIPPED (EKart Active)</option>
+            <option value="PROCESSING">PROCESSING</option>
+            <option value="SHIPPED">SHIPPED</option>
             <option value="DELIVERED">DELIVERED</option>
           </select>
 
@@ -178,8 +208,6 @@ function getEkartRate(pincode: string) {
       ) : (
         <div class="divide-y divide-slate-200" id="orders-list-container">
           {orders.map((o) => {
-            const ekartFee = getEkartRate(o.pincode);
-            const isBooked = o.courierPartner?.includes('EKart') || Boolean(o.trackingNumber);
             const isoDate = new Date(o.createdAt).toISOString();
             const searchText = `${o.orderNumber} ${o.customerName} ${o.customerPhone} ${o.customerEmail} ${o.shippingAddress} ${o.pincode}`.toLowerCase();
 
@@ -194,7 +222,7 @@ function getEkartRate(pincode: string) {
                 data-search={searchText}
               >
                 
-                <!-- Top Row: Order ID, Date, Payment Status & EKart Rate -->
+                <!-- Top Row: Order ID, Date, Payment Status & Total -->
                 <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div class="flex items-center gap-3">
                     <input
@@ -212,6 +240,9 @@ function getEkartRate(pincode: string) {
                   </div>
 
                   <div class="flex items-center gap-2">
+                    <span class="font-black text-base text-slate-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl">
+                      Total: ₹{o.totalAmount?.toLocaleString('en-IN')}
+                    </span>
                     <span class="bg-slate-100 text-slate-800 font-bold px-3 py-1 rounded-full text-[10px] uppercase">
                       Payment: {o.paymentMethod}
                     </span>
@@ -240,106 +271,117 @@ function getEkartRate(pincode: string) {
                   </div>
                 </div>
 
-                <!-- Middle Content: Customer Address & Curtain Product Specs -->
+                <!-- Middle Content: 2-Column Clean Layout (Customer Info & Ordered Products with Photo) -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6 pt-2">
                   
                   <!-- Left: Customer Details & Address -->
-                  <div class="md:col-span-5 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
-                    <span class="font-extrabold text-slate-900 block text-xs border-b border-slate-200 pb-1.5 flex items-center gap-1.5">
-                      <span>👤</span> Customer & Delivery Info
-                    </span>
-
-                    <div class="space-y-1 pt-1">
-                      <div class="font-extrabold text-slate-900 text-sm">{o.customerName}</div>
-                      <div class="font-bold text-amber-900 text-xs">📞 Phone: {o.customerPhone}</div>
-                      <div class="text-slate-500 font-mono text-[11px]">📧 Email: {o.customerEmail}</div>
-                      <div class="text-slate-700 font-medium text-xs pt-1">
-                        📍 <strong>Address:</strong> {o.shippingAddress}
-                      </div>
-                      <div class="text-slate-600 text-xs font-semibold">
-                        City: {o.city || 'N/A'} | State: {o.state || 'N/A'} | Pincode: <span class="font-mono font-bold text-slate-900">{o.pincode}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Center: Curtain Item Specifications (Color & Size) -->
-                  <div class="md:col-span-4 bg-amber-50/50 p-4 rounded-2xl border border-amber-200/80 space-y-2 text-xs">
-                    <span class="font-extrabold text-amber-950 block text-xs border-b border-amber-200 pb-1.5 flex items-center gap-1.5">
-                      <span>🚪</span> Curtain Order Specification
-                    </span>
-
-                    <div class="space-y-2 pt-1">
-                      {o.items.map((item) => (
-                        <div class="bg-white p-3 rounded-xl border border-amber-200 space-y-1.5">
-                          <div class="font-extrabold text-slate-900 text-xs">{item.productTitle}</div>
-                          <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-700 pt-0.5">
-                            <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
-                              🎨 Color: {item.color || 'Standard'}
-                            </span>
-                            <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
-                              📏 Size: {item.size || '7ft Door'}
-                            </span>
-                          </div>
-                          <div class="text-slate-600 text-[11px] font-semibold">
-                            Quantity: {item.quantity} × ₹{item.unitPrice?.toLocaleString('en-IN')} = <strong>₹{item.totalPrice?.toLocaleString('en-IN')}</strong>
-                          </div>
-
-                          <div class="pt-1.5 border-t border-slate-100">
-                            <a
-                              href={`/products/${item.productId}`}
-                              target="_blank"
-                              class="text-amber-800 font-extrabold text-[11px] hover:underline flex items-center gap-1"
-                            >
-                              <span>🔗 View Ordered Product Page</span>
-                              <span>↗</span>
-                            </a>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <!-- Right: EKart Courier Booking Panel -->
-                  <div class="md:col-span-3 bg-white p-4 rounded-2xl border border-slate-300 space-y-3 flex flex-col justify-between text-xs">
-                    <div class="space-y-1.5">
-                      <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                        <span class="font-black text-slate-900 text-xs flex items-center gap-1">
-                          <span>🚚</span> EKart Logistics
+                  <div class="md:col-span-5 bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-3 text-xs flex flex-col justify-between">
+                    <div>
+                      <span class="font-extrabold text-slate-900 block text-xs border-b border-slate-200 pb-2 flex items-center justify-between">
+                        <span class="flex items-center gap-1.5">
+                          <span>👤</span> Customer & Delivery Address
                         </span>
-                        <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                          EST. ₹{ekartFee}
-                        </span>
-                      </div>
+                        <span class="text-[10px] text-slate-400 font-mono font-normal">ID: {o.id.slice(0, 8)}</span>
+                      </span>
 
-                      <div class="text-[11px] text-slate-500 leading-relaxed">
-                        Pickup charges estimated for pincode <strong class="text-slate-800 font-mono">{o.pincode}</strong>.
-                      </div>
-                    </div>
-
-                    <div class="pt-2">
-                      {isBooked ? (
-                        <div class="bg-emerald-50 border border-emerald-300 p-3 rounded-xl space-y-1 text-[11px]">
-                          <span class="font-extrabold text-emerald-900 block flex items-center gap-1">
-                            <span>✓</span> EKart Pickup Booked!
-                          </span>
-                          <span class="font-mono text-slate-800 font-bold block">AWB: {o.trackingNumber}</span>
+                      <div class="space-y-2 pt-2.5">
+                        <div class="font-extrabold text-slate-900 text-sm">{o.customerName}</div>
+                        
+                        <div class="flex flex-wrap items-center gap-2 pt-0.5">
                           <a
-                            href={o.trackingUrl || `https://track.ekartlogistics.com/shipmentTrack/${o.trackingNumber}`}
-                            target="_blank"
-                            class="text-amber-800 font-bold hover:underline inline-block pt-1"
+                            href={`tel:${o.customerPhone}`}
+                            class="inline-flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-800 font-bold px-2.5 py-1 rounded-lg border border-slate-300 transition"
                           >
-                            Track Shipment ↗
+                            <span>📞</span> {o.customerPhone}
+                          </a>
+
+                          <a
+                            href={`https://wa.me/${o.customerPhone.replace(/\D/g, '')}`}
+                            target="_blank"
+                            class="inline-flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg border border-emerald-300 transition"
+                          >
+                            <span>💬 WhatsApp</span>
                           </a>
                         </div>
-                      ) : (
-                        <button
-                          type="button"
-                          data-order-id={o.id}
-                          class="book-ekart-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-3 rounded-xl shadow transition flex items-center justify-center gap-1.5"
-                        >
-                          <span>📦 Confirm & Book EKart Pickup</span>
-                        </button>
-                      )}
+
+                        <div class="text-slate-500 font-mono text-[11px] pt-1">📧 {o.customerEmail}</div>
+                        
+                        <div class="text-slate-800 font-medium text-xs pt-1.5 bg-white p-3 rounded-xl border border-slate-200 leading-relaxed">
+                          📍 <strong>Delivery Address:</strong><br />
+                          {o.shippingAddress}
+                          <div class="text-slate-600 text-xs font-bold pt-1">
+                            {o.city ? `${o.city}, ` : ''}{o.state ? `${o.state} - ` : ''}<span class="font-mono text-slate-900 bg-amber-100 px-1.5 py-0.5 rounded">{o.pincode}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: Ordered Product Specifications (with Photo, Color Swatch & Live Link) -->
+                  <div class="md:col-span-7 bg-amber-50/40 p-5 rounded-2xl border border-amber-200/80 space-y-3 text-xs">
+                    <span class="font-extrabold text-amber-950 block text-xs border-b border-amber-200 pb-2 flex items-center gap-1.5">
+                      <span>🚪</span> Ordered Product & Variant Details
+                    </span>
+
+                    <div class="space-y-3 pt-1">
+                      {o.items.map((item) => {
+                        const info = getItemProductInfo(item);
+                        return (
+                          <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            
+                            <!-- Product Variant Image -->
+                            <div class="w-20 h-24 sm:w-24 sm:h-28 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 shadow-xs relative group">
+                              <img
+                                src={info.variantImage}
+                                alt={`${info.productName} - ${item.color || 'Variant'}`}
+                                width="96"
+                                height="112"
+                                loading="lazy"
+                                class="w-full h-full object-cover"
+                              />
+                            </div>
+
+                            <!-- Product Info & Specs -->
+                            <div class="space-y-2 flex-1 min-w-0">
+                              <div class="font-extrabold text-slate-900 text-sm leading-snug">
+                                {item.productTitle}
+                              </div>
+
+                              <div class="flex flex-wrap items-center gap-2 text-xs font-bold pt-0.5">
+                                <!-- Color Badge with swatch -->
+                                <span class="bg-amber-100 text-amber-950 px-2.5 py-1 rounded-lg border border-amber-300 flex items-center gap-1.5">
+                                  <span class="w-3 h-3 rounded-full border border-slate-400 shrink-0 shadow-2xs" style={`background-color: ${info.colorHex}`}></span>
+                                  <span>Color: <strong>{item.color || 'Standard'}</strong></span>
+                                </span>
+
+                                <!-- Size Badge -->
+                                <span class="bg-blue-50 text-blue-950 px-2.5 py-1 rounded-lg border border-blue-200">
+                                  📏 Size: <strong>{item.size || '5 Feet (Window)'}</strong>
+                                </span>
+
+                                <!-- Qty & Price -->
+                                <span class="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-lg font-mono">
+                                  Qty: {item.quantity} × ₹{item.unitPrice?.toLocaleString('en-IN')} = <strong>₹{item.totalPrice?.toLocaleString('en-IN')}</strong>
+                                </span>
+                              </div>
+
+                              <!-- Live Product Link with Pre-selected Variant -->
+                              <div class="pt-2 border-t border-slate-100">
+                                <a
+                                  href={`/products/${info.slug}?color=${encodeURIComponent(item.color || '')}&size=${encodeURIComponent(item.size || '')}`}
+                                  target="_blank"
+                                  class="inline-flex items-center gap-1.5 text-xs font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 px-3 py-1.5 rounded-xl transition hover:shadow-2xs"
+                                >
+                                  <span>🔗 View Live Product (Variant Pre-selected)</span>
+                                  <span>↗</span>
+                                </a>
+                              </div>
+
+                            </div>
+
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -355,40 +397,6 @@ function getEkartRate(pincode: string) {
   </div>
 
   <script is:inline>
-    // EKart Booking Handler
-    document.querySelectorAll('.book-ekart-btn').forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
-        const orderId = btn.getAttribute('data-order-id');
-        if (!orderId) return;
-
-        btn.disabled = true;
-        btn.innerHTML = '⌛ Booking EKart Courier...';
-
-        try {
-          const res = await fetch('/api/admin/book-ekart', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId, courierPartner: 'EKart Logistics' }),
-          });
-
-          const data = await res.json();
-          if (data.success) {
-            alert(`✨ EKart Courier Pickup Booked Successfully!\nAWB: ${data.order.trackingNumber}`);
-            window.location.reload();
-          } else {
-            alert('Error booking EKart: ' + (data.error || 'Failed to book courier'));
-            btn.disabled = false;
-            btn.innerHTML = '📦 Confirm & Book EKart Pickup';
-          }
-        } catch (err) {
-          console.error(err);
-          alert('Unexpected error booking EKart courier.');
-          btn.disabled = false;
-          btn.innerHTML = '📦 Confirm & Book EKart Pickup';
-        }
-      });
-    });
-
     // Day-by-Day, Payment Status & Fulfillment Interactive Filter Script
     document.addEventListener('DOMContentLoaded', () => {
       const paymentBtns = document.querySelectorAll('.payment-btn');

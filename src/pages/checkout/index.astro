@@ -5,31 +5,42 @@ import { getIntegrationSettings } from '../../lib/settings';
 
 const settings = await getIntegrationSettings();
 
-const slug = Astro.url.searchParams.get('product') || '';
-const color = Astro.url.searchParams.get('color') || 'Onyx Black';
-const size = Astro.url.searchParams.get('size') || 'XL';
-const quantityStr = Astro.url.searchParams.get('qty') || '1';
-const quantity = Math.max(1, parseInt(quantityStr, 10) || 1);
-
 const rawProducts = await getStorefrontProducts();
 const allProducts = (rawProducts?.length ? rawProducts : PRODUCTS_CATALOG).filter(Boolean);
-let product = slug ? allProducts.find((p) => p?.slug === slug) : null;
+
+const slug = Astro.url.searchParams.get('product') || '';
+let product = slug ? allProducts.find((p) => p?.slug === slug || p?.id === slug) : null;
 if (!product) {
   product = allProducts[0] || PRODUCTS_CATALOG[0];
 }
+
+const normalizedSizes = normalizeProductSizes(product?.sizes, product?.price, product?.originalPrice);
+const defaultColor = (product?.colors && product.colors[0]?.name) || 'Standard';
+const defaultSize = (normalizedSizes && normalizedSizes[0]?.name) || '5 Feet (Window)';
+
+const colorParam = Astro.url.searchParams.get('color');
+const sizeParam = Astro.url.searchParams.get('size');
+const color = (colorParam && colorParam !== 'undefined' && colorParam !== 'null' && colorParam !== '') ? colorParam : defaultColor;
+const size = (sizeParam && sizeParam !== 'undefined' && sizeParam !== 'null' && sizeParam !== '') ? sizeParam : defaultSize;
+
+const quantityStr = Astro.url.searchParams.get('qty') || '1';
+const quantity = Math.max(1, parseInt(quantityStr, 10) || 1);
 
 const priceParam = Astro.url.searchParams.get('price');
 let unitPrice = product?.price || 0;
 
 if (priceParam && !isNaN(parseFloat(priceParam)) && parseFloat(priceParam) > 0) {
   unitPrice = parseFloat(priceParam);
-} else if (size && product?.sizes && Array.isArray(product.sizes)) {
-  const normalized = normalizeProductSizes(product.sizes, product.price, product.originalPrice);
-  const matched = normalized.find((s) => s.name.toLowerCase() === size.toLowerCase());
+} else if (size && normalizedSizes.length > 0) {
+  const matched = normalizedSizes.find((s) => s.name.toLowerCase() === size.toLowerCase()) ||
+                  normalizedSizes.find((s) => s.name.toLowerCase().includes(size.toLowerCase().slice(0, 3)));
   if (matched && matched.price) {
     unitPrice = matched.price;
   }
 }
+
+const matchedColorObj = product?.colors?.find((c) => c.name.toLowerCase() === color.toLowerCase());
+const previewImage = matchedColorObj?.images?.[0] || product?.images?.[0] || '/uploads/grey-eyelet-curtain-front.webp';
 
 const itemTotal = unitPrice * quantity;
 
@@ -246,8 +257,8 @@ const initialEmail = Astro.url.searchParams.get('email') || (sessionUser?.email?
             <!-- Item Detail Card -->
             <div class="flex gap-4">
               <img
-                src={product.images[0]}
-                alt={`Cart preview: ${product.name}`}
+                src={previewImage}
+                alt={`Cart preview: ${product.name} - ${color}`}
                 width="80"
                 height="96"
                 loading="lazy"

@@ -5,7 +5,7 @@ import { getStorefrontProducts, normalizeProductSizes } from '../../lib/products
 const { slug } = Astro.params;
 
 const allProducts = await getStorefrontProducts();
-const product = allProducts.find((p) => p.slug === slug);
+const product = allProducts.find((p) => p.slug === slug || p.id === slug);
 
 if (!product) {
   return Astro.rewrite('/404');
@@ -1401,6 +1401,8 @@ const productFaqs = [
               id: `${currentProductId}-${Date.now()}`,
               slug: currentProductSlug,
               title: finalTitle,
+              color: selectedColor,
+              size: selectedSize,
               price: unitPrice,
               image: currentImg,
               quantity: quantity
@@ -1408,8 +1410,52 @@ const productFaqs = [
           }
 
           localStorage.setItem('teepul_cart', JSON.stringify(cart));
-          window.location.href = '/checkout';
+
+          const checkoutUrl = `/checkout?product=${encodeURIComponent(currentProductSlug)}&color=${encodeURIComponent(selectedColor)}&size=${encodeURIComponent(selectedSize)}&qty=${quantity}&price=${unitPrice}`;
+          window.location.href = checkoutUrl;
         });
+      }
+
+      // Pre-select color and size from URL parameters if present (e.g. from Admin or ads)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramColor = urlParams.get('color');
+        const paramSize = urlParams.get('size');
+
+        if (paramColor) {
+          const colorBtns = Array.from(document.querySelectorAll('.color-chip-btn'));
+          const matchingColorBtn = colorBtns.find(
+            (b) => b.getAttribute('data-color')?.toLowerCase().trim() === paramColor.toLowerCase().trim()
+          );
+          if (matchingColorBtn) {
+            colorBtns.forEach((b) => {
+              b.className = 'color-chip-btn flex items-center gap-2.5 p-1.5 pr-3 rounded-2xl border-2 transition focus:outline-none cursor-pointer text-left border-slate-200 hover:border-slate-400 bg-white text-slate-800 font-semibold';
+            });
+            matchingColorBtn.className = 'color-chip-btn flex items-center gap-2.5 p-1.5 pr-3 rounded-2xl border-2 transition focus:outline-none cursor-pointer text-left active-color border-amber-800 ring-2 ring-amber-800/30 bg-amber-50/70 text-amber-950 font-bold';
+            selectedColor = matchingColorBtn.getAttribute('data-color') || '';
+            const label = document.getElementById('selected-color-label');
+            if (label) label.innerText = selectedColor;
+            updateGalleryForColor(selectedColor);
+          }
+        }
+
+        if (paramSize) {
+          const sizeBtns = Array.from(document.querySelectorAll('.size-btn'));
+          const matchingSizeBtn = sizeBtns.find(
+            (b) => b.getAttribute('data-size')?.toLowerCase().trim() === paramSize.toLowerCase().trim() ||
+                   b.getAttribute('data-size')?.toLowerCase().includes(paramSize.toLowerCase().trim().slice(0, 3))
+          );
+          if (matchingSizeBtn) {
+            sizeBtns.forEach((b) => b.classList.remove('active-size'));
+            matchingSizeBtn.classList.add('active-size');
+            selectedSize = matchingSizeBtn.getAttribute('data-size') || '';
+            baseSizePrice = parseFloat(matchingSizeBtn.getAttribute('data-price') || '0');
+            baseSizeOrigPrice = parseFloat(matchingSizeBtn.getAttribute('data-original-price') || '0');
+            updatePricing();
+          }
+        }
+      } catch (paramErr) {
+        console.warn('URL params parsing failed:', paramErr);
       }
 
       updatePricing();
