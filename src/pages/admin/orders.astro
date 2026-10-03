@@ -326,11 +326,12 @@ function getItemProductInfo(item: any) {
                           </a>
 
                           <a
-                            href={`https://wa.me/${o.customerPhone.replace(/\D/g, '')}`}
+                            href={`https://wa.me/${o.customerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Namaste ${o.customerName}! 🙏\n\nThank you for shopping with *Teepul Luxury Curtains*.\n\n✅ *Your Order is Confirmed!*\n📋 *Order Number:* ${o.orderNumber}\n💵 *Total Amount:* ₹${o.totalAmount.toLocaleString('en-IN')}\n💳 *Payment Status:* ${o.paymentStatus}\n📍 *Delivery Address:* ${o.shippingAddress}, ${o.pincode}\n\nYour order is currently being packed and will be dispatched via express courier shortly.\n\nNeed help? Reply directly to this WhatsApp chat. ✨`)}`}
                             target="_blank"
-                            class="inline-flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg border border-emerald-300 transition"
+                            class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] px-3 py-1 rounded-lg border border-emerald-700 transition shadow-xs"
+                            title="Send instant order confirmation WhatsApp message to customer"
                           >
-                            <span>💬 WhatsApp</span>
+                            <span>💬 Send Confirm WhatsApp</span>
                           </a>
                         </div>
 
