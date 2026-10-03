@@ -42,7 +42,7 @@ const categories = [
   },
   {
     name: 'Door Curtains',
-    tagline: '7 FT Standard Door Height',
+    tagline: '7 & 9 FT Standard Door Height',
     image: '/images/hero-curtains.jpg',
     href: '/products?category=Door+Curtains',
     badge: 'Most Bought',
@@ -53,13 +53,6 @@ const categories = [
     image: '/images/size-guide-comparison.jpg',
     href: '/products?category=Window+Curtains',
     badge: 'Essential',
-  },
-  {
-    name: 'Combo Packs',
-    tagline: 'Curated Sets for Full Home',
-    image: '/images/colors-palette.jpg',
-    href: '/products?category=Combo+Packs',
-    badge: 'Extra Value',
   },
 ];
 
@@ -305,12 +298,12 @@ const homepageFaqs = [
       </a>
     </div>
 
-    <!-- Scrollable container on mobile, 5 cols on desktop -->
-    <div class="flex sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto no-scrollbar pb-3 snap-x snap-mandatory">
+    <!-- Scrollable container on mobile, 4 cols on desktop -->
+    <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto no-scrollbar pb-3 snap-x snap-mandatory">
       {categories.map((cat) => (
         <a
           href={cat.href}
-          class="min-w-[200px] sm:min-w-0 flex-1 bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden group snap-start flex flex-col justify-between"
+          class="min-w-[220px] sm:min-w-0 flex-1 bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden group snap-start flex flex-col justify-between"
         >
           <div class="relative aspect-[4/3] bg-slate-100 overflow-hidden">
             <img
@@ -365,7 +358,7 @@ const homepageFaqs = [
       <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
         {colorHues.map((color) => (
           <a
-            href={`/products?color=${color.name}`}
+            href={`/products?color=${color.slug}`}
             class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-xs hover:shadow-lg hover:-translate-y-1 transition text-center flex flex-col items-center gap-2.5 group"
           >
             <div class={`w-12 h-12 sm:w-14 sm:h-14 rounded-full ${color.bgClass} shadow-md border-2 border-white ring-2 ring-slate-200 group-hover:scale-110 group-hover:ring-[#7B1830] transition duration-300 flex items-center justify-center`}>

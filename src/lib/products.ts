@@ -206,7 +206,7 @@ export const PRODUCTS_CATALOG: Product[] = [
     "price": 489,
     "originalPrice": 978,
     "currency": "₹",
-    "category": "Door Curtains",
+    "category": "Living Room",
     "badge": "Top Seller",
     "rating": 4.4,
     "reviewCount": 117,

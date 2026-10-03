@@ -338,13 +338,14 @@ const menuItems = rawMenuItems
           <button
             type="button"
             id="header-cart-btn"
-            class="cart-trigger relative bg-[#7B1830] hover:bg-[#4A0F1D] active:scale-95 text-white font-bold px-4 py-2 rounded-full flex items-center gap-2 text-xs transition shadow-md cursor-pointer"
+            onclick="window.openCartDrawer?.()"
+            class="cart-trigger relative bg-[#7B1830] hover:bg-[#4A0F1D] active:scale-95 text-white font-bold px-3.5 sm:px-4 py-2 rounded-full flex items-center gap-2 text-xs transition shadow-md cursor-pointer shrink-0"
             title="Open Shopping Cart"
             aria-label="Shopping Cart"
           >
-            <span class="text-sm">🛒</span>
+            <span class="text-base sm:text-sm">🛒</span>
             <span class="hidden sm:inline font-bold text-[11px] uppercase tracking-wider">Cart</span>
-            <span id="cart-badge-count" class="bg-[#F3E5D5] text-[#7B1830] text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">0</span>
+            <span id="cart-badge-count" class="bg-white text-[#7B1830] text-[11px] font-black w-5 h-5 min-w-[20px] min-h-[20px] rounded-full flex items-center justify-center shadow-xs leading-none">0</span>
           </button>
         </div>
       </div>
@@ -359,28 +360,22 @@ const menuItems = rawMenuItems
               </a>
             </li>
             <li>
-              <a href="/products?category=living-room" class="hover:text-[#7B1830] transition-colors py-1">Living Room</a>
+              <a href="/products?category=Living+Room" class="hover:text-[#7B1830] transition-colors py-1">Living Room</a>
             </li>
             <li>
-              <a href="/products?category=bedroom" class="hover:text-[#7B1830] transition-colors py-1">Bedroom</a>
+              <a href="/products?category=Bedroom" class="hover:text-[#7B1830] transition-colors py-1">Bedroom</a>
             </li>
             <li>
-              <a href="/products?category=door" class="hover:text-[#7B1830] transition-colors py-1">Door Curtains</a>
+              <a href="/products?category=Door+Curtains" class="hover:text-[#7B1830] transition-colors py-1">Door Curtains</a>
             </li>
             <li>
-              <a href="/products?category=kitchen" class="hover:text-[#7B1830] transition-colors py-1">Kitchen</a>
+              <a href="/products?category=Window+Curtains" class="hover:text-[#7B1830] transition-colors py-1">Window Curtains</a>
             </li>
             <li>
               <a href="/products#colors" class="hover:text-[#7B1830] transition-colors py-1">Shop by Color</a>
             </li>
             <li>
               <a href="/products#sizes" class="hover:text-[#7B1830] transition-colors py-1">Size Guide (5/7/9 FT)</a>
-            </li>
-            <li>
-              <a href="/products?filter=combo" class="hover:text-[#7B1830] transition-colors py-1">Combo Packs</a>
-            </li>
-            <li>
-              <a href="/products?filter=new" class="hover:text-[#7B1830] transition-colors py-1">New Arrivals</a>
             </li>
             <li>
               <a href="/products?filter=offers" class="text-[#7B1830] bg-[#FBE7E7] px-2.5 py-1 rounded-full font-black hover:bg-[#7B1830] hover:text-white transition">
@@ -415,20 +410,24 @@ const menuItems = rawMenuItems
             <span>✨ All Curtains Catalog</span>
             <span class="text-xs text-[#7B1830]">&rarr;</span>
           </a>
-          <a href="/products?category=living-room" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+          <a href="/products?category=Living+Room" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
             <span>🛋️ Living Room Curtains</span>
             <span class="text-xs text-[#7B1830]">&rarr;</span>
           </a>
-          <a href="/products?category=bedroom" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+          <a href="/products?category=Bedroom" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
             <span>🛏️ Bedroom Blackout Curtains</span>
             <span class="text-xs text-[#7B1830]">&rarr;</span>
           </a>
-          <a href="/products?category=door" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+          <a href="/products?category=Door+Curtains" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
             <span>🚪 7 &amp; 9 FT Door Curtains</span>
             <span class="text-xs text-[#7B1830]">&rarr;</span>
           </a>
+          <a href="/products?category=Window+Curtains" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>🪟 5 FT Window Curtains</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
           <a href="/products#colors" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
-            <span>🎨 Shop by Color (Maroon, Brown, Navy)</span>
+            <span>🎨 Shop by Color (Maroon, Brown, Pink, Black)</span>
             <span class="text-xs text-[#7B1830]">&rarr;</span>
           </a>
           <a href="/products#sizes" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
@@ -522,12 +521,14 @@ const menuItems = rawMenuItems
           <div class="space-y-3">
             <h4 class="text-xs font-bold uppercase tracking-wider text-[#FFF8F1]">Curtains Collection</h4>
             <ul class="space-y-2 text-xs">
-              <li><a href="/products" class="hover:text-[#FFF8F1] transition">All Curtains (23 Designs)</a></li>
-              <li><a href="/products?category=living-room" class="hover:text-[#FFF8F1] transition">Living Room Curtains</a></li>
-              <li><a href="/products?category=bedroom" class="hover:text-[#FFF8F1] transition">Bedroom Blackout Curtains</a></li>
-              <li><a href="/products?category=door" class="hover:text-[#FFF8F1] transition">7 &amp; 9 FT Door Drapes</a></li>
+              <li><a href="/products" class="hover:text-[#FFF8F1] transition">All Curtains (24 Designs)</a></li>
+              <li><a href="/products?category=Living+Room" class="hover:text-[#FFF8F1] transition">Living Room Curtains</a></li>
+              <li><a href="/products?category=Bedroom" class="hover:text-[#FFF8F1] transition">Bedroom Blackout Curtains</a></li>
+              <li><a href="/products?category=Door+Curtains" class="hover:text-[#FFF8F1] transition">7 &amp; 9 FT Door Drapes</a></li>
+              <li><a href="/products?category=Window+Curtains" class="hover:text-[#FFF8F1] transition">5 FT Window Drapes</a></li>
+              <li><a href="/products#colors" class="hover:text-[#FFF8F1] transition">Shop by Color</a></li>
               <li><a href="/products#sizes" class="hover:text-[#FFF8F1] transition">Size Guide &amp; Measurement</a></li>
-              <li><a href="/products?filter=offers" class="text-[#F3E5D5] font-bold hover:underline">Special Offers &amp; Combos</a></li>
+              <li><a href="/products?filter=offers" class="text-[#F3E5D5] font-bold hover:underline">⚡ Festive Offers (-50%)</a></li>
             </ul>
           </div>
 
@@ -631,8 +632,8 @@ const menuItems = rawMenuItems
           aria-label="Open Shopping Cart"
         >
           <div class="relative">
-            <span class="text-lg">🛒</span>
-            <span id="mobile-bottom-cart-badge" class="absolute -top-1 -right-2 bg-[#7B1830] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">0</span>
+            <span class="text-xl">🛒</span>
+            <span id="mobile-bottom-cart-badge" class="absolute -top-1.5 -right-2.5 bg-[#7B1830] text-white text-[9px] font-black w-4.5 h-4.5 min-w-[18px] min-h-[18px] rounded-full flex items-center justify-center shadow-xs leading-none border border-white">0</span>
           </div>
           <span class="text-[10px] font-extrabold tracking-tight text-[#7B1830]">Cart</span>
         </button>

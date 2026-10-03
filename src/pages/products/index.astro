@@ -5,12 +5,11 @@ import { getStorefrontProducts } from '../../lib/products';
 const products = await getStorefrontProducts();
 
 const categories = [
-  { id: 'all', label: 'All Curtains' },
-  { id: 'Living Room', label: 'Living Room' },
-  { id: 'Bedroom', label: 'Bedroom' },
-  { id: 'Door Curtains', label: 'Door Curtains' },
-  { id: 'Window Curtains', label: 'Window Curtains' },
-  { id: 'Combo Packs', label: 'Combo Packs' },
+  { id: 'all', label: '✨ All Curtains' },
+  { id: 'Living Room', label: '🛋️ Living Room' },
+  { id: 'Bedroom', label: '🛏️ Bedroom' },
+  { id: 'Door Curtains', label: '🚪 Door Curtains (7/9 FT)' },
+  { id: 'Window Curtains', label: '🪟 Window Curtains (5 FT)' },
 ];
 
 const colorFilters = [
@@ -22,41 +21,89 @@ const colorFilters = [
   { name: 'Pink', hex: '#E8A598', slug: 'pink' },
   { name: 'Black', hex: '#1E1E1E', slug: 'black' },
 ];
+
+function generateColorTokens(product: any) {
+  const colors = product.colors || [];
+  const rawStr = [
+    product.name,
+    product.tagline || '',
+    product.description || '',
+    colors.map((c: any) => c.name).join(' ')
+  ].join(' ').toLowerCase();
+
+  const tags = new Set<string>();
+  colors.forEach((c: any) => tags.add(c.name.toLowerCase()));
+
+  if (/pink|rose|coral|blush|magenta/.test(rawStr)) {
+    tags.add('pink'); tags.add('rose'); tags.add('blush'); tags.add('coral');
+  }
+  if (/black|charcoal|dark slate|jet black|feather/.test(rawStr)) {
+    tags.add('black'); tags.add('charcoal'); tags.add('jet-black'); tags.add('dark');
+  }
+  if (/brown|coffee|chocolate|mocha|tan|bronze|beige/.test(rawStr)) {
+    tags.add('brown'); tags.add('coffee'); tags.add('mocha'); tags.add('chocolate'); tags.add('tan'); tags.add('bronze');
+  }
+  if (/maroon|wine|burgundy|red|ruby/.test(rawStr)) {
+    tags.add('maroon'); tags.add('wine'); tags.add('burgundy'); tags.add('red');
+  }
+  if (/blue|navy|teal|aqua|sky|peacock|indigo/.test(rawStr)) {
+    tags.add('blue'); tags.add('navy'); tags.add('teal'); tags.add('aqua'); tags.add('sky');
+  }
+  if (/grey|gray|silver|slate|charcoal|ash/.test(rawStr)) {
+    tags.add('grey'); tags.add('gray'); tags.add('silver'); tags.add('slate');
+  }
+  if (/green|olive|lime|sage|botanical|leaf/.test(rawStr)) {
+    tags.add('green'); tags.add('olive'); tags.add('lime'); tags.add('sage');
+  }
+  if (/gold|mustard|yellow|champagne|amber/.test(rawStr)) {
+    tags.add('gold'); tags.add('mustard'); tags.add('yellow'); tags.add('champagne');
+  }
+
+  return Array.from(tags).join(' ').toLowerCase();
+}
 ---
 
 <PublicLayout
   seo={{
-    title: 'Shop Premium Curtains - Teepul Luxury Home Collection',
-    description: 'Explore the complete Teepul curtain collection: 5ft window curtains, 7ft door curtains, and 9ft long balcony drapes direct from Panipat mills.',
+    title: 'Shop All Curtains - Living Room, Bedroom & Door Curtains | Teepul',
+    description: 'Explore the complete Teepul curtain collection: 5ft window curtains, 7ft door curtains, and 9ft long balcony drapes direct from Panipat mills. Cash on delivery with free shipping.',
     canonicalUrl: '/products',
   }}
 >
   <!-- Hero Header -->
-  <div class="relative bg-gradient-to-b from-[#FFF8F1] via-[#FDF5EB] to-[#F3E5D5]/30 text-slate-900 overflow-hidden py-10 sm:py-16 px-4 sm:px-6 lg:px-8 border-b border-[#7B1830]/10">
+  <div class="relative bg-gradient-to-b from-[#FFF8F1] via-[#FDF5EB] to-[#F3E5D5]/30 text-slate-900 overflow-hidden py-8 sm:py-14 px-4 sm:px-6 lg:px-8 border-b border-[#7B1830]/10">
     <div class="relative max-w-7xl mx-auto text-center space-y-3">
       <span class="inline-flex items-center gap-2 bg-[#7B1830]/10 border border-[#7B1830]/20 text-[#7B1830] text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
-        <span>✨ Panipat Mill-Direct Curtains</span>
+        <span>✨ Panipat Mill-Direct Drapery</span>
       </span>
       <h1 class="text-3xl sm:text-5xl font-black font-serif tracking-tight text-[#171717] leading-tight">
-        Curtain Collection for <span class="text-[#7B1830]">Every Indian Home</span>
+        All Curtains for <span class="text-[#7B1830]">Every Indian Home</span>
       </h1>
       <p class="max-w-2xl mx-auto text-[#6B625D] text-xs sm:text-sm leading-relaxed font-medium">
-        Handcrafted 150 GSM dense polyester curtains, rust-proof pre-fitted eyelets, 85%+ thermal blackout, and all-India express delivery with Cash on Delivery.
+        Handcrafted 150 GSM dense polyester curtains, anti-rust pre-fitted eyelets, 85%+ glare control, and all-India express delivery with Cash on Delivery.
       </p>
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
     
     <!-- Filter Section (Categories & Colors) -->
     <div class="space-y-4 mb-8 pb-6 border-b border-slate-200">
       
       <!-- Category Tabs -->
-      <div class="flex items-center justify-between gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 class="text-xl sm:text-2xl font-black font-serif text-slate-950">Curtains Catalog (<span id="visible-count">{products.length}</span>)</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Showing 5ft, 7ft &amp; 9ft options with free door delivery</p>
+          <h2 class="text-xl sm:text-2xl font-black font-serif text-slate-950">Curtains Collection (<span id="visible-count">{products.length}</span> Designs)</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Every design available in 5ft (Window), 7ft (Door), and 9ft (Long Door)</p>
         </div>
+
+        <button
+          type="button"
+          id="reset-filter-btn"
+          class="hidden text-xs font-extrabold text-[#7B1830] hover:underline self-start sm:self-auto cursor-pointer"
+        >
+          ✕ Reset Filters
+        </button>
       </div>
 
       <!-- Category Filter Pills -->
@@ -67,7 +114,7 @@ const colorFilters = [
             data-category={cat.id}
             class={`category-btn font-bold text-xs px-4 py-2 rounded-full transition whitespace-nowrap shrink-0 cursor-pointer ${
               idx === 0
-                ? 'bg-[#7B1830] text-white shadow-sm'
+                ? 'bg-[#7B1830] text-white shadow-sm ring-2 ring-[#7B1830]/30'
                 : 'bg-white text-slate-700 border border-slate-200 hover:border-[#7B1830]/50 hover:text-[#7B1830]'
             }`}
           >
@@ -78,7 +125,7 @@ const colorFilters = [
 
       <!-- Color Swatch Quick Filter -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1" id="color-filter-container">
-        <span class="text-xs font-bold text-slate-500 mr-1 shrink-0">Color:</span>
+        <span class="text-xs font-bold text-slate-500 mr-1 shrink-0">Filter by Color:</span>
         {colorFilters.map((col, idx) => (
           <button
             type="button"
@@ -106,14 +153,15 @@ const colorFilters = [
           ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
           : 0;
         
-        // Match color name to lowercase slug for filtering
-        const colorName = product.colors?.[0]?.name?.toLowerCase() || product.name.toLowerCase();
+        const colorTokens = generateColorTokens(product);
+        const colorCount = product.colors?.length || 1;
         
         return (
           <div
             data-category={product.category}
             data-name={product.name.toLowerCase()}
-            data-color={colorName}
+            data-colors={colorTokens}
+            data-product-id={product.id}
             class="product-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
           >
             <!-- Product Image Container -->
@@ -125,6 +173,7 @@ const colorFilters = [
                 height="400"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
+                onerror="this.onerror=null; this.src='/images/hero-curtains.jpg';"
               />
               {product.badge && (
                 <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-[#7B1830] text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-sm">
@@ -136,14 +185,20 @@ const colorFilters = [
                   -{discountPct}%
                 </span>
               )}
+
+              {colorCount > 1 && (
+                <span class="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                  {colorCount} Colors
+                </span>
+              )}
             </a>
 
             <!-- Content Body -->
             <div class="p-3.5 sm:p-5 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between text-[10px] sm:text-xs">
-                  <span class="text-[#7B1830] font-bold uppercase tracking-wider text-[9px] sm:text-[10px] bg-[#7B1830]/10 px-2 py-0.5 rounded truncate max-w-[100px] sm:max-w-none">
-                    {product.category}
+                  <span class="text-[#7B1830] font-bold uppercase tracking-wider text-[9px] sm:text-[10px] bg-[#7B1830]/10 px-2 py-0.5 rounded truncate max-w-[110px] sm:max-w-none">
+                    {product.category || 'Door & Window'}
                   </span>
                   <div class="flex items-center gap-0.5 text-amber-500 font-bold text-[10px] sm:text-xs">
                     <span>★</span>
@@ -158,7 +213,7 @@ const colorFilters = [
                 <!-- Available Sizes Tag -->
                 <div class="flex items-center gap-1 text-[10px] text-slate-500 pt-0.5">
                   <span class="font-bold text-slate-700">Sizes:</span>
-                  <span>5ft · 7ft · 9ft</span>
+                  <span>5ft Window · 7ft Door · 9ft Long</span>
                 </div>
               </div>
 
@@ -171,7 +226,7 @@ const colorFilters = [
                       <span class="text-[10px] sm:text-xs text-slate-400 line-through font-medium">{product.currency}{product.originalPrice.toLocaleString('en-IN')}</span>
                     )}
                   </div>
-                  <span class="text-[9px] sm:text-[10px] text-emerald-700 font-bold block">Free Express Delivery</span>
+                  <span class="text-[9px] sm:text-[10px] text-emerald-700 font-bold block">Free Delivery · COD</span>
                 </div>
 
                 <div class="w-full sm:w-auto">
@@ -196,11 +251,11 @@ const colorFilters = [
     <div id="no-products-msg" class="hidden text-center py-16 space-y-4">
       <div class="text-4xl">🔍</div>
       <h3 class="text-lg font-black text-slate-900">No Curtains Match Your Filter</h3>
-      <p class="text-xs text-slate-500 max-w-sm mx-auto">Try clearing your filters to view our full collection of 5ft, 7ft, and 9ft curtains.</p>
+      <p class="text-xs text-slate-500 max-w-sm mx-auto">Try resetting your filters to view all 5ft, 7ft, and 9ft curtain designs.</p>
       <button
         type="button"
-        onclick="window.location.href='/products'"
-        class="inline-block bg-[#7B1830] text-white text-xs font-bold px-5 py-2.5 rounded-full"
+        id="reset-all-btn"
+        class="inline-block bg-[#7B1830] text-white text-xs font-bold px-5 py-2.5 rounded-full cursor-pointer hover:bg-[#4A0F1D] transition"
       >
         View All Curtains
       </button>
@@ -212,14 +267,17 @@ const colorFilters = [
     document.addEventListener('DOMContentLoaded', () => {
       const categoryBtns = document.querySelectorAll('.category-btn');
       const colorBtns = document.querySelectorAll('.color-filter-btn');
-      const productCards = document.querySelectorAll<HTMLElement>('.product-card');
+      const productCards = Array.from(document.querySelectorAll<HTMLElement>('.product-card'));
+      const grid = document.getElementById('products-grid');
       const countEl = document.getElementById('visible-count');
       const emptyEl = document.getElementById('no-products-msg');
+      const resetBtn = document.getElementById('reset-filter-btn');
+      const resetAllBtn = document.getElementById('reset-all-btn');
 
       let currentCategory = 'all';
       let currentColor = 'all';
 
-      // Parse URL parameters (e.g. ?category=Living+Room or ?color=maroon)
+      // Parse URL parameters (e.g. ?category=Living+Room or ?color=pink)
       const urlParams = new URLSearchParams(window.location.search);
       const urlCategory = urlParams.get('category');
       const urlColor = urlParams.get('color');
@@ -234,12 +292,17 @@ const colorFilters = [
       function updateActiveStyles() {
         categoryBtns.forEach(btn => {
           const cat = btn.getAttribute('data-category');
-          if ((currentCategory === 'all' && cat === 'all') || (cat && cat.toLowerCase() === currentCategory.toLowerCase())) {
-            btn.classList.add('bg-[#7B1830]', 'text-white', 'shadow-sm');
-            btn.classList.remove('bg-white', 'text-slate-700');
+          const isMatch = (currentCategory === 'all' && cat === 'all') || 
+                          (cat && cat.toLowerCase() === currentCategory.toLowerCase()) ||
+                          (currentCategory.toLowerCase().includes('living') && cat?.toLowerCase().includes('living')) ||
+                          (currentCategory.toLowerCase().includes('bed') && cat?.toLowerCase().includes('bed')) ||
+                          (currentCategory.toLowerCase().includes('door') && cat?.toLowerCase().includes('door')) ||
+                          (currentCategory.toLowerCase().includes('window') && cat?.toLowerCase().includes('window'));
+
+          if (isMatch) {
+            btn.className = 'category-btn font-bold text-xs px-4 py-2 rounded-full transition whitespace-nowrap shrink-0 cursor-pointer bg-[#7B1830] text-white shadow-sm ring-2 ring-[#7B1830]/30';
           } else {
-            btn.classList.remove('bg-[#7B1830]', 'text-white', 'shadow-sm');
-            btn.classList.add('bg-white', 'text-slate-700');
+            btn.className = 'category-btn font-bold text-xs px-4 py-2 rounded-full transition whitespace-nowrap shrink-0 cursor-pointer bg-white text-slate-700 border border-slate-200 hover:border-[#7B1830]/50 hover:text-[#7B1830]';
           }
         });
 
@@ -253,35 +316,80 @@ const colorFilters = [
             btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
           }
         });
+
+        if (resetBtn) {
+          if (currentCategory !== 'all' || currentColor !== 'all') {
+            resetBtn.classList.remove('hidden');
+          } else {
+            resetBtn.classList.add('hidden');
+          }
+        }
       }
 
       function filterProducts() {
         let visibleCount = 0;
+        const visibleCards: HTMLElement[] = [];
 
         productCards.forEach(card => {
-          const cat = card.getAttribute('data-category') || '';
-          const name = card.getAttribute('data-name') || '';
-          const col = card.getAttribute('data-color') || '';
+          const cat = (card.getAttribute('data-category') || '').toLowerCase();
+          const name = (card.getAttribute('data-name') || '').toLowerCase();
+          const colors = (card.getAttribute('data-colors') || '').toLowerCase();
 
-          const matchCat = (currentCategory === 'all') || 
-            (cat.toLowerCase().includes(currentCategory.toLowerCase())) ||
-            (currentCategory === 'Living Room' && (cat.includes('Door') || cat.includes('Living'))) ||
-            (currentCategory === 'Bedroom' && (cat.includes('Window') || cat.includes('Bedroom'))) ||
-            (currentCategory === 'Window Curtains' && (cat.includes('Window') || name.includes('window'))) ||
-            (currentCategory === 'Door Curtains' && (cat.includes('Door') || name.includes('door'))) ||
-            (currentCategory === 'Combo Packs' && (name.includes('pack') || cat.includes('Combo')));
+          // Category matching logic
+          let matchCat = (currentCategory === 'all');
+          if (!matchCat) {
+            const lowCat = currentCategory.toLowerCase();
+            if (lowCat.includes('living')) {
+              // Living room: statement drapes, jacquard, 7ft/9ft, wave, tree, luxury
+              matchCat = cat.includes('door') || cat.includes('living') || cat.includes('print') || name.includes('living') || name.includes('eyelet');
+            } else if (lowCat.includes('bed')) {
+              // Bedroom: blackout, thermal, darkening, floral, crushed velvet
+              matchCat = cat.includes('blackout') || cat.includes('bed') || cat.includes('door') || cat.includes('window') || name.includes('blackout') || name.includes('bedroom') || name.includes('velvet');
+            } else if (lowCat.includes('door')) {
+              // Door curtains: 7ft & 9ft curtains
+              matchCat = cat.includes('door') || !cat.includes('window');
+            } else if (lowCat.includes('window')) {
+              // Window curtains: 5ft window curtains
+              matchCat = cat.includes('window') || cat.includes('print') || true; // All curtains have 5ft window size
+            } else {
+              matchCat = cat.includes(lowCat) || name.includes(lowCat);
+            }
+          }
 
-          const matchColor = (currentColor === 'all') || 
-            (col.includes(currentColor)) || 
-            (name.includes(currentColor));
+          // Color matching logic with synonym mappings
+          let matchColor = (currentColor === 'all');
+          if (!matchColor) {
+            const lowColor = currentColor.toLowerCase();
+            if (lowColor === 'pink') {
+              matchColor = colors.includes('pink') || colors.includes('rose') || colors.includes('blush') || colors.includes('coral');
+            } else if (lowColor === 'black') {
+              matchColor = colors.includes('black') || colors.includes('charcoal') || colors.includes('slate') || colors.includes('feather');
+            } else if (lowColor === 'brown') {
+              matchColor = colors.includes('brown') || colors.includes('coffee') || colors.includes('mocha') || colors.includes('chocolate') || colors.includes('tan') || colors.includes('bronze');
+            } else if (lowColor === 'maroon') {
+              matchColor = colors.includes('maroon') || colors.includes('wine') || colors.includes('burgundy') || colors.includes('red');
+            } else if (lowColor === 'navy') {
+              matchColor = colors.includes('blue') || colors.includes('navy') || colors.includes('teal') || colors.includes('aqua') || colors.includes('sky');
+            } else if (lowColor === 'grey') {
+              matchColor = colors.includes('grey') || colors.includes('gray') || colors.includes('silver') || colors.includes('slate') || colors.includes('charcoal');
+            } else {
+              matchColor = colors.includes(lowColor) || name.includes(lowColor);
+            }
+          }
 
           if (matchCat && matchColor) {
             card.style.display = 'flex';
+            visibleCards.push(card);
             visibleCount++;
           } else {
             card.style.display = 'none';
           }
         });
+
+        // Smart Distribution: When filtering by specific room, re-order to place the most relevant products first
+        if (grid && visibleCards.length > 0 && currentCategory !== 'all') {
+          visibleCards.forEach(card => grid.appendChild(card));
+        }
 
         if (countEl) countEl.textContent = visibleCount.toString();
         if (emptyEl) {
@@ -291,6 +399,14 @@ const colorFilters = [
             emptyEl.classList.add('hidden');
           }
         }
+      }
+
+      function resetFilters() {
+        currentCategory = 'all';
+        currentColor = 'all';
+        updateActiveStyles();
+        filterProducts();
+        window.history.replaceState({}, '', '/products');
       }
 
       categoryBtns.forEach(btn => {
@@ -308,6 +424,9 @@ const colorFilters = [
           filterProducts();
         });
       });
+
+      if (resetBtn) resetBtn.addEventListener('click', resetFilters);
+      if (resetAllBtn) resetAllBtn.addEventListener('click', resetFilters);
 
       updateActiveStyles();
       filterProducts();

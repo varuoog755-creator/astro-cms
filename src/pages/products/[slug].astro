@@ -140,11 +140,11 @@ const productFaqs = [
     
     <!-- Top Breadcrumb -->
     <nav class="flex text-xs font-semibold text-slate-500 gap-2 items-center" aria-label="Breadcrumb">
-      <a href="/" class="hover:text-amber-800 transition">Home</a>
+      <a href="/" class="hover:text-[#7B1830] transition font-bold">Home</a>
       <span>/</span>
-      <a href="/products" class="hover:text-amber-800 transition">Curtains</a>
+      <a href="/products" class="hover:text-[#7B1830] transition font-bold">All Curtains</a>
       <span>/</span>
-      <span class="text-slate-900 truncate max-w-[200px] sm:max-w-md">{product.name}</span>
+      <span class="text-[#7B1830] font-extrabold truncate max-w-[200px] sm:max-w-md">{product.name}</span>
     </nav>
 
     <!-- 1️⃣ PRODUCT HERO (Product Image Gallery + Product Info) -->
@@ -172,6 +172,7 @@ const productFaqs = [
                   fetchpriority={idx === 0 ? "high" : "auto"}
                   decoding="async"
                   class="w-full h-full object-cover select-none pointer-events-none"
+                  onerror="this.onerror=null; this.src='/images/hero-curtains.jpg';"
                 />
               </div>
             ))}
@@ -180,7 +181,7 @@ const productFaqs = [
           <!-- Top Floating Badges -->
           <div class="absolute top-3 left-3 z-20 flex flex-col gap-1.5 pointer-events-none">
             {product.badge && (
-              <span class="bg-rose-600 text-white font-black text-[10px] sm:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+              <span class="bg-[#7B1830] text-white font-black text-[10px] sm:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
                 🔥 {product.badge}
               </span>
             )}
@@ -212,7 +213,7 @@ const productFaqs = [
             <button
               type="button"
               id="slider-prev-btn"
-              class="w-8 h-8 rounded-full bg-white hover:bg-amber-50 active:scale-90 text-slate-700 hover:text-amber-900 border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
+              class="w-8 h-8 rounded-full bg-white hover:bg-[#FFF8F1] active:scale-90 text-slate-700 hover:text-[#7B1830] border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
               aria-label="Previous image"
             >
               ‹
@@ -220,7 +221,7 @@ const productFaqs = [
             <button
               type="button"
               id="slider-next-btn"
-              class="w-8 h-8 rounded-full bg-white hover:bg-amber-50 active:scale-90 text-slate-700 hover:text-amber-900 border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
+              class="w-8 h-8 rounded-full bg-white hover:bg-[#FFF8F1] active:scale-90 text-slate-700 hover:text-[#7B1830] border border-slate-200 shadow-sm flex items-center justify-center font-bold text-sm transition cursor-pointer select-none"
               aria-label="Next image"
             >
               ›
@@ -235,7 +236,7 @@ const productFaqs = [
               type="button"
               data-slide-index={idx}
               data-img={img}
-              class={`thumb-btn flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-amber-800 ring-2 ring-amber-800/30' : 'border-slate-300 hover:border-amber-600/60 opacity-70 hover:opacity-100'}`}
+              class={`thumb-btn flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition shadow-sm focus:outline-none cursor-pointer ${idx === 0 ? 'border-[#7B1830] ring-2 ring-[#7B1830]/30' : 'border-slate-300 hover:border-[#7B1830]/60 opacity-70 hover:opacity-100'}`}
             >
               <img
                 src={img}
@@ -244,6 +245,7 @@ const productFaqs = [
                 height="80"
                 loading="lazy"
                 class="w-full h-full object-cover pointer-events-none"
+                onerror="this.onerror=null; this.src='/images/hero-curtains.jpg';"
               />
             </button>
           ))}
@@ -256,7 +258,7 @@ const productFaqs = [
           
           <!-- Category & Status -->
           <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
-            <span class="bg-amber-100 text-amber-900 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-amber-200">
+            <span class="bg-[#7B1830]/10 text-[#7B1830] font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#7B1830]/20">
               {product.category || 'Door & Window Curtains'}
             </span>
             <span class="bg-emerald-100 text-emerald-800 font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
