@@ -75,14 +75,37 @@ const order = await prisma.order.findUnique({
   <script is:inline define:vars={{ purchaseTotal: order?.totalAmount || 0, orderId: orderNumber }}>
     (function () {
       try {
-        if (typeof window.fbq === 'function') {
-          fbq('track', 'Purchase', {
-            currency: 'INR',
-            value: Number(purchaseTotal) || 0,
-            content_type: 'product',
-            order_id: String(orderId)
-          });
+        var purchaseKey = 'teepul_purchase_tracked_' + String(orderId);
+        var isAlreadyTracked = false;
+        try {
+          isAlreadyTracked = sessionStorage.getItem(purchaseKey) === 'true';
+        } catch (storageErr) {}
+
+        if (!isAlreadyTracked) {
+          try {
+            sessionStorage.setItem(purchaseKey, 'true');
+          } catch (storageErr) {}
+
+          // Meta Pixel Purchase Event with Event ID Deduplication
+          if (typeof window.fbq === 'function') {
+            fbq('track', 'Purchase', {
+              currency: 'INR',
+              value: Number(purchaseTotal) || 0,
+              content_type: 'product',
+              order_id: String(orderId)
+            }, { eventID: 'order_' + String(orderId) });
+          }
+
+          // Google Analytics 4 / Google Tag Deduplicated Purchase Event
+          if (typeof window.gtag === 'function') {
+            gtag('event', 'purchase', {
+              transaction_id: String(orderId),
+              value: Number(purchaseTotal) || 0,
+              currency: 'INR'
+            });
+          }
         }
+
         localStorage.removeItem('teepul_cart');
         if (typeof window.updateCartBadge === 'function') {
           window.updateCartBadge();
