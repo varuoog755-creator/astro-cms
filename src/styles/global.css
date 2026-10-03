@@ -2,17 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #7B1830;
+  --color-dark: #4A0F1D;
+  --color-cream: #FFF8F1;
+  --color-beige: #F3E5D5;
+  --color-pink: #FBE7E7;
+  --color-text: #171717;
+  --color-muted: #6B625D;
+  --color-border: #E8DED6;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    background-color: #FFF8F1;
+    color: #171717;
   }
 
   body {
     -webkit-overflow-scrolling: touch;
     touch-action: manipulation;
+    background-color: #FFF8F1;
   }
 
   /* Prevent awkward iOS Safari auto-zoom when tapping inputs */
@@ -23,20 +37,22 @@
   }
 }
 
+.font-serif-luxury {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
 .glass-header {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 248, 241, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-.brand-gradient-text {
-  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #7c3aed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.brand-maroon-gradient {
+  background: linear-gradient(135deg, #7B1830 0%, #4A0F1D 100%);
 }
 
-.brand-gradient-bg {
-  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #7c3aed 100%);
+.brand-warm-gradient {
+  background: linear-gradient(180deg, #FFF8F1 0%, #F3E5D5 100%);
 }
 
 /* Mobile no-scrollbar utility for smooth swipeable pills */
@@ -48,7 +64,7 @@
   scrollbar-width: none;
 }
 
-/* Safe area inset for modern iPhones with home indicator */
+/* Safe area inset for modern smartphones with bottom bar */
 .pb-safe {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
 }
@@ -79,35 +95,35 @@
   object-fit: cover !important;
 }
 
-/* ── Size Selector: high-contrast, no white-on-white ────────────────── */
+/* ── Size Selector: high-contrast, maroon accent ────────────────── */
 .size-btn {
   background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
+  color: #171717 !important;
+  border: 1.5px solid #E8DED6 !important;
   transition: all 0.2s ease !important;
 }
 .size-btn .size-title {
-  color: #0f172a !important;
+  color: #171717 !important;
   font-weight: 700 !important;
 }
 .size-btn .size-badge {
-  background-color: #f1f5f9 !important;
-  color: #334155 !important;
+  background-color: #F3E5D5 !important;
+  color: #4A0F1D !important;
 }
 
-/* Active / selected state – rich dark amber, always readable */
+/* Active / selected state – rich primary maroon */
 .size-btn.active-size {
-  background-color: #78350f !important;
+  background-color: #7B1830 !important;
   color: #ffffff !important;
-  border-color: #78350f !important;
-  box-shadow: 0 4px 14px -2px rgba(120, 53, 15, 0.4) !important;
+  border-color: #7B1830 !important;
+  box-shadow: 0 4px 14px -2px rgba(123, 24, 48, 0.35) !important;
 }
 .size-btn.active-size .size-title {
   color: #ffffff !important;
   font-weight: 800 !important;
 }
 .size-btn.active-size .size-badge {
-  background-color: #92400e !important;
+  background-color: #4A0F1D !important;
   color: #ffffff !important;
 }
 

@@ -223,92 +223,103 @@ const menuItems = rawMenuItems
       }
     </style>
   </head>
-  <body class="bg-[#fafafa] text-slate-900 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-800 selection:text-white">
+  <body class="bg-[#FFF8F1] text-[#171717] font-sans antialiased min-h-screen flex flex-col selection:bg-[#7B1830] selection:text-white">
     <!-- Accessible Skip to Content Link (WCAG 2.1 AA) -->
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-slate-900 focus:text-white focus:px-4 focus:py-2.5 focus:rounded-xl focus:shadow-2xl focus:outline-none font-bold text-xs"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-[#7B1830] focus:text-white focus:px-4 focus:py-2.5 focus:rounded-xl focus:shadow-2xl focus:outline-none font-bold text-xs"
     >
       Skip to main content
     </a>
 
-    <!-- Top Announcement Bar -->
-    <div class="bg-slate-950 text-slate-200 text-[11px] sm:text-xs py-2 px-3 sm:px-4 text-center border-b border-slate-900 flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap">
-      <span class="bg-amber-600 text-white font-black px-2 py-0.5 rounded text-[9px] sm:text-[10px] uppercase tracking-wider shrink-0">TEEPUL</span>
-      <span class="font-medium truncate sm:hidden">✨ Free All-India Delivery · 7-Day Returns</span>
-      <span class="font-medium hidden sm:inline">✨ Premium Door Curtains, Sheer Linen Drapes &amp; Thermal Blackout Drapes · Direct Factory Dispatch</span>
-      <a href="/products" class="text-amber-400 font-bold hover:underline ml-1 hidden sm:inline shrink-0">Explore Shop &rarr;</a>
+    <!-- Top Announcement Bar (Rich Maroon) -->
+    <div class="bg-[#7B1830] text-white text-[11px] sm:text-xs py-2 px-3 sm:px-4 text-center border-b border-[#4A0F1D] flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap shadow-xs">
+      <span class="bg-[#FFF8F1] text-[#7B1830] font-black px-2 py-0.5 rounded text-[9px] sm:text-[10px] uppercase tracking-wider shrink-0 shadow-xs">TEEPUL LUXURY</span>
+      <span class="font-semibold truncate sm:hidden">✨ Flat 40% OFF · Free All-India COD · 7-Day Easy Returns</span>
+      <span class="font-medium hidden sm:inline">✨ Premium Door Curtains, Jacquard Blackout Drapes &amp; Sheer Linen · Direct Panipat Factory Dispatch</span>
+      <a href="/products?filter=offers" class="text-[#F3E5D5] font-bold hover:underline ml-1 hidden sm:inline shrink-0">Explore Offers &rarr;</a>
     </div>
 
-    <!-- Header Navigation -->
-    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200/80 transition-all duration-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
+    <!-- Main Header Navigation -->
+    <header class="bg-[#FFF8F1]/95 backdrop-blur-md sticky top-0 z-50 border-b border-[#E8DED6] transition-all duration-200">
+      
+      <!-- Top Row: Logo, Search, Quick Actions -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
         
+        <!-- Mobile Left: Hamburger Toggle -->
+        <button
+          type="button"
+          id="mobile-menu-toggle"
+          class="lg:hidden p-2 rounded-xl text-[#171717] hover:bg-[#F3E5D5] focus:outline-none transition active:scale-95"
+          aria-label="Toggle Navigation Menu"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
         <!-- Brand Logo -->
-        <a href="/" class="flex items-center gap-3 group py-1">
+        <a href="/" class="flex items-center gap-3 group py-1 shrink-0">
           <img
             src="/teepul-logo-transparent.png"
             alt="Teepul Luxury Home & Drapery"
-            class="h-10 sm:h-12 w-auto object-contain transition-transform"
+            class="h-9 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
           />
         </a>
 
-        <!-- Desktop Navigation Menu -->
-        <nav class="hidden md:flex items-center gap-8">
-          {menuItems.map((item: any) => (
-            <a
-              href={item.url}
-              class="text-xs uppercase tracking-widest font-bold text-slate-700 hover:text-amber-800 transition-colors py-1"
-            >
-              {item.title}
-            </a>
-          ))}
-        </nav>
-
-        <!-- Search Bar & Actions -->
-        <div class="flex items-center gap-2.5 sm:gap-3">
-          <form action="/search" method="GET" class="relative hidden sm:block">
+        <!-- Desktop Search Bar -->
+        <div class="hidden lg:flex flex-1 max-w-xl mx-4">
+          <form action="/search" method="GET" class="relative w-full">
             <input
               type="text"
               name="q"
-              placeholder="Search curtains, decor..."
+              placeholder="Search curtains by room, color (Maroon, Brown), or size (7ft, 9ft)..."
               aria-label="Search store curtains and decor"
-              class="w-44 lg:w-52 bg-slate-50 text-xs font-medium text-slate-900 rounded-full pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 border border-slate-200 focus:bg-white transition-all"
+              class="w-full bg-white text-xs font-medium text-[#171717] rounded-full pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7B1830] border border-[#E8DED6] focus:bg-white transition-all shadow-xs"
             />
-            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-[#6B625D] absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </form>
+        </div>
 
-          <!-- Cart Icon & Counter -->
-          <button
-            type="button"
-            id="header-cart-btn"
-            class="cart-trigger relative bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold px-3.5 py-2 rounded-full hidden sm:flex items-center gap-1.5 text-xs transition shadow-xs cursor-pointer"
-            title="Open Shopping Cart"
-            aria-label="Shopping Cart"
+        <!-- Desktop Quick Utility Actions -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          
+          <a
+            href="/checkout"
+            class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-[#6B625D] hover:text-[#7B1830] transition px-2.5 py-1.5 rounded-lg hover:bg-[#F3E5D5]/50"
+            title="Track Order Status"
           >
-            <span class="text-sm">🛒</span>
-            <span class="hidden sm:inline font-bold text-[11px] uppercase tracking-wider">Cart</span>
-            <span id="cart-badge-count" class="bg-amber-500 text-slate-950 text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center">0</span>
-          </button>
+            <span>📦</span>
+            <span class="hidden xl:inline">Track Order</span>
+          </a>
+
+          <a
+            href="/contact"
+            class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-[#6B625D] hover:text-[#7B1830] transition px-2.5 py-1.5 rounded-lg hover:bg-[#F3E5D5]/50"
+            title="Customer Help & Support"
+          >
+            <span>💬</span>
+            <span class="hidden xl:inline">Help</span>
+          </a>
 
           <!-- Customer Profile / Login Button -->
           {currentSession ? (
             <div class="hidden sm:flex items-center gap-2">
               <a
                 href="/account"
-                class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs px-3.5 py-2 rounded-full transition border border-slate-200"
+                class="flex items-center gap-1.5 bg-white hover:bg-[#F3E5D5] text-[#171717] font-bold text-xs px-3.5 py-2 rounded-full transition border border-[#E8DED6] shadow-xs"
                 title="My Customer Dashboard"
               >
                 <span>👤</span>
-                <span class="max-w-[110px] truncate">{currentSession.displayName || currentSession.username}</span>
+                <span class="max-w-[100px] truncate">{currentSession.displayName || currentSession.username}</span>
               </a>
 
               <button
                 type="button"
                 id="header-logout-btn"
-                class="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 font-bold text-xs px-2.5 py-2 rounded-full transition border border-slate-200"
+                class="bg-white hover:bg-rose-50 text-[#6B625D] hover:text-rose-700 font-bold text-xs px-2.5 py-2 rounded-full transition border border-[#E8DED6]"
                 title="Logout from Account"
               >
                 🚪
@@ -317,77 +328,147 @@ const menuItems = rawMenuItems
           ) : (
             <a
               href="/login"
-              class="hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs px-3.5 py-2 rounded-full transition border border-slate-200"
+              class="hidden sm:flex items-center gap-1.5 bg-white hover:bg-[#F3E5D5] text-[#171717] font-bold text-xs px-3.5 py-2 rounded-full transition border border-[#E8DED6] shadow-xs"
             >
-              <span>👤 Sign In</span>
+              <span>👤 Login</span>
             </a>
           )}
 
-          <!-- Mobile Hamburger Toggle Button -->
+          <!-- Header Cart Button -->
           <button
             type="button"
-            id="mobile-menu-toggle"
-            class="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none"
-            aria-label="Toggle Navigation Menu"
+            id="header-cart-btn"
+            class="cart-trigger relative bg-[#7B1830] hover:bg-[#4A0F1D] active:scale-95 text-white font-bold px-4 py-2 rounded-full flex items-center gap-2 text-xs transition shadow-md cursor-pointer"
+            title="Open Shopping Cart"
+            aria-label="Shopping Cart"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <span class="text-sm">🛒</span>
+            <span class="hidden sm:inline font-bold text-[11px] uppercase tracking-wider">Cart</span>
+            <span id="cart-badge-count" class="bg-[#F3E5D5] text-[#7B1830] text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">0</span>
           </button>
         </div>
       </div>
 
-      <!-- Mobile Drawer Navigation -->
-      <div id="mobile-menu-drawer" class="hidden md:hidden bg-white/95 backdrop-blur-lg border-b border-slate-200 px-4 pt-3 pb-6 space-y-3">
+      <!-- Desktop Main Category Navigation Bar -->
+      <nav class="hidden lg:block bg-white border-t border-[#E8DED6] shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ul class="flex items-center justify-between text-[11px] xl:text-xs font-bold uppercase tracking-wider text-[#6B625D] py-2.5 whitespace-nowrap overflow-x-auto no-scrollbar">
+            <li>
+              <a href="/products" class="hover:text-[#7B1830] transition-colors py-1 flex items-center gap-1">
+                <span>✨ All Curtains</span>
+              </a>
+            </li>
+            <li>
+              <a href="/products?category=living-room" class="hover:text-[#7B1830] transition-colors py-1">Living Room</a>
+            </li>
+            <li>
+              <a href="/products?category=bedroom" class="hover:text-[#7B1830] transition-colors py-1">Bedroom</a>
+            </li>
+            <li>
+              <a href="/products?category=door" class="hover:text-[#7B1830] transition-colors py-1">Door Curtains</a>
+            </li>
+            <li>
+              <a href="/products?category=kitchen" class="hover:text-[#7B1830] transition-colors py-1">Kitchen</a>
+            </li>
+            <li>
+              <a href="/products#colors" class="hover:text-[#7B1830] transition-colors py-1">Shop by Color</a>
+            </li>
+            <li>
+              <a href="/products#sizes" class="hover:text-[#7B1830] transition-colors py-1">Size Guide (5/7/9 FT)</a>
+            </li>
+            <li>
+              <a href="/products?filter=combo" class="hover:text-[#7B1830] transition-colors py-1">Combo Packs</a>
+            </li>
+            <li>
+              <a href="/products?filter=new" class="hover:text-[#7B1830] transition-colors py-1">New Arrivals</a>
+            </li>
+            <li>
+              <a href="/products?filter=offers" class="text-[#7B1830] bg-[#FBE7E7] px-2.5 py-1 rounded-full font-black hover:bg-[#7B1830] hover:text-white transition">
+                ⚡ Offers (-50%)
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Mobile Search Bar Below Header -->
+      <div class="lg:hidden px-4 py-2.5 bg-white border-t border-[#E8DED6]">
         <form action="/search" method="GET" class="relative">
           <input
             type="text"
             name="q"
-            placeholder="Search curtains, lights, decor..."
+            placeholder="Search curtains (Maroon, Brown, 7ft door)..."
             aria-label="Search store curtains and decor"
-            class="w-full bg-slate-100 text-xs font-medium text-slate-800 rounded-full pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 border border-slate-200"
+            class="w-full bg-[#FFF8F1] text-xs font-medium text-[#171717] rounded-full pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1830] border border-[#E8DED6]"
           />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-[#6B625D] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </form>
+      </div>
 
-        <div class="flex flex-col space-y-2 pt-2">
-          {menuItems.map((item: any) => (
-            <a
-              href={item.url}
-              class="px-4 py-2.5 rounded-xl text-xs font-extrabold text-slate-800 hover:bg-amber-50 hover:text-amber-700 uppercase tracking-wider transition"
-            >
-              {item.title}
-            </a>
-          ))}
+      <!-- Mobile Drawer Navigation -->
+      <div id="mobile-menu-drawer" class="hidden lg:hidden bg-[#FFF8F1] border-b border-[#E8DED6] px-4 pt-3 pb-6 space-y-3 shadow-xl">
+        <div class="flex flex-col space-y-1.5 pt-1">
+          <span class="text-[10px] font-black uppercase text-[#6B625D] tracking-widest px-3 py-1">Shop Categories</span>
+          <a href="/products" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>✨ All Curtains Catalog</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
+          <a href="/products?category=living-room" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>🛋️ Living Room Curtains</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
+          <a href="/products?category=bedroom" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>🛏️ Bedroom Blackout Curtains</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
+          <a href="/products?category=door" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>🚪 7 &amp; 9 FT Door Curtains</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
+          <a href="/products#colors" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>🎨 Shop by Color (Maroon, Brown, Navy)</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
+          <a href="/products#sizes" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#171717] hover:bg-[#F3E5D5] flex items-center justify-between">
+            <span>📏 Size Guide (5ft, 7ft, 9ft)</span>
+            <span class="text-xs text-[#7B1830]">&rarr;</span>
+          </a>
+          <a href="/products?filter=offers" class="px-3.5 py-2 rounded-xl text-xs font-bold text-[#7B1830] bg-[#FBE7E7] flex items-center justify-between">
+            <span>⚡ Special Offers (Flat 40% OFF)</span>
+            <span class="text-xs font-black">SAVE &rarr;</span>
+          </a>
 
-          {currentSession ? (
-            <>
+          <div class="border-t border-[#E8DED6] my-2 pt-2">
+            <span class="text-[10px] font-black uppercase text-[#6B625D] tracking-widest px-3 py-1">Customer Account</span>
+            {currentSession ? (
+              <>
+                <a
+                  href="/account"
+                  class="px-3.5 py-2 rounded-xl text-xs font-extrabold text-[#7B1830] bg-white flex items-center justify-between border border-[#E8DED6]"
+                >
+                  <span>👤 Dashboard ({currentSession.displayName || currentSession.username})</span>
+                  <span class="text-[10px] bg-[#F3E5D5] text-[#7B1830] px-2 py-0.5 rounded font-black">OPEN</span>
+                </a>
+                <button
+                  type="button"
+                  id="mobile-logout-btn"
+                  class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-extrabold text-rose-700 bg-rose-50 flex items-center gap-2 mt-1 border border-rose-100"
+                >
+                  <span>🚪 Logout</span>
+                </button>
+              </>
+            ) : (
               <a
-                href="/account"
-                class="px-4 py-2.5 rounded-xl text-xs font-extrabold text-amber-900 bg-amber-50 flex items-center justify-between border border-amber-200"
+                href="/login"
+                class="px-3.5 py-2 rounded-xl text-xs font-extrabold text-[#7B1830] bg-white flex items-center justify-between border border-[#E8DED6]"
               >
-                <span>👤 My Dashboard ({currentSession.displayName || currentSession.username})</span>
-                <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-black">OPEN</span>
+                <span>🔑 Customer Login / Signup</span>
+                <span class="text-xs">&rarr;</span>
               </a>
-
-              <button
-                type="button"
-                id="mobile-logout-btn"
-                class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-extrabold text-red-600 bg-red-50 flex items-center gap-2 border border-red-100"
-              >
-                <span>🚪 Logout</span>
-              </button>
-            </>
-          ) : (
-            <a
-              href="/login"
-              class="px-4 py-2.5 rounded-xl text-xs font-extrabold text-amber-900 bg-amber-50 uppercase tracking-wider transition border border-amber-200"
-            >
-              🔑 Customer Login / Register
-            </a>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>
@@ -395,102 +476,108 @@ const menuItems = rawMenuItems
     <!-- Floating Toast Alert for Fast Add to Cart -->
     <div
       id="cart-toast"
-      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transition-all duration-300 text-xs"
+      class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 hidden bg-[#171717] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-[#4A0F1D] flex items-center gap-3 transition-all duration-300 text-xs"
     >
       <span class="text-base">✨</span>
       <div>
         <span id="cart-toast-msg" class="font-bold block">Added item to cart!</span>
-        <span class="text-[10px] text-slate-300">Ready for express checkout.</span>
+        <span class="text-[10px] text-[#F3E5D5]">Ready for express checkout.</span>
       </div>
-      <a
-        href="/checkout"
-        class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-[11px] px-3.5 py-1.5 rounded-xl shadow ml-2 transition shrink-0"
+      <button
+        type="button"
+        onclick="window.openCartDrawer?.()"
+        class="bg-[#7B1830] hover:bg-[#4A0F1D] text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-xl shadow ml-2 transition shrink-0 cursor-pointer"
       >
-        Checkout 🛒
-      </a>
+        View Cart 🛒
+      </button>
     </div>
 
     <!-- Main Body Slot -->
-    <main id="main-content" role="main" class="flex-1 pb-16 md:pb-0">
+    <main id="main-content" role="main" class="flex-1 pb-20 md:pb-0">
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 text-slate-400 pt-16 pb-12 border-t border-slate-900 mt-20">
+    <!-- Premium Footer (Rich Charcoal & Maroon Accent) -->
+    <footer class="bg-[#171717] text-[#A89F91] pt-16 pb-12 border-t border-[#4A0F1D] mt-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-neutral-800">
           
           <!-- Column 1: Brand Info -->
           <div class="space-y-4 md:col-span-1">
-            <a href="/" class="inline-block bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-md">
+            <a href="/" class="inline-block bg-[#FFF8F1] px-4 py-2.5 rounded-2xl border border-[#E8DED6] shadow-md">
               <img src="/teepul-header-logo.png" alt="Teepul Luxury Home & Drapery" class="h-9 sm:h-11 w-auto object-contain" />
             </a>
-            <p class="text-xs leading-relaxed text-slate-400">
-              Luxury Door Curtains, French Sheer Window Drapery, Thermal Blackout & Home Decoration Drapes. Designed for timeless elegance in Indian living spaces.
+            <p class="text-xs leading-relaxed text-[#A89F91]">
+              Teepul brings factory-direct luxury curtains, blackout eyelet drapes &amp; French sheer window panels from the historic textile mills of Panipat to modern Indian homes.
             </p>
-            <div class="flex items-center gap-3 text-slate-400 text-xs">
-              <span class="inline-flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-slate-300">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Systems Operational
+            <div class="flex items-center gap-3 text-xs">
+              <span class="inline-flex items-center gap-1.5 bg-[#4A0F1D]/50 border border-[#7B1830]/40 px-3 py-1 rounded-full text-[#F3E5D5]">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Panipat Mill Active · Direct Dispatch
               </span>
             </div>
           </div>
 
-          <!-- Column 2: Quick Links -->
+          <!-- Column 2: Curtains Navigation -->
           <div class="space-y-3">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">Navigation</h4>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#FFF8F1]">Curtains Collection</h4>
             <ul class="space-y-2 text-xs">
-              <li><a href="/" class="hover:text-white transition">Home Page</a></li>
-              <li><a href="/products" class="hover:text-white transition">Store & Products</a></li>
-              <li><a href="/blog" class="hover:text-white transition">Latest Articles</a></li>
-              <li><a href="/about" class="hover:text-white transition">About Platform</a></li>
-              <li><a href="/search" class="hover:text-white transition">Global Search</a></li>
+              <li><a href="/products" class="hover:text-[#FFF8F1] transition">All Curtains (23 Designs)</a></li>
+              <li><a href="/products?category=living-room" class="hover:text-[#FFF8F1] transition">Living Room Curtains</a></li>
+              <li><a href="/products?category=bedroom" class="hover:text-[#FFF8F1] transition">Bedroom Blackout Curtains</a></li>
+              <li><a href="/products?category=door" class="hover:text-[#FFF8F1] transition">7 &amp; 9 FT Door Drapes</a></li>
+              <li><a href="/products#sizes" class="hover:text-[#FFF8F1] transition">Size Guide &amp; Measurement</a></li>
+              <li><a href="/products?filter=offers" class="text-[#F3E5D5] font-bold hover:underline">Special Offers &amp; Combos</a></li>
             </ul>
           </div>
 
           <!-- Column 3: Customer Care & Policies -->
           <div class="space-y-3">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">Customer Care & Policies</h4>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#FFF8F1]">Customer Care &amp; Policies</h4>
             <ul class="space-y-2 text-xs">
-              <li><a href="/contact" class="hover:text-white transition">Contact Us & Panipat Studio</a></li>
-              <li><a href="/shipping-policy" class="hover:text-white transition">Shipping & Delivery Policy</a></li>
-              <li><a href="/refund-policy" class="hover:text-white transition">Refund & Cancellation Policy</a></li>
-              <li><a href="/terms" class="hover:text-white transition">Terms and Conditions</a></li>
-              <li><a href="/privacy-policy" class="hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="/checkout" class="hover:text-white transition">Track Cart & Order</a></li>
+              <li><a href="/contact" class="hover:text-[#FFF8F1] transition">Contact Us &amp; Panipat Studio</a></li>
+              <li><a href="/shipping-policy" class="hover:text-[#FFF8F1] transition">Shipping &amp; Free COD Policy</a></li>
+              <li><a href="/refund-policy" class="hover:text-[#FFF8F1] transition">7-Day Return &amp; Replacement</a></li>
+              <li><a href="/terms" class="hover:text-[#FFF8F1] transition">Terms &amp; Conditions</a></li>
+              <li><a href="/privacy-policy" class="hover:text-[#FFF8F1] transition">Privacy Policy</a></li>
+              <li><a href="/checkout" class="hover:text-[#FFF8F1] transition">Track Order &amp; Cart</a></li>
             </ul>
           </div>
 
-          <!-- Column 4: Newsletter -->
+          <!-- Column 4: Newsletter & Trust -->
           <div class="space-y-4">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">Newsletter</h4>
-            <p class="text-xs text-slate-400">Subscribe for release updates, curtain offers, and styling tips.</p>
-            <form onsubmit="event.preventDefault(); alert('Subscribed successfully!');" class="space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#FFF8F1]">Teepul VIP Club</h4>
+            <p class="text-xs text-[#A89F91]">Get early access to festive home makeover offers and styling guides.</p>
+            <form onsubmit="event.preventDefault(); alert('Subscribed to Teepul VIP Club successfully!');" class="space-y-2">
               <input
                 type="email"
                 placeholder="Enter your email"
                 required
-                class="w-full bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                class="w-full bg-neutral-900 border border-neutral-800 text-xs text-[#FFF8F1] rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7B1830]"
               />
-              <button type="submit" class="w-full bg-amber-800 hover:bg-amber-700 text-white font-bold text-xs py-2.5 rounded-xl transition">
-                Subscribe
+              <button type="submit" class="w-full bg-[#7B1830] hover:bg-[#4A0F1D] text-white font-bold text-xs py-2.5 rounded-xl transition shadow-sm">
+                Join VIP Club &rarr;
               </button>
             </form>
+            <div class="pt-2 text-[10px] text-[#A89F91] flex items-center gap-2">
+              <span>🔒 100% Secure Checkout</span>
+              <span>•</span>
+              <span>🚚 Free All-India Delivery</span>
+            </div>
           </div>
         </div>
 
-        <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} Teepul - Luxury Home Curtains & Drapery. Ashank Ecommerce Pvt Ltd, Panipat, Haryana. All rights reserved.</p>
+        <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89F91]">
+          <p>© {new Date().getFullYear()} Teepul - Luxury Home Curtains &amp; Drapery. Ashank Ecommerce Pvt Ltd, Panipat, Haryana. All rights reserved.</p>
           <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <a href="/blog" class="hover:text-slate-300 transition font-medium text-amber-400/90">Blog</a>
-            <a href="/terms" class="hover:text-slate-300 transition">Terms</a>
-            <a href="/privacy-policy" class="hover:text-slate-300 transition">Privacy</a>
-            <a href="/refund-policy" class="hover:text-slate-300 transition">Refunds</a>
-            <a href="/shipping-policy" class="hover:text-slate-300 transition">Shipping</a>
-            <a href="/contact" class="hover:text-slate-300 transition">Contact</a>
-            <a href="/sitemap.xml" class="hover:text-slate-300 transition">Sitemap</a>
-            <a href="/rss.xml" class="hover:text-slate-300 transition">RSS</a>
-            <a href="/robots.txt" class="hover:text-slate-300 transition">Robots.txt</a>
+            <a href="/blog" class="hover:text-[#FFF8F1] transition font-medium text-[#F3E5D5]">Blog</a>
+            <a href="/terms" class="hover:text-[#FFF8F1] transition">Terms</a>
+            <a href="/privacy-policy" class="hover:text-[#FFF8F1] transition">Privacy</a>
+            <a href="/refund-policy" class="hover:text-[#FFF8F1] transition">Refunds</a>
+            <a href="/shipping-policy" class="hover:text-[#FFF8F1] transition">Shipping</a>
+            <a href="/contact" class="hover:text-[#FFF8F1] transition">Contact</a>
+            <a href="/sitemap.xml" class="hover:text-[#FFF8F1] transition">Sitemap</a>
+            <a href="/robots.txt" class="hover:text-[#FFF8F1] transition">Robots.txt</a>
           </div>
         </div>
       </div>
@@ -499,10 +586,10 @@ const menuItems = rawMenuItems
     <!-- Floating WhatsApp Sales Widget (Desktop & Tablet) -->
     {integrationSettings.whatsapp_enabled && integrationSettings.whatsapp_floating_widget && (
       <a
-        href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi! I am browsing the store and have a question about products.')}`}
+        href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi Teepul! I am browsing your curtain collection and have a question.')}`}
         target="_blank"
         rel="noopener noreferrer"
-        class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all hidden sm:flex items-center gap-2 font-bold text-xs group"
+        class="fixed bottom-24 md:bottom-6 right-4 sm:right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all hidden sm:flex items-center gap-2 font-bold text-xs group"
         title="Chat on WhatsApp"
       >
         <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -514,41 +601,41 @@ const menuItems = rawMenuItems
       </a>
     )}
 
-    <!-- Mobile App-Style Bottom Navigation Bar (80% Mobile Users - Sleek & Compact) -->
+    <!-- Mobile App-Style Sticky Bottom Navigation Bar -->
     {!hideMobileNav && (
-      <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 py-1 px-2 shadow-[0_-3px_15px_rgba(0,0,0,0.06)] flex items-center justify-around" style="padding-bottom: max(0.25rem, env(safe-area-inset-bottom));">
-        <a href="/" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
+      <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFF8F1]/95 backdrop-blur-xl border-t border-[#E8DED6] py-1.5 px-3 shadow-[0_-4px_20px_rgba(74,15,29,0.08)] flex items-center justify-around" style="padding-bottom: max(0.35rem, env(safe-area-inset-bottom));">
+        <a href="/" class="flex flex-col items-center justify-center py-0.5 px-2 text-[#6B625D] hover:text-[#7B1830] transition active:scale-95 min-w-[52px]">
           <span class="text-lg">🏠</span>
-          <span class="text-[9px] font-extrabold tracking-tight">Home</span>
+          <span class="text-[10px] font-extrabold tracking-tight">Home</span>
         </a>
 
-        <a href="/products" class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px]">
-          <span class="text-lg">🛍️</span>
-          <span class="text-[9px] font-extrabold tracking-tight">Shop</span>
+        <a href="/products" class="flex flex-col items-center justify-center py-0.5 px-2 text-[#6B625D] hover:text-[#7B1830] transition active:scale-95 min-w-[52px]">
+          <span class="text-lg">📂</span>
+          <span class="text-[10px] font-extrabold tracking-tight">Categories</span>
+        </a>
+
+        <a href="/account" class="flex flex-col items-center justify-center py-0.5 px-2 text-[#6B625D] hover:text-[#7B1830] transition active:scale-95 min-w-[52px]">
+          <span class="text-lg">❤️</span>
+          <span class="text-[10px] font-extrabold tracking-tight">Wishlist</span>
+        </a>
+
+        <a href={currentSession ? "/account" : "/login"} class="flex flex-col items-center justify-center py-0.5 px-2 text-[#6B625D] hover:text-[#7B1830] transition active:scale-95 min-w-[52px]">
+          <span class="text-lg">👤</span>
+          <span class="text-[10px] font-extrabold tracking-tight">Account</span>
         </a>
 
         <button
           type="button"
           onclick="window.openCartDrawer?.()"
-          class="flex flex-col items-center justify-center py-0.5 px-2 text-slate-700 hover:text-amber-800 transition active:scale-95 min-w-[48px] relative cursor-pointer"
+          class="flex flex-col items-center justify-center py-0.5 px-2 text-[#7B1830] transition active:scale-95 min-w-[52px] relative cursor-pointer"
           aria-label="Open Shopping Cart"
         >
           <div class="relative">
             <span class="text-lg">🛒</span>
-            <span id="mobile-bottom-cart-badge" class="absolute -top-1 -right-2 bg-amber-800 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-xs">0</span>
+            <span id="mobile-bottom-cart-badge" class="absolute -top-1 -right-2 bg-[#7B1830] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">0</span>
           </div>
-          <span class="text-[9px] font-extrabold tracking-tight">Cart</span>
+          <span class="text-[10px] font-extrabold tracking-tight text-[#7B1830]">Cart</span>
         </button>
-
-        <a
-          href={`https://wa.me/${integrationSettings.whatsapp_number}?text=${encodeURIComponent('Hi Teepul! I am browsing on mobile and need assistance.')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex flex-col items-center justify-center py-0.5 px-2 text-emerald-600 hover:text-emerald-700 transition active:scale-95 min-w-[48px]"
-        >
-          <span class="text-lg">💬</span>
-          <span class="text-[9px] font-extrabold tracking-tight">WhatsApp</span>
-        </a>
       </nav>
     )}
 

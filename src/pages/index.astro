@@ -1,6 +1,5 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
-import CurtainHero3D from '../components/CurtainHero3D.astro';
 import prisma from '../lib/db';
 import { getStorefrontProducts, PRODUCTS_CATALOG } from '../lib/products';
 import { getOrSetCache } from '../lib/cache';
@@ -25,6 +24,53 @@ const [posts, allProducts] = await Promise.all([
 
 // Top Sellers: Highest rated items (4.7+)
 const topSellers = [...allProducts].sort((a, b) => b.rating - a.rating).slice(0, 8);
+
+const categories = [
+  {
+    name: 'Living Room',
+    tagline: '7ft & 9ft Statement Drapes',
+    image: '/images/category-living-room.jpg',
+    href: '/products?category=Living+Room',
+    badge: 'Trending',
+  },
+  {
+    name: 'Bedroom Blackout',
+    tagline: '85%+ Glare & Thermal Shield',
+    image: '/images/category-bedroom.jpg',
+    href: '/products?category=Bedroom',
+    badge: 'Popular',
+  },
+  {
+    name: 'Door Curtains',
+    tagline: '7 FT Standard Door Height',
+    image: '/images/hero-curtains.jpg',
+    href: '/products?category=Door+Curtains',
+    badge: 'Most Bought',
+  },
+  {
+    name: 'Window Curtains',
+    tagline: '5 FT Standard Window Fit',
+    image: '/images/size-guide-comparison.jpg',
+    href: '/products?category=Window+Curtains',
+    badge: 'Essential',
+  },
+  {
+    name: 'Combo Packs',
+    tagline: 'Curated Sets for Full Home',
+    image: '/images/colors-palette.jpg',
+    href: '/products?category=Combo+Packs',
+    badge: 'Extra Value',
+  },
+];
+
+const colorHues = [
+  { name: 'Royal Maroon', hex: '#7B1830', bgClass: 'bg-[#7B1830]', textClass: 'text-white', slug: 'maroon' },
+  { name: 'Coffee Brown', hex: '#4A2C2A', bgClass: 'bg-[#4A2C2A]', textClass: 'text-white', slug: 'brown' },
+  { name: 'Navy Blue', hex: '#1B2E4B', bgClass: 'bg-[#1B2E4B]', textClass: 'text-white', slug: 'navy' },
+  { name: 'Slate Grey', hex: '#4B5563', bgClass: 'bg-[#4B5563]', textClass: 'text-white', slug: 'grey' },
+  { name: 'Blush Pink', hex: '#E8A598', bgClass: 'bg-[#E8A598]', textClass: 'text-slate-900', slug: 'pink' },
+  { name: 'Jet Black', hex: '#1E1E1E', bgClass: 'bg-[#1E1E1E]', textClass: 'text-white', slug: 'black' },
+];
 
 const ugcVideos = [
   {
@@ -77,12 +123,12 @@ const homepageFaqs = [
   {
     category: 'Size Guide',
     question: 'How do I choose the right curtain size for my windows or doors?',
-    answer: 'Measure your rod to the floor or sill: Window curtains are 5 Feet (152 cm). Standard Door curtains are 7 Feet (213 cm). Long Door / Balcony curtains are 9 Feet (274 cm). Every panel comes pre-fitted with eyelet grommets designed for standard rods.',
+    answer: 'Measure from your curtain rod to the floor or sill: Window curtains are 5 Feet (152 cm). Standard Door curtains are 7 Feet (213 cm). Long Door / Balcony curtains are 9 Feet (274 cm). Every panel comes pre-fitted with 48mm eyelet grommets for standard rods.',
   },
   {
     category: 'Fabric & Quality',
     question: 'What fabric materials are used in Teepul curtains?',
-    answer: 'Teepul uses 100% premium virgin polyester, dense woven jacquard, and crushed velvet textures directly manufactured in Panipat mills. Fabrics are pre-shrunk, fade-resistant, and provide superior room darkening.',
+    answer: 'Teepul uses 100% premium virgin polyester, dense woven jacquard, and crushed textures directly manufactured in Panipat mills. Fabrics are pre-shrunk, fade-resistant, and provide superior room darkening.',
   },
   {
     category: 'Wash Care',
@@ -90,9 +136,9 @@ const homepageFaqs = [
     answer: 'Yes. All Teepul curtains are 100% machine wash and hand wash safe in cold water. The eyelet rings are manufactured with anti-rust stainless alloy that will not corrode or stain the fabric.',
   },
   {
-    category: 'Delivery',
+    category: 'Delivery & COD',
     question: 'What is the delivery timeline and shipping cost?',
-    answer: 'We offer 100% Free Express Shipping across India. Orders are dispatched from our Panipat manufacturing unit within 24 hours and delivered in 2 to 5 business days to all pin codes.',
+    answer: 'We offer 100% Free Express Shipping and Cash on Delivery across India. Orders are dispatched from our Panipat manufacturing unit within 24 hours and delivered in 2 to 5 business days to all pin codes.',
   },
   {
     category: 'Returns & Replacements',
@@ -104,35 +150,370 @@ const homepageFaqs = [
 
 <PublicLayout
   seo={{
-    title: 'Teepul - Luxury Door Curtains, Window Drapery & Home Decor',
-    description: 'Shop luxury door curtains, thermal blackout drapes, linen sheer curtains, and printed eyelet curtains direct from Panipat weaving mills. All-India express delivery with 7-day returns.',
+    title: 'Teepul - Premium Curtains & Luxury Home Decor for Indian Homes',
+    description: 'Shop luxury door curtains, blackout window drapes, and textured eyelet curtains direct from Panipat mills. Free express delivery, Cash on Delivery, and 7-day easy replacements.',
     canonicalUrl: '/',
-    preloadLcpImage: topSellers[0]?.images?.[0] || PRODUCTS_CATALOG[0]?.images?.[0],
+    preloadLcpImage: '/images/hero-curtains.jpg',
     faqs: homepageFaqs.map(f => ({ question: f.question, answer: f.answer }))
   }}
 >
 
-  <!-- 1. 3D ANIMATED HERO SECTION -->
-  <CurtainHero3D />
+  <!-- ========================================================================= -->
+  <!-- 1. HERO SECTION (Editorial Indian Home Decor Showcase)                    -->
+  <!-- ========================================================================= -->
+  <section class="relative bg-gradient-to-b from-[#FFF8F1] via-[#FDF5EB] to-[#F3E5D5]/40 overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-24 border-b border-[#7B1830]/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        
+        <!-- Left Text & CTAs (7 cols) -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          
+          <!-- Trust Pill -->
+          <div class="inline-flex items-center gap-2 bg-[#7B1830]/10 border border-[#7B1830]/20 px-3.5 py-1.5 rounded-full shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-[#7B1830] animate-pulse"></span>
+            <span class="text-[11px] sm:text-xs font-black uppercase tracking-wider text-[#7B1830]">
+              Direct From Panipat Weaving Mills
+            </span>
+          </div>
 
-  <!-- 2. BEFORE → AFTER SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 border-b border-slate-100">
-    <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-50 border border-amber-200 px-3.5 py-1 rounded-full">
-        BEFORE → AFTER
+          <!-- Main Heading -->
+          <div class="space-y-3">
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black font-serif text-[#171717] tracking-tight leading-[1.15]">
+              Ghar Ko Banaye Aur Bhi <span class="text-[#7B1830] underline decoration-[#7B1830]/30 underline-offset-8">Khoobsurat</span>
+            </h1>
+            <p class="text-sm sm:text-lg text-[#6B625D] font-medium max-w-2xl leading-relaxed">
+              Stylish, Durable &amp; Budget Friendly Curtains for Every Indian Home. Heavyweight drape, 85%+ glare control, and anti-rust pre-fitted rings.
+            </p>
+          </div>
+
+          <!-- Feature Badges Row -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-2.5 pt-1">
+            <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-xs font-bold text-slate-800 border border-slate-200 shadow-xs">
+              <span class="text-[#7B1830]">✦</span> Premium Fabric
+            </span>
+            <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-xs font-bold text-slate-800 border border-slate-200 shadow-xs">
+              <span class="text-[#7B1830]">✦</span> Easy to Wash
+            </span>
+            <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-xs font-bold text-slate-800 border border-slate-200 shadow-xs">
+              <span class="text-[#7B1830]">✦</span> Fade Resistant
+            </span>
+            <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-xs font-bold text-slate-800 border border-slate-200 shadow-xs">
+              <span class="text-[#7B1830]">✦</span> Pre-Fitted Eyelets
+            </span>
+            <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-xs font-bold text-[#7B1830] border border-[#7B1830]/20 shadow-xs">
+              <span>🇮🇳</span> Perfect for Indian Homes
+            </span>
+          </div>
+
+          <!-- Action Buttons & Guarantee -->
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <a
+              href="/products"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#7B1830] hover:bg-[#4A0F1D] text-white font-extrabold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 active:scale-95 text-center cursor-pointer"
+            >
+              <span>🛍️ Shop Curtains</span>
+              <span>&rarr;</span>
+            </a>
+            
+            <a
+              href="#size-guide"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-[#FFF8F1] text-slate-900 font-bold text-sm sm:text-base px-7 py-4 rounded-2xl border border-slate-300 shadow-sm transition hover:border-[#7B1830]/40 text-center"
+            >
+              <span>📏 Visual Size Guide</span>
+            </a>
+          </div>
+
+          <!-- Social Proof Micro Banner -->
+          <div class="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-600 font-medium">
+            <div class="flex items-center gap-2">
+              <div class="flex text-amber-500 text-sm">★★★★★</div>
+              <span class="font-bold text-slate-900">4.9 / 5.0</span>
+              <span class="text-slate-400">|</span>
+              <span>10,000+ Indian Homes</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-700 font-bold">✓ Cash on Delivery</span>
+              <span class="text-slate-400">|</span>
+              <span class="text-emerald-700 font-bold">✓ Free Express Shipping</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Hero Image Showcase (5 cols) -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-md lg:max-w-none">
+            <!-- Decorative Glow Background -->
+            <div class="absolute -inset-2 bg-gradient-to-tr from-[#7B1830]/20 via-[#F3E5D5] to-[#7B1830]/10 rounded-3xl blur-xl opacity-70 transform -rotate-1"></div>
+            
+            <!-- Main Hero Image Card -->
+            <div class="relative bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+              <img
+                src="/images/hero-curtains.jpg"
+                alt="Modern Indian living room with luxury maroon curtains and natural daylight"
+                width="800"
+                height="800"
+                class="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700"
+                loading="eager"
+                decoding="async"
+              />
+              
+              <!-- Floating Overlay Tags -->
+              <div class="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md text-white text-[11px] font-black px-3.5 py-1.5 rounded-full border border-white/20 shadow-lg flex items-center gap-1.5">
+                <span class="text-amber-400">★</span>
+                <span>Top Selling Maroon Leaf Drapes</span>
+              </div>
+
+              <div class="absolute bottom-4 inset-x-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-slate-200/80 flex items-center justify-between">
+                <div>
+                  <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Starting From</div>
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-xl font-black text-[#7B1830]">₹455</span>
+                    <span class="text-xs text-slate-400 line-through">₹1,299</span>
+                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">65% OFF</span>
+                  </div>
+                </div>
+                <a
+                  href="/products"
+                  class="bg-[#7B1830] hover:bg-[#4A0F1D] text-white text-xs font-extrabold px-4 py-2.5 rounded-xl shadow transition"
+                >
+                  View Collection &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 2. CATEGORY BROWSER (Horizontal on Mobile, Grid on Desktop)                -->
+  <!-- ========================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 pb-3 border-b border-slate-200 gap-2">
+      <div>
+        <span class="text-[11px] font-black uppercase text-[#7B1830] tracking-widest bg-[#7B1830]/10 px-3 py-1 rounded-full">
+          CURATED ROOM SOLUTIONS
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black font-serif text-slate-950 mt-2">Shop by Category</h2>
+      </div>
+      <a href="/products" class="text-xs font-bold text-[#7B1830] hover:underline flex items-center gap-1">
+        <span>View All Categories</span>
+        <span>&rarr;</span>
+      </a>
+    </div>
+
+    <!-- Scrollable container on mobile, 5 cols on desktop -->
+    <div class="flex sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto no-scrollbar pb-3 snap-x snap-mandatory">
+      {categories.map((cat) => (
+        <a
+          href={cat.href}
+          class="min-w-[200px] sm:min-w-0 flex-1 bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden group snap-start flex flex-col justify-between"
+        >
+          <div class="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+            <img
+              src={cat.image}
+              alt={cat.name}
+              width="400"
+              height="300"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+            />
+            <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
+              {cat.badge}
+            </span>
+          </div>
+
+          <div class="p-4 bg-white text-center space-y-1">
+            <h3 class="font-extrabold text-sm sm:text-base text-slate-900 group-hover:text-[#7B1830] transition-colors">
+              {cat.name}
+            </h3>
+            <p class="text-[11px] text-slate-500 line-clamp-1 leading-snug">
+              {cat.tagline}
+            </p>
+            <span class="text-[11px] font-bold text-[#7B1830] pt-2 inline-block group-hover:underline">
+              Explore &rarr;
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3. SHOP BY COLOR PALETTE                                                  -->
+  <!-- ========================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="bg-gradient-to-r from-[#FFF8F1] via-[#FDF5EB] to-[#F3E5D5]/60 rounded-3xl border border-[#7B1830]/15 p-6 sm:p-10 shadow-sm">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+        <div class="text-center md:text-left space-y-1">
+          <span class="text-[10px] sm:text-xs font-black uppercase text-[#7B1830] tracking-widest bg-white px-3 py-1 rounded-full border border-[#7B1830]/20">
+            ROOM COLOR HARMONY
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-black font-serif text-slate-950">Shop by Color</h2>
+          <p class="text-xs sm:text-sm text-slate-600">Select rich Panipat jacquard and solid shades matched to your wall tones.</p>
+        </div>
+        
+        <a href="/products" class="text-xs font-black text-[#7B1830] bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-xs hover:bg-[#7B1830] hover:text-white transition">
+          View All Hues &rarr;
+        </a>
+      </div>
+
+      <!-- Color Swatches Grid -->
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
+        {colorHues.map((color) => (
+          <a
+            href={`/products?color=${color.name}`}
+            class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-xs hover:shadow-lg hover:-translate-y-1 transition text-center flex flex-col items-center gap-2.5 group"
+          >
+            <div class={`w-12 h-12 sm:w-14 sm:h-14 rounded-full ${color.bgClass} shadow-md border-2 border-white ring-2 ring-slate-200 group-hover:scale-110 group-hover:ring-[#7B1830] transition duration-300 flex items-center justify-center`}>
+            </div>
+            <div class="space-y-0.5">
+              <span class="text-xs font-extrabold text-slate-900 block group-hover:text-[#7B1830] transition">
+                {color.name}
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono block">
+                {color.hex}
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. VISUAL SIZE GUIDE SECTION (5 FT, 7 FT, 9 FT)                           -->
+  <!-- ========================================================================= -->
+  <section id="size-guide" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 scroll-mt-24">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-[11px] font-black uppercase text-[#7B1830] tracking-widest bg-[#7B1830]/10 px-3.5 py-1 rounded-full">
+        ZERO CONFUSION MEASUREMENTS
       </span>
-      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Small Change. Big Difference.</h2>
+      <h2 class="text-3xl sm:text-4xl font-black font-serif text-slate-950 mt-3">Simple 3-Size Guide</h2>
       <p class="text-xs sm:text-sm text-slate-600 mt-2">
-        See how simply upgrading to Teepul curtains turns harsh outdoor glare into cozy, magazine-worthy living rooms.
+        Standard Indian home dimensions. Every curtain panel width is standard 4 Feet (48 inches / 122 cm).
+      </p>
+    </div>
+
+    <!-- 3 Sizing Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch mb-8">
+      
+      <!-- 5 FT Window -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-7 flex flex-col justify-between hover:border-[#7B1830]/50 hover:shadow-xl transition duration-300">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-black text-[#7B1830]">5 FT</span>
+            <span class="text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">
+              152 CM / 60 INCH
+            </span>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-slate-900">Window Curtain</h3>
+            <p class="text-xs text-slate-500 mt-1">Standard bedroom, study, and kitchen windows extending just past the sill.</p>
+          </div>
+          <ul class="space-y-2 text-xs text-slate-700 font-medium pt-2 border-t border-slate-100">
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✓</span> 8 Pre-fitted eyelet rings</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✓</span> 4 Feet wide standard panel</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✓</span> Eliminates table/sill interference</li>
+          </ul>
+        </div>
+        <div class="pt-6">
+          <a
+            href="/products?size=5ft"
+            class="block w-full text-center bg-slate-100 hover:bg-[#7B1830] hover:text-white text-slate-900 font-extrabold text-xs py-3 rounded-xl transition"
+          >
+            Shop 5 FT Windows (From ₹455) &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- 7 FT Door (Most Popular) -->
+      <div class="bg-gradient-to-b from-[#FFF8F1] to-white rounded-3xl border-2 border-[#7B1830] shadow-xl p-6 sm:p-7 flex flex-col justify-between relative transform md:-translate-y-2">
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#7B1830] text-white text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-wider shadow">
+          ⭐ MOST POPULAR FOR INDIAN HOMES
+        </div>
+        <div class="space-y-4 pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-3xl font-black text-[#7B1830]">7 FT</span>
+            <span class="text-[10px] font-black uppercase tracking-wider bg-[#7B1830]/10 text-[#7B1830] px-2.5 py-1 rounded-full font-bold">
+              213 CM / 84 INCH
+            </span>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-slate-900">Standard Door Curtain</h3>
+            <p class="text-xs text-slate-600 mt-1">Standard height for bedroom doors, hall entryways, and 7ft patio doors.</p>
+          </div>
+          <ul class="space-y-2 text-xs text-slate-800 font-semibold pt-2 border-t border-[#7B1830]/10">
+            <li class="flex items-center gap-2"><span class="text-[#7B1830] font-bold">✓</span> Fits 90% of Indian room doors</li>
+            <li class="flex items-center gap-2"><span class="text-[#7B1830] font-bold">✓</span> Floor skimming architectural fall</li>
+            <li class="flex items-center gap-2"><span class="text-[#7B1830] font-bold">✓</span> 85%+ glare &amp; dust shield</li>
+          </ul>
+        </div>
+        <div class="pt-6">
+          <a
+            href="/products?size=7ft"
+            class="block w-full text-center bg-[#7B1830] hover:bg-[#4A0F1D] text-white font-extrabold text-xs py-3.5 rounded-xl shadow-lg transition"
+          >
+            Shop 7 FT Doors (From ₹515) &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- 9 FT Long Door / Balcony -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-7 flex flex-col justify-between hover:border-[#7B1830]/50 hover:shadow-xl transition duration-300">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-black text-[#7B1830]">9 FT</span>
+            <span class="text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">
+              274 CM / 108 INCH
+            </span>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-slate-900">Long Door &amp; Balcony</h3>
+            <p class="text-xs text-slate-500 mt-1">High ceiling living rooms, French glass doors, and luxury floor-to-ceiling drapery.</p>
+          </div>
+          <ul class="space-y-2 text-xs text-slate-700 font-medium pt-2 border-t border-slate-100">
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✓</span> Grand high-ceiling statement</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✓</span> Blocks balcony heat &amp; afternoon glare</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✓</span> Heavyweight vertical drape</li>
+          </ul>
+        </div>
+        <div class="pt-6">
+          <a
+            href="/products?size=9ft"
+            class="block w-full text-center bg-slate-100 hover:bg-[#7B1830] hover:text-white text-slate-900 font-extrabold text-xs py-3 rounded-xl transition"
+          >
+            Shop 9 FT Long Doors (From ₹549) &rarr;
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 5. ROOM TRANSFORMATION (BEFORE → AFTER)                                   -->
+  <!-- ========================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 border-t border-slate-200">
+    <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+      <span class="text-xs font-black uppercase text-[#7B1830] tracking-widest bg-[#7B1830]/10 px-3.5 py-1 rounded-full">
+        ROOM TRANSFORMATION
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-black font-serif text-slate-950 mt-3">Small Upgrade. Massive Transformation.</h2>
+      <p class="text-xs sm:text-sm text-slate-600 mt-2">
+        See how simply switching to Teepul curtains turns harsh outdoor glare into warm, magazine-worthy Indian living rooms.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-stretch">
       <!-- BEFORE CARD -->
-      <div class="bg-rose-50/50 rounded-3xl p-6 sm:p-8 border border-rose-200/80 flex flex-col justify-between space-y-6">
+      <div class="bg-rose-50/60 rounded-3xl p-6 sm:p-8 border border-rose-200/80 flex flex-col justify-between space-y-6">
         <div class="space-y-3">
           <div class="inline-flex items-center gap-2 bg-rose-600 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
-            <span>❌ BEFORE TEEPUL</span>
+            <span>❌ WITHOUT TEEPUL CURTAINS</span>
           </div>
           <h3 class="text-xl font-black text-slate-900">Dull, Harsh &amp; Overheated Room</h3>
           <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-2">
@@ -155,22 +536,22 @@ const homepageFaqs = [
           </ul>
         </div>
 
-        <div class="p-4 bg-white/80 rounded-2xl border border-rose-200 text-xs text-slate-500 italic">
+        <div class="p-4 bg-white/90 rounded-2xl border border-rose-200 text-xs text-slate-600 italic">
           "Pehle din me hall me garmi aur dhoop rehti thi, aur room khali lagta tha."
         </div>
       </div>
 
       <!-- AFTER CARD -->
-      <div class="bg-emerald-50/60 rounded-3xl p-6 sm:p-8 border border-emerald-300 shadow-lg flex flex-col justify-between space-y-6 relative overflow-hidden">
+      <div class="bg-emerald-50/70 rounded-3xl p-6 sm:p-8 border border-emerald-300 shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden">
         <div class="space-y-3">
           <div class="inline-flex items-center gap-2 bg-emerald-700 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
-            <span>✨ AFTER TEEPUL CURTAINS</span>
+            <span>✨ WITH TEEPUL CURTAINS</span>
           </div>
           <h3 class="text-xl font-black text-slate-900">Luxurious, Cool &amp; 100% Private</h3>
           <ul class="space-y-2.5 text-xs text-slate-800 font-semibold pt-2">
             <li class="flex items-center gap-2">
               <span class="text-emerald-700 font-bold">✓</span>
-              <span><strong>85%+ Sunlight Shield:</strong> Keeps room cool and glare-free</span>
+              <span><strong>85%+ Sunlight Shield:</strong> Keeps rooms cool and TV glare-free</span>
             </li>
             <li class="flex items-center gap-2">
               <span class="text-emerald-700 font-bold">✓</span>
@@ -188,87 +569,38 @@ const homepageFaqs = [
         </div>
 
         <div class="p-4 bg-white rounded-2xl border border-emerald-200 text-xs text-emerald-950 font-semibold shadow-xs flex items-center justify-between">
-          <span>Instant upgrade in under 2 minutes!</span>
-          <a href="/products" class="text-emerald-800 font-black hover:underline">Shop Now &rarr;</a>
+          <span>Instant makeover in under 2 minutes!</span>
+          <a href="/products" class="text-emerald-800 font-black hover:underline">Shop Collection &rarr;</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3. SHOP BY NEED SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 bg-[#faf8f5] rounded-3xl my-6 border border-amber-900/10">
-    <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-100/80 px-3.5 py-1 rounded-full">
-        COLLECTIONS BY INTENT
-      </span>
-      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Shop By Need</h2>
-      <p class="text-xs sm:text-sm text-slate-600 mt-2">
-        Find the exact curtain solution tailored to your room type and light requirement.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">🛋️</div>
-          <h3 class="font-extrabold text-sm text-slate-900">Living Room</h3>
-          <p class="text-[11px] text-slate-500 mt-1 leading-snug">7ft &amp; 9ft Statement Drapes for Grand Windows &amp; Doors</p>
-        </div>
-        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Living &rarr;</span>
-      </a>
-
-      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">🛏️</div>
-          <h3 class="font-extrabold text-sm text-slate-900">Bedroom Blackout</h3>
-          <p class="text-[11px] text-slate-500 mt-1 leading-snug">85%+ Room Darkening for Deep Sleep &amp; Glare Control</p>
-        </div>
-        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Blackout &rarr;</span>
-      </a>
-
-      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">🛡️</div>
-          <h3 class="font-extrabold text-sm text-slate-900">Complete Privacy</h3>
-          <p class="text-[11px] text-slate-500 mt-1 leading-snug">Dense Woven Jacquard with 0% Outdoor Visibility</p>
-        </div>
-        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Privacy &rarr;</span>
-      </a>
-
-      <a href="/products" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition text-center group flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-800 font-extrabold text-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">☀️</div>
-          <h3 class="font-extrabold text-sm text-slate-900">Light Control</h3>
-          <p class="text-[11px] text-slate-500 mt-1 leading-snug">Soft Semi-Sheer Linen Textures for Gentle Daylight</p>
-        </div>
-        <span class="text-xs font-bold text-amber-800 mt-4 block group-hover:underline">Explore Sheers &rarr;</span>
-      </a>
-    </div>
-  </section>
-
-  <!-- 4. BESTSELLERS SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+  <!-- ========================================================================= -->
+  <!-- 6. CURATED BESTSELLERS                                                    -->
+  <!-- ========================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
     <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 pb-3 border-b border-slate-200 gap-2">
       <div>
-        <div class="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+        <div class="inline-flex items-center gap-1.5 bg-[#7B1830]/10 border border-[#7B1830]/20 text-[#7B1830] text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
           <span>⭐</span>
           <span>CURATED BESTSELLERS</span>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Bestseller Curtains</h2>
+        <h2 class="text-2xl sm:text-3xl font-black font-serif text-slate-950 mt-2">Bestseller Curtains</h2>
       </div>
-      <a href="/products" class="text-xs font-bold text-amber-800 hover:underline flex items-center gap-1">
+      <a href="/products" class="text-xs font-bold text-[#7B1830] hover:underline flex items-center gap-1">
         <span>View All Designs ({allProducts.length})</span>
         <span>&rarr;</span>
       </a>
     </div>
 
     <!-- Responsive Grid (2 columns on mobile, 4 on desktop) -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6">
       {topSellers.map((product) => (
         <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
-          <div class="relative aspect-square bg-slate-100 overflow-hidden">
+          <a href={`/products/${product.slug}`} class="block relative aspect-square bg-slate-100 overflow-hidden">
             <img
-              src={product.images?.[0] || 'https://images.meesho.com/images/products/423378719/fp7sq_512.jpg'}
+              src={product.images?.[0] || '/images/hero-curtains.jpg'}
               alt={product.name}
               width="400"
               height="400"
@@ -276,7 +608,7 @@ const homepageFaqs = [
               loading="lazy"
             />
             <div class="absolute top-2 left-2 flex flex-col gap-1">
-              <span class="bg-rose-600 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow">
+              <span class="bg-[#7B1830] text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow">
                 {product.badge || '🔥 BESTSELLER'}
               </span>
             </div>
@@ -285,12 +617,12 @@ const homepageFaqs = [
                 -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
               </span>
             )}
-          </div>
+          </a>
 
           <div class="p-3 sm:p-5 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
             <div class="space-y-1.5 sm:space-y-2">
               <div class="flex items-center justify-between text-[10px] sm:text-xs">
-                <span class="text-amber-900 font-bold uppercase tracking-wider text-[9px] sm:text-[10px] bg-amber-50 px-2 py-0.5 rounded">
+                <span class="text-[#7B1830] font-bold uppercase tracking-wider text-[9px] sm:text-[10px] bg-[#7B1830]/10 px-2 py-0.5 rounded">
                   {product.category}
                 </span>
                 <div class="flex items-center gap-0.5 text-amber-500 font-bold">
@@ -299,7 +631,7 @@ const homepageFaqs = [
                 </div>
               </div>
 
-              <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug line-clamp-2">
+              <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-[#7B1830] transition-colors leading-snug line-clamp-2">
                 <a href={`/products/${product.slug}`}>{product.name}</a>
               </h3>
             </div>
@@ -315,7 +647,7 @@ const homepageFaqs = [
               <button
                 type="button"
                 onclick={`window.animatedAddToCart(this, '${product.name.replace(/'/g, "\\'")}', '${product.slug}', ${product.price}, '${product.images?.[0] || ''}')`}
-                class="bg-amber-800 hover:bg-amber-900 text-white font-extrabold text-[10px] sm:text-xs px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl shadow active:scale-95 transition-all duration-300 shrink-0 flex items-center gap-1 group/btn cursor-pointer whitespace-nowrap"
+                class="bg-[#7B1830] hover:bg-[#4A0F1D] text-white font-extrabold text-[10px] sm:text-xs px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl shadow active:scale-95 transition-all duration-300 shrink-0 flex items-center gap-1 group/btn cursor-pointer whitespace-nowrap"
                 title="Add to Cart"
               >
                 <span class="cart-icon transition-transform duration-300 group-hover/btn:scale-125">🛒</span>
@@ -328,261 +660,148 @@ const homepageFaqs = [
     </div>
   </section>
 
-  <!-- 5. WHY OUR CURTAINS? SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 bg-slate-900 text-white rounded-3xl my-6 shadow-2xl">
+  <!-- ========================================================================= -->
+  <!-- 7. THE TEEPUL CRAFTSMANSHIP ADVANTAGE (Photographic Proof)                -->
+  <!-- ========================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 bg-slate-950 text-white rounded-3xl my-6 shadow-2xl">
     <div class="text-center max-w-2xl mx-auto mb-12">
       <span class="text-xs font-black uppercase text-amber-400 tracking-widest bg-slate-800 px-3.5 py-1 rounded-full border border-slate-700">
         THE TEEPUL ADVANTAGE
       </span>
-      <h2 class="text-3xl sm:text-4xl font-black text-white mt-3">Why Choose Our Curtains?</h2>
+      <h2 class="text-3xl sm:text-4xl font-black font-serif text-white mt-3">Engineered for Indian Homes</h2>
       <p class="text-xs sm:text-sm text-slate-400 mt-2">
-        Engineered in Panipat weaving mills with premium hardware, anti-rust eyelets, and flawless craftsmanship.
+        Direct from Panipat weaving mills with premium hardware, anti-rust eyelets, and flawless craftsmanship.
       </p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       
-      <!-- 1. Easy to Install -->
-      <div class="bg-slate-800/90 rounded-2xl border border-slate-700/80 overflow-hidden flex flex-col justify-between group hover:border-amber-400/50 transition duration-300 hover:shadow-xl">
+      <!-- 1. 150 GSM Dense Weave -->
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between group hover:border-[#7B1830]/80 transition duration-300">
         <div class="aspect-[16/10] overflow-hidden bg-slate-950 relative">
           <img
-            src="/images/advantage/easy-install.webp"
-            alt="Easy to install curtain panels with pre-fitted grommets sliding on standard rod"
-            title="Easy 60-Second Curtain Installation on Standard Rods"
+            src="/images/feature-fabric.jpg"
+            alt="150 GSM High-Density Polyester Weave Close-up"
             width="640"
             height="400"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
-            decoding="async"
           />
-          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full border border-amber-400/20">
-            ⚡ Quick Hang
+          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full">
+            🧵 150 GSM Fabric
           </div>
         </div>
         <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
           <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <span class="text-amber-400">⚡</span> Easy to Install
-            </h3>
+            <h3 class="text-base font-bold text-white">Dense Weave Fabric</h3>
             <p class="text-xs text-slate-300 leading-relaxed mt-1.5">
-              Pre-fitted grommets slide effortlessly onto all standard 1-inch and 1.5-inch curtain rods in under 60 seconds.
+              Heavyweight polyester blocks 85%+ glare, resists fading, and drapes with clean vertical lines.
             </p>
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-2 py-1 rounded inline-block w-fit mt-2">
-            60-Sec Setup
+            Zero Color Bleed
           </span>
         </div>
       </div>
 
-      <!-- 2. Multiple Sizes -->
-      <div class="bg-slate-800/90 rounded-2xl border border-slate-700/80 overflow-hidden flex flex-col justify-between group hover:border-amber-400/50 transition duration-300 hover:shadow-xl">
+      <!-- 2. Precision JUKI Stitching -->
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between group hover:border-[#7B1830]/80 transition duration-300">
         <div class="aspect-[16/10] overflow-hidden bg-slate-950 relative">
           <img
-            src="/images/advantage/multiple-sizes.webp"
-            alt="Standard Indian curtain sizes 5ft window, 7ft door, and 9ft long door comparison"
-            title="Available in 3 Standard Indian Sizes: 5ft, 7ft, and 9ft"
+            src="/images/feature-stitching.jpg"
+            alt="Precision JUKI Double-Fold Hem Stitching"
             width="640"
             height="400"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
-            decoding="async"
           />
-          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full border border-amber-400/20">
-            📏 3 Standard Sizes
+          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full">
+            ✂️ JUKI Stitching
           </div>
         </div>
         <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
           <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <span class="text-amber-400">📏</span> Multiple Sizes
-            </h3>
+            <h3 class="text-base font-bold text-white">Double Folded Hems</h3>
             <p class="text-xs text-slate-300 leading-relaxed mt-1.5">
-              Available in 3 standard Indian sizes: 5ft (Window), 7ft (Door), and 9ft (Long Door).
+              Hand-finished by Panipat artisans with reinforced corners that will not fray or curl over time.
             </p>
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-2 py-1 rounded inline-block w-fit mt-2">
-            5ft · 7ft · 9ft
+            Durable Finish
           </span>
         </div>
       </div>
 
-      <!-- 3. Multiple Colours -->
-      <div class="bg-slate-800/90 rounded-2xl border border-slate-700/80 overflow-hidden flex flex-col justify-between group hover:border-amber-400/50 transition duration-300 hover:shadow-xl">
+      <!-- 3. Rust-Free Eyelet Rings -->
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between group hover:border-[#7B1830]/80 transition duration-300">
         <div class="aspect-[16/10] overflow-hidden bg-slate-950 relative">
           <img
-            src="/images/advantage/multiple-colors.webp"
-            alt="Teepul premium curtain collection in multiple modern color variations and jacquard prints"
-            title="Over 20+ Rich Color Variations and Modern Textured Prints"
+            src="/images/feature-eyelet.jpg"
+            alt="Stainless Steel Anti-Rust Eyelets on Rod"
             width="640"
             height="400"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
-            decoding="async"
           />
-          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full border border-amber-400/20">
-            🎨 Color Palette
+          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full">
+            ⚙️ 48mm Eyelets
           </div>
         </div>
         <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
           <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <span class="text-amber-400">🎨</span> Multiple Colours
-            </h3>
+            <h3 class="text-base font-bold text-white">Anti-Rust Eyelets</h3>
             <p class="text-xs text-slate-300 leading-relaxed mt-1.5">
-              Over 20+ rich hues including Coffee Brown, Slate Grey, Royal Maroon, Gold, Navy, and Floral prints.
+              Metallic alloy grommets glide silently on any 1-inch or 1.5-inch rod and resist rust during washing.
             </p>
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-2 py-1 rounded inline-block w-fit mt-2">
-            20+ Rich Hues
+            Silent Glide
           </span>
         </div>
       </div>
 
-      <!-- 4. Pre-fitted Eyelets -->
-      <div class="bg-slate-800/90 rounded-2xl border border-slate-700/80 overflow-hidden flex flex-col justify-between group hover:border-amber-400/50 transition duration-300 hover:shadow-xl">
+      <!-- 4. 60-Sec Easy Install -->
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between group hover:border-[#7B1830]/80 transition duration-300">
         <div class="aspect-[16/10] overflow-hidden bg-slate-950 relative">
           <img
-            src="/images/advantage/prefitted-eyelets.webp"
-            alt="Anti-rust stainless steel 48mm silver eyelet grommets pre-fitted on curtain header"
-            title="Pre-Fitted Rust-Proof Stainless Steel Eyelet Grommets"
+            src="/images/feature-easy-install.jpg"
+            alt="60 Second Easy Installation on Standard Curtain Rods"
             width="640"
             height="400"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
-            decoding="async"
           />
-          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full border border-amber-400/20">
-            ⚙️ Rust-Free Steel
+          <div class="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-md text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full">
+            ⚡ 60-Sec Hang
           </div>
         </div>
         <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
           <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <span class="text-amber-400">⚙️</span> Pre-fitted Eyelets
-            </h3>
+            <h3 class="text-base font-bold text-white">Ready Right Out of Box</h3>
             <p class="text-xs text-slate-300 leading-relaxed mt-1.5">
-              High-strength rust-free stainless steel grommets precision-attached for silent and smooth gliding.
+              Zero extra hooks or tools needed. Unpack, slide onto your existing rod, and enjoy the new look.
             </p>
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-2 py-1 rounded inline-block w-fit mt-2">
-            Anti-Rust Steel
+            Tool-Free Setup
           </span>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- 6. PRODUCT EXPERIENCE (Fabric + Stitching + Eyelet Close-ups) -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
-    <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-50 border border-amber-200 px-3.5 py-1 rounded-full">
-        CRAFTSMANSHIP &amp; DETAILS
-      </span>
-      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Product Experience Up Close</h2>
-      <p class="text-xs sm:text-sm text-slate-600 mt-2">
-        Touch, feel, and durability engineered to last for years of machine washing.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-        <div class="space-y-4">
-          <div class="aspect-[16/10] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80">
-            <img
-              src="/images/experience/fabric-weave.webp"
-              alt="150 GSM High-Density Polyester Weave Close-up"
-              width="640"
-              height="400"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          </div>
-          <h3 class="text-lg font-black text-slate-900">150 GSM Fabric Weave</h3>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            150 GSM high-density polyester yarn prevents light leakage, blocks thermal heat, and ensures straight, crease-free vertical fall.
-          </p>
-        </div>
-        <div>
-          <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md inline-block">✓ Zero Color Bleed</span>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-        <div class="space-y-4">
-          <div class="aspect-[16/10] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80">
-            <img
-              src="/images/experience/juki-stitching.webp"
-              alt="Precision JUKI Double-Hem Stitching Close-up"
-              width="640"
-              height="400"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          </div>
-          <h3 class="text-lg font-black text-slate-900">Precision JUKI Stitching</h3>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Crafted by skilled women artisans at our Panipat factory with double-folded hem borders that prevent frayed edges.
-          </p>
-        </div>
-        <div>
-          <span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">✓ Double Stitched Hems</span>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-        <div class="space-y-4">
-          <div class="aspect-[16/10] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80">
-            <img
-              src="/images/experience/silver-eyelets.webp"
-              alt="Stainless Steel Anti-Rust Eyelet Rings on Curtain Rod"
-              width="640"
-              height="400"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          </div>
-          <h3 class="text-lg font-black text-slate-900">Rust-Proof Silver Eyelets</h3>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            48mm internal diameter grommets fit all standard rods and feature anti-rust alloy coating safe for repeated machine washing.
-          </p>
-        </div>
-        <div>
-          <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md inline-block">✓ Smooth Silent Glide</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. WHAT YOU GET SECTION (Pack of 2 = 2 Panels) -->
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="bg-gradient-to-r from-amber-50 via-white to-amber-50 rounded-3xl border-2 border-amber-300 p-6 sm:p-10 shadow-lg text-center space-y-4">
-      <div class="inline-flex items-center gap-2 bg-amber-800 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
-        <span>📦 COMPLETE READY-TO-HANG SET</span>
-      </div>
-      <h2 class="text-2xl sm:text-3xl font-black text-slate-900">
-        What You Get: <span class="text-amber-800">Pack of 2 = 2 Full Panels</span>
-      </h2>
-      <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-        Every order contains <strong>2 matched curtain panels</strong> with pre-installed eyelets, pre-shrunk fabric, and factory inspection seal. Ready to hang right out of the box with zero extra fittings needed!
-      </p>
-      <div class="flex flex-wrap justify-center gap-4 pt-2 text-xs font-bold text-slate-700">
-        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ 2 Matching Panels</span>
-        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ Pre-Installed Eyelets</span>
-        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ Free Door Delivery</span>
-        <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">✓ 7-Day Door Returns</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8. CUSTOMER REVIEWS & REAL UGC VIDEOS -->
+  <!-- ========================================================================= -->
+  <!-- 8. CUSTOMER REVIEWS & LIVE UGC VIDEOS                                     -->
+  <!-- ========================================================================= -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
     <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 pb-3 border-b border-slate-200 gap-2">
       <div>
-        <div class="inline-flex items-center gap-1.5 bg-rose-50 border border-rose-200 text-rose-800 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-          <span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
-          <span>LIVE UGC &amp; REAL REVIEWS</span>
+        <div class="inline-flex items-center gap-1.5 bg-[#7B1830]/10 border border-[#7B1830]/20 text-[#7B1830] text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-[#7B1830] animate-pulse"></span>
+          <span>REAL UGC &amp; REVIEWS</span>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Loved by 10,000+ Indian Homes</h2>
+        <h2 class="text-2xl sm:text-3xl font-black font-serif text-slate-950 mt-2">Loved by 10,000+ Indian Homes</h2>
       </div>
       <div class="flex items-center gap-1 text-amber-500 font-bold text-sm">
         <span>★★★★★</span>
@@ -628,7 +847,7 @@ const homepageFaqs = [
             </h3>
             <div class="pt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500">
               <span class="text-emerald-700 font-bold">✓ Verified Clip</span>
-              <span class="text-amber-800 font-bold">Tap to Mute/Play</span>
+              <span class="text-[#7B1830] font-bold">Tap to Mute/Play</span>
             </div>
           </div>
         </div>
@@ -638,7 +857,7 @@ const homepageFaqs = [
     <!-- Review Text Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       {customerReviews.map((rev) => (
-        <div class="bg-[#fcfaf7] p-6 rounded-3xl border border-amber-900/10 shadow-xs space-y-3 flex flex-col justify-between">
+        <div class="bg-[#FFF8F1] p-6 rounded-3xl border border-[#7B1830]/15 shadow-xs space-y-3 flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center gap-1 text-amber-500 text-sm font-bold">
               ★★★★★ <span class="text-slate-900 text-xs ml-1 font-bold">5.0</span>
@@ -655,24 +874,26 @@ const homepageFaqs = [
     </div>
   </section>
 
-  <!-- 9. FAQ SECTION (Categorized Accordions) -->
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 border-t border-slate-200">
+  <!-- ========================================================================= -->
+  <!-- 9. FAQ ACCORDION SECTION                                                  -->
+  <!-- ========================================================================= -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 border-t border-slate-200">
     <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-      <span class="text-xs font-black uppercase text-amber-800 tracking-widest bg-amber-50 border border-amber-200 px-3.5 py-1 rounded-full">
+      <span class="text-xs font-black uppercase text-[#7B1830] tracking-widest bg-[#7B1830]/10 px-3.5 py-1 rounded-full">
         CLEAR ANSWERS
       </span>
-      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-3">Frequently Asked Questions</h2>
+      <h2 class="text-3xl sm:text-4xl font-black font-serif text-slate-950 mt-3">Frequently Asked Questions</h2>
       <p class="text-xs sm:text-sm text-slate-600 mt-2">
-        Everything you need to know about sizing, fabric care, wash, delivery, and returns.
+        Everything you need to know about curtain sizing, fabric care, wash, delivery, and returns.
       </p>
     </div>
 
     <div class="space-y-4">
-      {homepageFaqs.map((faq, index) => (
-        <details class="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm transition hover:border-amber-400">
+      {homepageFaqs.map((faq) => (
+        <details class="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm transition hover:border-[#7B1830]">
           <summary class="flex justify-between items-center cursor-pointer font-bold text-slate-900 text-sm list-none select-none">
             <span class="flex items-center gap-2.5">
-              <span class="text-[10px] font-black uppercase text-amber-900 bg-amber-100 px-2 py-0.5 rounded shrink-0">
+              <span class="text-[10px] font-black uppercase text-[#7B1830] bg-[#7B1830]/10 px-2.5 py-0.5 rounded shrink-0">
                 {faq.category}
               </span>
               <span>{faq.question}</span>
@@ -687,27 +908,29 @@ const homepageFaqs = [
     </div>
   </section>
 
-  <!-- 10. FINAL CTA SECTION -->
+  <!-- ========================================================================= -->
+  <!-- 10. FINAL CALL TO ACTION BANNER                                           -->
+  <!-- ========================================================================= -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-12">
-    <div class="bg-gradient-to-br from-amber-950 via-slate-900 to-amber-950 text-white rounded-3xl p-8 sm:p-14 text-center space-y-6 shadow-2xl border border-amber-500/20 relative overflow-hidden">
-      <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
+    <div class="bg-gradient-to-br from-[#4A0F1D] via-[#7B1830] to-[#3B0815] text-white rounded-3xl p-8 sm:p-14 text-center space-y-6 shadow-2xl border border-white/20 relative overflow-hidden">
+      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-amber-200 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
         <span>🏡 DIRECT PANIPAT FACTORY DISPATCH</span>
       </div>
 
-      <h2 class="text-3xl sm:text-5xl font-black text-white max-w-3xl mx-auto leading-tight">
-        Ready to Upgrade Your Room?
+      <h2 class="text-3xl sm:text-5xl font-black font-serif text-white max-w-3xl mx-auto leading-tight">
+        Ready to Transform Your Indian Home?
       </h2>
 
-      <p class="text-slate-300 text-xs sm:text-base max-w-xl mx-auto leading-relaxed">
-        Bring home luxury thermal blackout drapes and sheer curtains at mill-direct prices from ₹469. Free Express Shipping &amp; 7-Day Returns.
+      <p class="text-slate-200 text-xs sm:text-base max-w-xl mx-auto leading-relaxed">
+        Bring home luxury thermal blackout drapes and sheer curtains at mill-direct prices from ₹455. Free Express Shipping, Cash on Delivery &amp; 7-Day Door Returns.
       </p>
 
       <div class="pt-2">
         <a
           href="/products"
-          class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-sm sm:text-base px-9 py-4 rounded-full shadow-2xl hover:-translate-y-1 transition-all"
+          class="inline-flex items-center gap-2 bg-[#FFF8F1] hover:bg-white text-[#7B1830] font-black text-sm sm:text-base px-9 py-4 rounded-2xl shadow-2xl hover:-translate-y-1 transition-all"
         >
-          <span>🛍️ Shop Curtains Now</span>
+          <span>🛍️ Shop All Curtains</span>
           <span>&rarr;</span>
         </a>
       </div>
